@@ -1,4 +1,4 @@
-package src;
+package ChessBoard;
 
 public class Point
 {
