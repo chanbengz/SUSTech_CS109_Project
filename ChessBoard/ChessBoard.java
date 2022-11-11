@@ -70,20 +70,28 @@ public class ChessBoard
             for(int j=1;j<=4;j++)
             {
                 int who=map[i][j].player;
-                int value=(int)Math.pow(-1,who)*this.players[who].pieces.chess[map[i][j].index].level;
-                System.out.printf("%2d ",value);
+                if(who==-1)System.out.printf("%2d ",-1);
+                else
+                {
+                    int value=(int)Math.pow(-1,who)*this.players[who].pieces.chess[map[i][j].index].level;
+                    System.out.printf("%2d ",value);
+                }
             }
         System.out.println("-----------------------");
         for(int i=1;i<=8;i++,System.out.println())
             for(int j=1;j<=4;j++)
             {
                 int who=map[i][j].player;
-                if(this.players[who].pieces.chess[map[i][j].index].show)
+                if(who==-1)System.out.printf("%2d ",-1);
+                else
                 {
-                    int value=(int)Math.pow(-1,who)*this.players[who].pieces.chess[map[i][j].index].level;
-                    System.out.printf("%2d ",value);
+                    if(this.players[who].pieces.chess[map[i][j].index].show)
+                    {
+                        int value=(int)Math.pow(-1,who)*this.players[who].pieces.chess[map[i][j].index].level;
+                        System.out.printf("%2d ",value);
+                    }
+                    else System.out.printf("%2d ",0);
                 }
-                else System.out.printf("%2d ",0);
             }
     }
     void Input(Point[] fun)
