@@ -1,5 +1,9 @@
 package ChessBoard;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Random;
+
 class ChessPieces
 {
     Point General;//将
@@ -28,5 +32,35 @@ class ChessPieces
 }
 public class ChessBoard
 {
-
+    ChessPieces Red=new ChessPieces();
+    ChessPieces Black=new ChessPieces();
+    //本机生成
+    void CreatePieces()
+    {
+        LinkedList<Integer> All= new LinkedList<>();
+        for(int i=1;i<=32;i++) All.add(i);
+        Collections.shuffle(All, new Random());
+        Point[] RedStart=new Point[16];
+        for(int i=0;i<=15;i++)
+        {
+            int tmp=All.getLast();
+            All.removeLast();
+            int y=tmp%4==0 ? 4 : tmp%4;
+            int x=(tmp-y)/4+1;
+            RedStart[i]=new Point(x,y,false,true);
+        }
+        Red.init(RedStart);
+        Point[] BlackStart=new Point[16];
+        for(int i=0;i<=15;i++)
+        {
+            int tmp=All.getLast();
+            All.removeLast();
+            int y=tmp%4==0 ? 4 : tmp%4;
+            int x=(tmp-y)/4+1;
+            BlackStart[i]=new Point(x,y,false,true);
+        }
+        Black.init(BlackStart);
+    }
+    //文件读写
+    //网络读写
 }

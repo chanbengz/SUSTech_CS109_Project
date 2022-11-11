@@ -1,6 +1,6 @@
 package ChessBoard;
 
-public class Point
+public class Point//行列均由1为起始下标
 {
     int x, y;
     boolean show;
