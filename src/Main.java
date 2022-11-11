@@ -5,7 +5,6 @@ public class Main
     public static void main(String[] args)
     {
         ChessBoard Game=new ChessBoard();
-        Game.CreatePieces();
-        Game.DisplayOnBoard();
+        Game.Play();
     }
 }
