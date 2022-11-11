@@ -35,7 +35,7 @@ public class ChessBoard
     ChessPieces Red=new ChessPieces();
     ChessPieces Black=new ChessPieces();
     //本机生成
-    void CreatePieces()
+    public void CreatePieces()
     {
         LinkedList<Integer> All= new LinkedList<>();
         for(int i=1;i<=32;i++) All.add(i);
@@ -60,6 +60,39 @@ public class ChessBoard
             BlackStart[i]=new Point(x,y,false,true);
         }
         Black.init(BlackStart);
+    }
+    public void DisplayOnBoard()
+    {
+        int[][] board=new int[10][10];
+        board[Red.General.x][Red.General.y]=1;
+        for(Point tmp:Red.Advisor)
+            board[tmp.x][tmp.y]=2;
+        for(Point tmp:Red.Minister)
+            board[tmp.x][tmp.y]=3;
+        for(Point tmp:Red.Chariot)
+            board[tmp.x][tmp.y]=4;
+        for(Point tmp:Red.Horse)
+            board[tmp.x][tmp.y]=5;
+        for(Point tmp:Red.Soldier)
+            board[tmp.x][tmp.y]=6;
+        for(Point tmp:Red.Cannon)
+            board[tmp.x][tmp.y]=7;
+        board[Black.General.x][Black.General.y]=-1;
+        for(Point tmp:Black.Advisor)
+            board[tmp.x][tmp.y]=-2;
+        for(Point tmp:Black.Minister)
+            board[tmp.x][tmp.y]=-3;
+        for(Point tmp:Black.Chariot)
+            board[tmp.x][tmp.y]=-4;
+        for(Point tmp:Black.Horse)
+            board[tmp.x][tmp.y]=-5;
+        for(Point tmp:Black.Soldier)
+            board[tmp.x][tmp.y]=-6;
+        for(Point tmp:Black.Cannon)
+            board[tmp.x][tmp.y]=-7;
+        for(int i=1;i<=8;i++,System.out.println())
+            for(int j=1;j<=4;j++)
+                System.out.printf("%2d ",board[i][j]);
     }
     //文件读写
     //网络读写

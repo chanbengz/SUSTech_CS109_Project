@@ -1,7 +1,11 @@
-public class Main {
+package src;
+import ChessBoard.ChessBoard;
+public class Main
+{
     public static void main(String[] args)
     {
-        System.out.println("Hello cb!");
-        System.out.println("Hello world!");
+        ChessBoard Game=new ChessBoard();
+        Game.CreatePieces();
+        Game.DisplayOnBoard();
     }
 }
