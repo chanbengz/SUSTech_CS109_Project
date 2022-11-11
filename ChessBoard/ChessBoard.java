@@ -1,7 +1,5 @@
 package ChessBoard;
-
 import java.util.*;
-
 public class ChessBoard
 {
     //本机生成
@@ -48,15 +46,6 @@ public class ChessBoard
         this.players[0].pieces.init(RedStart);
         this.players[1].pieces.init(BlackStart);
     }
-    int Move(Point piece,Point dest)
-    {
-        if(piece.x==dest.x && piece.y==dest.y)
-        {
-            piece.show=true;
-            return 0;
-        }
-        return dest.level;
-    }
     void InitialMap(int player)
     {
         for(int i=0;i<=15;i++)
@@ -65,12 +54,14 @@ public class ChessBoard
     public void Show()
     {
         System.out.printf("Turn: %d\n",turn);
-        System.out.printf("Score: %d : %d\n",this.players[0].score,players[1].score);
+        System.out.println("Score:");
+        for(int i=0;i<=1;i++)
+            System.out.printf("id: %s rating: %d score: %d\n",this.players[i].id,this.players[i].rating,this.players[i].score);
         for(int i=1;i<=8;i++,System.out.println())
             for(int j=1;j<=4;j++)
             {
                 int who=map[i][j].player;
-                if(who==-1)System.out.printf("%2d ",-1);
+                if(who==-1 || !this.players[who].pieces.chess[map[i][j].index].alive)System.out.printf("%2d ",9);
                 else
                 {
                     int value=(int)Math.pow(-1,who)*this.players[who].pieces.chess[map[i][j].index].level;
@@ -82,7 +73,7 @@ public class ChessBoard
             for(int j=1;j<=4;j++)
             {
                 int who=map[i][j].player;
-                if(who==-1)System.out.printf("%2d ",-1);
+                if(who==-1 || !this.players[who].pieces.chess[map[i][j].index].alive)System.out.printf("%2d ",9);
                 else
                 {
                     if(this.players[who].pieces.chess[map[i][j].index].show)
@@ -120,7 +111,7 @@ public class ChessBoard
     public void Play()
     {
         for(int i=0;i<=1;i++)
-            players[i]=new Player();
+            players[i]=new Player(Integer.toString(i));
         CreatePieces();
         for(int i=0;i<=1;i++)
             InitialMap(i);
@@ -130,17 +121,14 @@ public class ChessBoard
             Show();
             if(Math.max(this.players[0].score,this.players[1].score)>=60)break;
             Point[] fun=new Point[2];
-            for(int i=0;i<=1;i++)
-                fun[i]=new Point(0,0,0,false,false);
             Input(fun);
             if(fun[0].level==7)
             {
                 if(fun[0]==fun[1])
-                {
-                    this.players[turn].pieces.chess[map[fun[0].x][fun[0].y].index].show=true;
-                }
+                    fun[0].show=true;
                 else
                 {
+                    fun[1].alive=false;
                     map[fun[1].x][fun[1].y].player=-1;
                     int cost=fun[1].level;
                     Scoring(turn,cost);
@@ -148,18 +136,34 @@ public class ChessBoard
             }
             else
             {
-                int cost=Move(fun[0],fun[1]);
-                int TmpPlayer=map[fun[0].x][fun[0].y].player;
-                int TmpIndex=map[fun[0].x][fun[0].y].index;
-                map[fun[0].x][fun[0].y].player=-1;
-                map[fun[1].x][fun[1].y].player=TmpPlayer;
-                map[fun[1].x][fun[1].y].index=TmpIndex;
-                this.players[turn].pieces.chess[map[fun[1].x][fun[1].y].index]=fun[0];
-                Scoring(turn,cost);
+                if(fun[0]==fun[1])
+                    fun[0].show=true;
+                else
+                {
+                    int cost=fun[1].level;
+                    int TmpPlayer=map[fun[0].x][fun[0].y].player;
+                    int TmpIndex=map[fun[0].x][fun[0].y].index;
+                    map[fun[0].x][fun[0].y].player=-1;
+                    fun[1].alive=false;
+                    map[fun[1].x][fun[1].y].player=TmpPlayer;
+                    map[fun[1].x][fun[1].y].index=TmpIndex;
+                    fun[0].x=fun[1].x;
+                    fun[0].y=fun[1].y;
+                    Scoring(turn,cost);
+                }
+
             }
             turn^=1;
             //SavePoint();
         }
+        double p=1.0/(1.0+Math.pow(10,1.0*(this.players[1].rating-this.players[0].rating)/400));
+        int sign=(this.players[0].score>this.players[1].score ? 1 : -1);
+        this.players[0].rating+=sign*20*(1-p);
+        this.players[1].rating+=-1*sign*20*(1-p);
+        System.out.println("Game over!");
+        System.out.println("Rating is updated!");
+        for(int i=0;i<=1;i++)
+            System.out.printf("id: %s rating: %d score: %d\n",this.players[i].id,this.players[i].rating,this.players[i].score);
     }
     //文件读写
     //网络读写
