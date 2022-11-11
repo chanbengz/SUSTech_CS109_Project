@@ -1,55 +1,26 @@
 package ChessBoard;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Random;
-
-class ChessPieces
-{
-    Point General;//将
-    Point[] Advisor;//士
-    Point[] Minister;//象
-    Point[] Chariot;//车
-    Point[] Horse;//马
-    Point[] Soldier;//卒
-    Point[] Cannon;//炮
-    public void init(Point[] A)
-    {
-        General=new Point(A[0]);
-        Advisor=new Point[2];
-        System.arraycopy(A, 1, Advisor, 0, 2);
-        Minister=new Point[2];
-        System.arraycopy(A, 3, Minister, 0, 2);
-        Chariot=new Point[2];
-        System.arraycopy(A, 5, Chariot, 0, 2);
-        Horse=new Point[2];
-        System.arraycopy(A, 7, Horse, 0, 2);
-        Soldier=new Point[5];
-        System.arraycopy(A, 9, Soldier, 0, 5);
-        Cannon=new Point[2];
-        System.arraycopy(A, 14, Cannon, 0, 2);
-    }
-}
+import java.util.*;
 public class ChessBoard
 {
-    ChessPieces Red=new ChessPieces();
-    ChessPieces Black=new ChessPieces();
     //本机生成
-    public void CreatePieces()
+    static class Pair
+    {
+        int player,index;
+        public Pair(int player, int index)
+        {
+            this.player=player;
+            this.index=index;
+        }
+    }
+    Pair[][] map=new Pair[10][10];
+    static int turn;
+    Player[] players=new Player[2];
+    void CreatePieces()
     {
         LinkedList<Integer> All= new LinkedList<>();
         for(int i=1;i<=32;i++) All.add(i);
         Collections.shuffle(All, new Random());
         Point[] RedStart=new Point[16];
-        for(int i=0;i<=15;i++)
-        {
-            int tmp=All.getLast();
-            All.removeLast();
-            int y=tmp%4==0 ? 4 : tmp%4;
-            int x=(tmp-y)/4+1;
-            RedStart[i]=new Point(x,y,false,true);
-        }
-        Red.init(RedStart);
         Point[] BlackStart=new Point[16];
         for(int i=0;i<=15;i++)
         {
@@ -57,42 +28,142 @@ public class ChessBoard
             All.removeLast();
             int y=tmp%4==0 ? 4 : tmp%4;
             int x=(tmp-y)/4+1;
-            BlackStart[i]=new Point(x,y,false,true);
+            int level;
+            if(i==0)level=1;//General
+            else if(i<=2)level=2;//Advisor
+            else if(i<=4)level=3;//Minister
+            else if(i<=6)level=4;//Chariot
+            else if(i<=8)level=5;//Horse
+            else if(i<=13)level=6;//Soldier
+            else level=7;//Cannon
+            RedStart[i]=new Point(x,y,level,false,true);
+            tmp=All.getFirst();
+            All.removeFirst();
+            y=tmp%4==0 ? 4 : tmp%4;
+            x=(tmp-y)/4+1;
+            BlackStart[i]=new Point(x,y,level,false,true);
         }
-        Black.init(BlackStart);
+        this.players[0].pieces.init(RedStart);
+        this.players[1].pieces.init(BlackStart);
     }
-    public void DisplayOnBoard()
+    void InitialMap(int player)
     {
-        int[][] board=new int[10][10];
-        board[Red.General.x][Red.General.y]=1;
-        for(Point tmp:Red.Advisor)
-            board[tmp.x][tmp.y]=2;
-        for(Point tmp:Red.Minister)
-            board[tmp.x][tmp.y]=3;
-        for(Point tmp:Red.Chariot)
-            board[tmp.x][tmp.y]=4;
-        for(Point tmp:Red.Horse)
-            board[tmp.x][tmp.y]=5;
-        for(Point tmp:Red.Soldier)
-            board[tmp.x][tmp.y]=6;
-        for(Point tmp:Red.Cannon)
-            board[tmp.x][tmp.y]=7;
-        board[Black.General.x][Black.General.y]=-1;
-        for(Point tmp:Black.Advisor)
-            board[tmp.x][tmp.y]=-2;
-        for(Point tmp:Black.Minister)
-            board[tmp.x][tmp.y]=-3;
-        for(Point tmp:Black.Chariot)
-            board[tmp.x][tmp.y]=-4;
-        for(Point tmp:Black.Horse)
-            board[tmp.x][tmp.y]=-5;
-        for(Point tmp:Black.Soldier)
-            board[tmp.x][tmp.y]=-6;
-        for(Point tmp:Black.Cannon)
-            board[tmp.x][tmp.y]=-7;
+        for(int i=0;i<=15;i++)
+            map[this.players[player].pieces.chess[i].x][this.players[player].pieces.chess[i].y]=new Pair(player, i);
+    }
+    public void Show()
+    {
+        System.out.printf("Turn: %d\n",turn);
+        System.out.println("Score:");
+        for(int i=0;i<=1;i++)
+            System.out.printf("id: %s rating: %d score: %d\n",this.players[i].id,this.players[i].rating,this.players[i].score);
         for(int i=1;i<=8;i++,System.out.println())
             for(int j=1;j<=4;j++)
-                System.out.printf("%2d ",board[i][j]);
+            {
+                int who=map[i][j].player;
+                if(who==-1 || !this.players[who].pieces.chess[map[i][j].index].alive)System.out.printf("%2d ",9);
+                else
+                {
+                    int value=(int)Math.pow(-1,who)*this.players[who].pieces.chess[map[i][j].index].level;
+                    System.out.printf("%2d ",value);
+                }
+            }
+        System.out.println("-----------------------");
+        for(int i=1;i<=8;i++,System.out.println())
+            for(int j=1;j<=4;j++)
+            {
+                int who=map[i][j].player;
+                if(who==-1 || !this.players[who].pieces.chess[map[i][j].index].alive)System.out.printf("%2d ",9);
+                else
+                {
+                    if(this.players[who].pieces.chess[map[i][j].index].show)
+                    {
+                        int value=(int)Math.pow(-1,who)*this.players[who].pieces.chess[map[i][j].index].level;
+                        System.out.printf("%2d ",value);
+                    }
+                    else System.out.printf("%2d ",0);
+                }
+            }
+    }
+    void Input(Point[] fun)
+    {
+        Scanner input=new Scanner(System.in);
+        System.out.println("Input: src dest");
+        int x1=input.nextInt(),y1=input.nextInt(),x2=input.nextInt(),y2=input.nextInt();
+        fun[0]=this.players[map[x1][y1].player].pieces.chess[map[x1][y1].index];
+        if(map[x2][y2].player==-1)
+            fun[1]=new Point(x2,y2,0,true,true);
+        else
+            fun[1]=this.players[map[x2][y2].player].pieces.chess[map[x2][y2].index];
+    }
+    void Scoring(int player,int cost)
+    {
+        Player tmp=this.players[player];
+        switch(cost)
+        {
+            case 1-> tmp.score+=30;
+            case 2-> tmp.score+=10;
+            case 3, 4, 5, 7 -> tmp.score+=5;
+            case 6-> tmp.score+=1;
+        }
+        this.players[player]=tmp;
+    }
+    public void Play()
+    {
+        for(int i=0;i<=1;i++)
+            players[i]=new Player(Integer.toString(i));
+        CreatePieces();
+        for(int i=0;i<=1;i++)
+            InitialMap(i);
+        turn=0;
+        while(true)
+        {
+            Show();
+            if(Math.max(this.players[0].score,this.players[1].score)>=60)break;
+            Point[] fun=new Point[2];
+            Input(fun);
+            if(fun[0].level==7)
+            {
+                if(fun[0]==fun[1])
+                    fun[0].show=true;
+                else
+                {
+                    fun[1].alive=false;
+                    map[fun[1].x][fun[1].y].player=-1;
+                    int cost=fun[1].level;
+                    Scoring(turn,cost);
+                }
+            }
+            else
+            {
+                if(fun[0]==fun[1])
+                    fun[0].show=true;
+                else
+                {
+                    int cost=fun[1].level;
+                    int TmpPlayer=map[fun[0].x][fun[0].y].player;
+                    int TmpIndex=map[fun[0].x][fun[0].y].index;
+                    map[fun[0].x][fun[0].y].player=-1;
+                    fun[1].alive=false;
+                    map[fun[1].x][fun[1].y].player=TmpPlayer;
+                    map[fun[1].x][fun[1].y].index=TmpIndex;
+                    fun[0].x=fun[1].x;
+                    fun[0].y=fun[1].y;
+                    Scoring(turn,cost);
+                }
+
+            }
+            turn^=1;
+            //SavePoint();
+        }
+        double p=1.0/(1.0+Math.pow(10,1.0*(this.players[1].rating-this.players[0].rating)/400));
+        int sign=(this.players[0].score>this.players[1].score ? 1 : -1);
+        this.players[0].rating+=sign*20*(1-p);
+        this.players[1].rating+=-1*sign*20*(1-p);
+        System.out.println("Game over!");
+        System.out.println("Rating is updated!");
+        for(int i=0;i<=1;i++)
+            System.out.printf("id: %s rating: %d score: %d\n",this.players[i].id,this.players[i].rating,this.players[i].score);
     }
     //文件读写
     //网络读写
