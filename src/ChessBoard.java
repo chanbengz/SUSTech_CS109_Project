@@ -13,23 +13,17 @@ class ChessPieces
     {
         General=new Point(A[0]);
         Advisor=new Point[2];
-        for(int i=0;i<=1;i++)
-            Advisor[i]=A[i+1];
+        System.arraycopy(A, 1, Advisor, 0, 2);
         Minister=new Point[2];
-        for(int i=0;i<=1;i++)
-            Minister[i]=A[i+3];
+        System.arraycopy(A, 3, Minister, 0, 2);
         Chariot=new Point[2];
-        for(int i=0;i<=1;i++)
-            Chariot[i]=A[i+5];
+        System.arraycopy(A, 5, Chariot, 0, 2);
         Horse=new Point[2];
-        for(int i=0;i<=1;i++)
-            Horse[i]=A[i+7];
+        System.arraycopy(A, 7, Horse, 0, 2);
         Soldier=new Point[5];
-        for(int i=0;i<=4;i++)
-            Soldier[i]=A[i+9];
+        System.arraycopy(A, 9, Soldier, 0, 5);
         Cannon=new Point[2];
-        for(int i=0;i<=1;i++)
-            Cannon[i]=A[i+14];
+        System.arraycopy(A, 14, Cannon, 0, 2);
     }
 }
 public class ChessBoard
