@@ -17,6 +17,14 @@ public class Player {
     {
         id=userid;
     }
+    public Player(Player user)
+    {
+        this.pieces.init(user.pieces.chess);
+        this.score=user.score;
+        this.id=user.id;
+        this.rating=user.rating;
+        this.history.addAll(user.history);
+    }
     public String Msg()
     {
         String out="";

@@ -23,4 +23,8 @@ public class Operation
     {
         return x1+y1*10+x2*100+y2*1000;
     }
+    public boolean check()
+    {
+        return x1==0 && y1==0 && x2==0 && y2==0;
+    }
 }

@@ -12,12 +12,53 @@ public class ChessBoard
             this.player=player;
             this.index=index;
         }
+        public Pair(Pair x)
+        {
+            this.player=x.player;
+            this.index=x.index;
+        }
     }
     Pair[][] map=new Pair[10][10];
     int turn,steps;
     Player[] players=new Player[2];
     ArrayList<Operation> opt_stack=new ArrayList<>();
     UUID uuid;
+    static class Cache
+    {
+        int turn,steps;
+        Pair[][] map=new Pair[10][10];
+        ArrayList<Operation> opt_stack=new ArrayList<>();
+        Player[] players=new Player[2];
+        public Cache(int turn,int steps,Pair[][] map,ArrayList<Operation> opt_stack,Player[] players)
+        {
+            this.turn=turn;
+            this.steps=steps;
+            for(int i=1;i<=8;i++)
+                for(int j=1;j<=4;j++)
+                    this.map[i][j]=new Pair(map[i][j]);
+            this.opt_stack.addAll(opt_stack);
+            for(int i=0;i<=1;i++)
+                this.players[i]=new Player(players[i]);
+        }
+    }
+    ArrayList<Cache> game_stack=new ArrayList<>();
+    void SavePoint()
+    {
+        game_stack.add(new Cache(turn,steps,map,opt_stack,players));
+    }
+    void LoadPoint()
+    {
+        Cache page=game_stack.get(game_stack.size()-1);
+        turn=page.turn;
+        steps=page.steps;
+        for(int i=1;i<=8;i++)
+            for(int j=1;j<=4;j++)
+                map[i][j]=new Pair(page.map[i][j]);
+        opt_stack.clear();
+        opt_stack.addAll(page.opt_stack);
+        for(int i=0;i<=1;i++)
+            players[i]=new Player(page.players[i]);
+    }
     void CreatePieces()
     {
         LinkedList<Integer> All= new LinkedList<>();
@@ -58,6 +99,7 @@ public class ChessBoard
     public void Show()
     {
         System.out.printf("Turn: %d\n",turn);
+        System.out.printf("Steps: %d\n",steps);
         System.out.println("Score:");
         for(int i=0;i<=1;i++)
             System.out.printf("id: %s rating: %d score: %d\n",players[i].id,players[i].rating,players[i].score);
@@ -134,6 +176,7 @@ public class ChessBoard
             else
             {
                 opt=Input();
+                if(opt.check()){LoadPoint();continue;}
                 opt_stack.add(opt);
             }
             steps++;
@@ -183,7 +226,7 @@ public class ChessBoard
                 }
             }
             turn^=1;
-            //SavePoint();
+            SavePoint();
         }
     }
     public String Play(Player Alice,Player Bob)

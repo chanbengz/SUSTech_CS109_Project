@@ -7,7 +7,7 @@ public class Main
 {
     public static void main(String[] args)
     {
-        Player Alice=new Player();
+        Player Alice=new Player("Alice");
         String dir;
         try {
             dir=FileOperation.SaveUser(Alice);
@@ -25,7 +25,7 @@ public class Main
         String userid="Tim";
         Player Tim=new Player(userid);
         ChessBoard Game=new ChessBoard();
-        dir=Game.Play(Alice,Tim);
+        dir=Game.Play(Bob,Tim);
         ChessBoard Replay=new ChessBoard();
         String data;
         try {
