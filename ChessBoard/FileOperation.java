@@ -5,7 +5,7 @@ import java.io.*;
 public class FileOperation
 {
     public static String SaveGame(ChessBoard game) throws IOException {
-        String dir="\\Save\\";
+        String dir="Save/";
         dir+=game.uuid.toString();
         dir+=".chess";
         File file=new File(dir);
@@ -24,7 +24,7 @@ public class FileOperation
         return dir;
     }
     public static String SaveUser(Player Alice) throws IOException {
-        String dir="\\User\\";
+        String dir="User/";
         File dictionary=new File(dir);
         if(!dictionary.exists())
             if(!dictionary.mkdir())
