@@ -7,4 +7,11 @@ public class ChessPieces {
     {
         System.arraycopy(A, 0, this.chess, 0, 16);
     }
+    public String Msg()
+    {
+        StringBuilder out= new StringBuilder();
+        for(int i=0;i<=15;i++)
+            out.append(chess[i].transfer()).append(Player.pause);
+        return out.toString();
+    }
 }

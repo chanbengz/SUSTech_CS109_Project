@@ -9,4 +9,18 @@ public class Operation
         this.x2=x2;
         this.y2=y2;
     }
+    public Operation(int status)
+    {
+        this.x1=status%10;
+        status/=10;
+        this.y1=status%10;
+        status/=10;
+        this.x2=status%10;
+        status/=10;
+        this.y2=status;
+    }
+    public int transfer()
+    {
+        return x1+y1*10+x2*100+y2*1000;
+    }
 }

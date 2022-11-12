@@ -20,4 +20,18 @@ public class Point//行列均由1为起始下标
         this.show=p.show;
         this.alive=p.alive;
     }
+    public Point(int status)
+    {
+        this.x=status%10;
+        status/=10;
+        this.y=status%10;
+        status/=10;
+        this.level=status;
+        this.show=false;
+        this.alive=true;
+    }
+    public int transfer()
+    {
+        return x+y*10+level*10;
+    }
 }
