@@ -1,8 +1,7 @@
 package ChessBoard;
-
 import java.util.ArrayList;
-
-public class Player {
+public class Player
+{
     public ChessPieces pieces=new ChessPieces();
     public int score=0;
     public String id;

@@ -1,7 +1,5 @@
 package ChessBoard;
-
 import java.io.*;
-
 public class FileOperation
 {
     public static String SaveGame(ChessBoard game) throws IOException {
@@ -43,7 +41,7 @@ public class FileOperation
         File file=new File(dir);
         FileInputStream fis=new FileInputStream(file);
         byte[] buf=new byte[1000];
-        StringBuilder input= new StringBuilder();
+        StringBuilder input=new StringBuilder();
         while(fis.read(buf,0, buf.length)!=-1)
             input.append(new String(buf));
         fis.close();

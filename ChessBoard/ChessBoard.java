@@ -1,7 +1,6 @@
 package ChessBoard;
 import java.io.IOException;
 import java.util.*;
-
 public class ChessBoard
 {
     static class Pair

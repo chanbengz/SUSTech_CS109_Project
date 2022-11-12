@@ -1,6 +1,6 @@
 package ChessBoard;
-
-public class ChessPieces {
+public class ChessPieces
+{
     Point[] chess=new Point[16];
     public ChessPieces()
     {
