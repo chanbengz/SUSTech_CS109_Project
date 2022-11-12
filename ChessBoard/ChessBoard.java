@@ -13,8 +13,10 @@ public class ChessBoard
         }
     }
     Pair[][] map=new Pair[10][10];
-    static int turn;
+    int turn;
     Player[] players=new Player[2];
+    ArrayList<Operation> history=new ArrayList<>();
+    UUID uuid;
     void CreatePieces()
     {
         LinkedList<Integer> All= new LinkedList<>();
@@ -46,10 +48,11 @@ public class ChessBoard
         this.players[0].pieces.init(RedStart);
         this.players[1].pieces.init(BlackStart);
     }
-    void InitialMap(int player)
+    void InitialMap()
     {
-        for(int i=0;i<=15;i++)
-            map[this.players[player].pieces.chess[i].x][this.players[player].pieces.chess[i].y]=new Pair(player, i);
+        for(int player=0;player<=1;player++)
+            for(int i=0;i<=15;i++)
+                map[this.players[player].pieces.chess[i].x][this.players[player].pieces.chess[i].y]=new Pair(player, i);
     }
     public void Show()
     {
@@ -85,16 +88,18 @@ public class ChessBoard
                 }
             }
     }
-    void Input(Point[] fun)
+    Operation Input(Point[] fun)
     {
         Scanner input=new Scanner(System.in);
         System.out.println("Input: src dest");
         int x1=input.nextInt(),y1=input.nextInt(),x2=input.nextInt(),y2=input.nextInt();
+        Operation opt=new Operation(x1,y1,x2,y2);
         fun[0]=this.players[map[x1][y1].player].pieces.chess[map[x1][y1].index];
         if(map[x2][y2].player==-1)
             fun[1]=new Point(x2,y2,0,true,true);
         else
             fun[1]=this.players[map[x2][y2].player].pieces.chess[map[x2][y2].index];
+        return opt;
     }
     void Scoring(int player,int cost)
     {
@@ -112,32 +117,45 @@ public class ChessBoard
     {
         for(int i=0;i<=1;i++)
             players[i]=new Player(Integer.toString(i));
+        this.uuid=UUID.randomUUID();
         CreatePieces();
-        for(int i=0;i<=1;i++)
-            InitialMap(i);
+        String guid=this.uuid.toString();
+        InitialMap();
         turn=0;
+        boolean start=false;
         while(true)
         {
             Show();
             if(Math.max(this.players[0].score,this.players[1].score)>=60)break;
             Point[] fun=new Point[2];
-            Input(fun);
-            if(fun[0].level==7)
+            Operation opt=Input(fun);
+            this.history.add(opt);
+            if(fun[0]==fun[1])
             {
-                if(fun[0]==fun[1])
-                    fun[0].show=true;
-                else
+                fun[0].show=true;
+                if(!start)
+                {
+                    if(map[fun[0].x][fun[0].y].player==1)
+                    {
+                        ChessPieces tmp=new ChessPieces();
+                        for(int i=0;i<=15;i++)
+                            tmp.chess[i]=new Point(this.players[0].pieces.chess[i]);
+                        this.players[0].pieces=this.players[1].pieces;
+                        this.players[1].pieces=tmp;
+                        InitialMap();
+                    }
+                    start=true;
+                }
+            }
+            else
+            {
+                if(fun[0].level==7)
                 {
                     fun[1].alive=false;
                     map[fun[1].x][fun[1].y].player=-1;
                     int cost=fun[1].level;
                     Scoring(turn,cost);
                 }
-            }
-            else
-            {
-                if(fun[0]==fun[1])
-                    fun[0].show=true;
                 else
                 {
                     int cost=fun[1].level;
@@ -151,7 +169,6 @@ public class ChessBoard
                     fun[0].y=fun[1].y;
                     Scoring(turn,cost);
                 }
-
             }
             turn^=1;
             //SavePoint();
@@ -161,9 +178,13 @@ public class ChessBoard
         this.players[0].rating+=sign*20*(1-p);
         this.players[1].rating+=-1*sign*20*(1-p);
         System.out.println("Game over!");
+        System.out.println(guid);
         System.out.println("Rating is updated!");
         for(int i=0;i<=1;i++)
             System.out.printf("id: %s rating: %d score: %d\n",this.players[i].id,this.players[i].rating,this.players[i].score);
+        this.players[0].history.add(guid);
+        this.players[1].history.add(guid);
+        FileSave.SaveGame(this);
     }
     //文件读写
     //网络读写

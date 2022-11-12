@@ -2,12 +2,11 @@ package ChessBoard;
 
 public class FileSave
 {
-
-    void Decode()
+    public static void SavePlayer(Player Alice)
     {
 
     }
-    String Encode(ChessBoard game)
+    public static void SaveGame(ChessBoard game)
     {
 
     }
