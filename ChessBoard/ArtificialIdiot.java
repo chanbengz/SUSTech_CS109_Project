@@ -107,27 +107,32 @@ public class ArtificialIdiot
                     {
                         for(int k=0;k<=3;k++)
                         {
-                            int nx=i+dx[k],ny=j+dy[k];
+                            int nx=i+dx[k],ny=j+dy[k],nl=Math.abs(map[nx][ny]);
                             if(!Check(nx,ny))continue;
                             if(map[nx][ny]!=9 && map[nx][ny]*turn<0)
                             {
                                 if(level==6)
                                 {
-                                    if(Math.abs(map[nx][ny])==1)
+                                    if(nl==1)
                                     {
-                                        cost1=Math.abs(map[nx][ny]);
+                                        cost1=nl;
+                                        opt=new Operation(i,j,nx,ny);
+                                    }
+                                }
+                                else if(level==1)
+                                {
+                                    if(2<=nl && nl<=5)
+                                    {
+                                        cost1=nl;
                                         opt=new Operation(i,j,nx,ny);
                                     }
                                 }
                                 else
                                 {
-                                    if(level<Math.abs(map[nx][ny]))
+                                    if(level<nl && nl<cost1)
                                     {
-                                        if(Math.abs(map[nx][ny])<cost1)
-                                        {
-                                            cost1=Math.abs(map[nx][ny]);
-                                            opt=new Operation(i,j,nx,ny);
-                                        }
+                                        cost1=nl;
+                                        opt=new Operation(i,j,nx,ny);
                                     }
                                 }
                             }

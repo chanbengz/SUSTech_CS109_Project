@@ -48,6 +48,7 @@ public class ChessBoard
     void LoadPoint()
     {
         Cache page=game_stack.get(game_stack.size()-1);
+        game_stack.remove(game_stack.size()-1);
         turn=page.turn;
         steps=page.steps;
         for(int i=1;i<=8;i++)
