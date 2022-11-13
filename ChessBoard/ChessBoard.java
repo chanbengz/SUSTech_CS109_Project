@@ -106,7 +106,7 @@ public class ChessBoard
             for(int j=1;j<=4;j++)
             {
                 int who=map[i][j].player;
-                if(who==-1 || !players[who].pieces.chess[map[i][j].index].alive)System.out.printf("%2d ",9);
+                if(who==-1)System.out.printf("%2d ",9);
                 else
                 {
                     int value=(int)Math.pow(-1,who)*players[who].pieces.chess[map[i][j].index].level;
@@ -118,7 +118,7 @@ public class ChessBoard
             for(int j=1;j<=4;j++)
             {
                 int who=map[i][j].player;
-                if(who==-1 || !players[who].pieces.chess[map[i][j].index].alive)System.out.printf("%2d ",9);
+                if(who==-1)System.out.printf("%2d ",9);
                 else
                 {
                     if(this.players[who].pieces.chess[map[i][j].index].show)
@@ -132,10 +132,19 @@ public class ChessBoard
     }
     Operation Input()
     {
-        Scanner input=new Scanner(System.in);
-        System.out.println("Input: src dest");
-        int x1=input.nextInt(),y1=input.nextInt(),x2=input.nextInt(),y2=input.nextInt();
-        return new Operation(x1,y1,x2,y2);
+        if(players[turn].isAI)
+        {
+            ArtificialIdiot AI=new ArtificialIdiot();
+            AI.LoadMap(this);
+            return AI.Easy();
+        }
+        else
+        {
+            Scanner input=new Scanner(System.in);
+            System.out.println("Input: src dest");
+            int x1=input.nextInt(),y1=input.nextInt(),x2=input.nextInt(),y2=input.nextInt();
+            return new Operation(x1,y1,x2,y2);
+        }
     }
     void Scoring(int player,int cost)
     {
@@ -175,7 +184,7 @@ public class ChessBoard
             else
             {
                 opt=Input();
-                if(opt.check()){LoadPoint();continue;}
+                if(opt.isLoad()){LoadPoint();continue;}
                 opt_stack.add(opt);
             }
             steps++;
@@ -266,7 +275,10 @@ public class ChessBoard
             int pos_id=data.indexOf(Player.pause,index);
             String id=data.substring(index,pos_id);
             index=pos_id+Player.pause.length();
-            players[i]=new Player(id);
+            int pos_isAI=data.indexOf(Player.pause,index);
+            String isAI=data.substring(index,pos_isAI);
+            index=pos_isAI+Player.pause.length();
+            players[i]=new Player(id,isAI.equals("true"));
             int pos_rat=data.indexOf(Player.pause,index);
             players[i].rating=Integer.parseInt(data.substring(index,pos_rat));
             index=pos_rat+Player.pause.length();

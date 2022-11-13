@@ -7,7 +7,7 @@ public class Main
 {
     static void test0()
     {
-        Player Alice=new Player("Alice");
+        Player Alice=new Player("Alice",false);
         String dir;
         try {
             dir=FileOperation.SaveUser(Alice);
@@ -22,19 +22,7 @@ public class Main
             throw new RuntimeException(e);
         }
         Bob.Load(user);
-        String userid="Tim";
-        Player Tim=new Player(userid);
-        ChessBoard Game=new ChessBoard();
-        dir=Game.Play(Bob,Tim);
-        ChessBoard Replay=new ChessBoard();
-        String data;
-        try {
-            data=FileOperation.Load(dir);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Replay.Load(data);
-        Replay.Replay();
+        Bob.Show();
     }
     static void test1()
     {
@@ -69,6 +57,22 @@ public class Main
             throw new RuntimeException(e);
         }
     }
+    static void test3()
+    {
+        Player Tim=new Player("Tim",false);
+        Player AI=new Player("AI",true);
+        ChessBoard Game=new ChessBoard();
+        String dir=Game.Play(Tim,AI);
+        ChessBoard Replay=new ChessBoard();
+        String data;
+        try {
+            data=FileOperation.Load(dir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Replay.Load(data);
+        Replay.Replay();
+    }
     public static void main(String[] args)
     {
         Scanner input=new Scanner(System.in);
@@ -78,6 +82,7 @@ public class Main
             case 0 -> test0();
             case 1 -> test1();
             case 2 -> test2();
+            case 3 -> test3();
         }
     }
 }

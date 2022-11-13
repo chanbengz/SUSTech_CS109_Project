@@ -6,28 +6,31 @@ public class Player
     public int score=0;
     public String id;
     public int rating=1500;
+    public boolean isAI=false;
     public ArrayList<String> history=new ArrayList<>();
     public static String pause="?!-.";
     public Player()
     {
         id="Player";
     }
-    public Player(String userid)
+    public Player(String userid,boolean isAI)
     {
         id=userid;
+        this.isAI=isAI;
     }
     public Player(Player user)
     {
         this.pieces.init(user.pieces.chess);
         this.score=user.score;
         this.id=user.id;
+        this.isAI=user.isAI;
         this.rating=user.rating;
         this.history.addAll(user.history);
     }
     public String Msg()
     {
         String out="";
-        out+=id+pause+rating+pause+pieces.Msg();
+        out+=id+pause+isAI+pause+rating+pause+pieces.Msg();
         return out;
     }
     public String UserMsg()
@@ -37,6 +40,14 @@ public class Player
         for(String game:history)
             out.append(game).append(pause);
         return out.toString();
+    }
+    public void Show()
+    {
+        System.out.printf("id: %s rating: %d\n",id,rating);
+        System.out.println("history:");
+        for(String game:history)
+            System.out.println(game);
+        if(history.isEmpty())System.out.println("null");
     }
     public void Load(String input)
     {
