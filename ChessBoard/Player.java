@@ -1,5 +1,6 @@
 package ChessBoard;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class Player
@@ -53,27 +54,19 @@ public class Player
             System.out.println(game);
         if(history.isEmpty())System.out.println("null");
     }
+    boolean FormatCheck(String raw)
+    {
+
+    }
     public void Load(String input)
     {
-        int index=0;
-        int pos_id=input.indexOf(pause,index);
-        id=input.substring(index,pos_id);
-        index=pos_id+pause.length();
-        int pos_uuid=input.indexOf(pause,index);
-        uuid=UUID.fromString(input.substring(index,pos_uuid));
-        index=pos_uuid+pause.length();
-        int pos_rat=input.indexOf(pause,index);
-        rating=Integer.parseInt(input.substring(index,pos_rat));
-        index=pos_rat+pause.length();
-        int pos_size=input.indexOf(pause,index);
-        int n=Integer.parseInt(input.substring(index,pos_size));
-        index=pos_size+pause.length();
+        if(!FormatCheck(input))return;
+        String[] data=input.split(pause);
+        id=data[0];
+        uuid=UUID.fromString(data[1]);
+        rating=Integer.parseInt(data[2]);
+        int n=Integer.parseInt(data[3]);
         history.clear();
-        for(int i=1;i<=n;i++)
-        {
-            int pos_his=input.indexOf(pause,index);
-            history.add(input.substring(index,pos_his));
-            index=pos_his+pause.length();
-        }
+        if(n>0)history.addAll(Arrays.asList(data).subList(4, n + 4));
     }
 }

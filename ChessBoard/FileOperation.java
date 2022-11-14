@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class FileOperation
 {
-    static String Encrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    static byte[] Encrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         String password=uuid.toString();
         KeyGenerator gen=KeyGenerator.getInstance("AES");
         gen.init(128,new SecureRandom(password.getBytes()));
@@ -18,11 +18,17 @@ public class FileOperation
         SecretKeySpec key=new SecretKeySpec(secretKey.getEncoded(), "AES");
         Cipher cipher=Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE,key);
-        return Base64.getEncoder().encodeToString(cipher.doFinal(data.getBytes()));
+        return Base64.getEncoder().encode(cipher.doFinal(data.getBytes()));
     }
-    static String Decrypt(String data, UUID uuid)
-    {
-
+    static String Decrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        String password=uuid.toString();
+        KeyGenerator gen=KeyGenerator.getInstance("AES");
+        gen.init(128,new SecureRandom(password.getBytes()));
+        SecretKey secretKey=gen.generateKey();
+        SecretKeySpec key=new SecretKeySpec(secretKey.getEncoded(), "AES");
+        Cipher cipher=Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE,key);
+        return new String(cipher.doFinal(Base64.getDecoder().decode(data)));
     }
     public static String SaveGame(ChessBoard game) throws IOException {
         StringBuilder data= new StringBuilder();
@@ -44,7 +50,7 @@ public class FileOperation
                 throw new IOException();
         FileOutputStream fos=new FileOutputStream(file);
         try {
-            fos.write((Encrypt(data.toString(),game.uuid)).getBytes());
+            fos.write((Encrypt(data.toString(),game.uuid)));
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
                  BadPaddingException e) {
             throw new RuntimeException(e);
@@ -65,7 +71,7 @@ public class FileOperation
                 throw new IOException();
         FileOutputStream fos=new FileOutputStream(file);
         try {
-            fos.write(Encrypt(Alice.UserMsg(),Alice.uuid).getBytes());
+            fos.write(Encrypt(Alice.UserMsg(),Alice.uuid));
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
                  BadPaddingException e) {
             throw new RuntimeException(e);
@@ -85,6 +91,11 @@ public class FileOperation
         UUID uuid;
         if(name.contains(".chess"))uuid=UUID.fromString(name.substring(0,name.indexOf(".chess")));
         else uuid=UUID.nameUUIDFromBytes(name.substring(0,name.indexOf(".usr")).getBytes());
-        return Decrypt(input.toString(),uuid);
+        try {
+            return Decrypt(input.toString(),uuid);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
+                 BadPaddingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

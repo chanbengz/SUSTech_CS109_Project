@@ -265,40 +265,27 @@ public class ChessBoard
         }
         return dir;
     }
-    public void Load(String data)
+    boolean FormatCheck(String raw)
     {
-        int index=0;
-        int pos_uuid=data.indexOf(Player.pause,index);
-        uuid=UUID.fromString(data.substring(index,pos_uuid));
-        index=pos_uuid+Player.pause.length();
+
+    }
+    public void Load(String raw)
+    {
+        if(!FormatCheck(raw))return;
+        String[] data=raw.split(Player.pause);
+        uuid=UUID.fromString(data[0]);
         for(int i=0;i<=1;i++)
         {
-            int pos_id=data.indexOf(Player.pause,index);
-            String id=data.substring(index,pos_id);
-            index=pos_id+Player.pause.length();
-            int pos_isAI=data.indexOf(Player.pause,index);
-            String isAI=data.substring(index,pos_isAI);
-            index=pos_isAI+Player.pause.length();
+            String id=data[1+i*19];
+            String isAI=data[2+i*19];
             players[i]=new Player(id,isAI.equals("true"));
-            int pos_rat=data.indexOf(Player.pause,index);
-            players[i].rating=Integer.parseInt(data.substring(index,pos_rat));
-            index=pos_rat+Player.pause.length();
+            players[i].rating=Integer.parseInt(data[3+i*19]);
             for(int j=0;j<=15;j++)
-            {
-                int pos=data.indexOf(Player.pause,index);
-                players[i].pieces.chess[j]=new Point(Integer.parseInt(data.substring(index,pos)));
-                index=pos+Player.pause.length();
-            }
+                players[i].pieces.chess[j]=new Point(Integer.parseInt(data[4+j+i*19]));
         }
-        int pos_size=data.indexOf(Player.pause,index);
-        int n=Integer.parseInt(data.substring(index,pos_size));
-        index=pos_size+Player.pause.length();
+        int n=Integer.parseInt(data[39]);
         for(int i=1;i<=n;i++)
-        {
-            int pos=data.indexOf(Player.pause,index);
-            opt_stack.add(new Operation(Integer.parseInt(data.substring(index,pos))));
-            index=pos+Player.pause.length();
-        }
+            opt_stack.add(new Operation(Integer.parseInt(data[39+i])));
     }
     public void Replay()
     {
