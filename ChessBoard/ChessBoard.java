@@ -216,9 +216,9 @@ public class ChessBoard
                 if(fun[0].level==7)
                 {
                     fun[1].alive=false;
+                    int who=map[fun[1].x][fun[1].y].player;
                     map[fun[1].x][fun[1].y].player=-1;
-                    int cost=fun[1].level;
-                    Scoring(turn,cost);
+                    Scoring(who^1,fun[1].level);
                 }
                 else
                 {
