@@ -42,4 +42,9 @@ public class Point//行列均由1为起始下标
     {
         return x+y*10+level*10;
     }
+    public void check() throws ChessException
+    {
+        if(x<1 || x>8 || y<1 || y>4)throw new ChessException("Wrong coordinate.\nError Code:302");
+        if(level<1 || level>7)throw new ChessException("Invalid level.\nError Code:303");
+    }
 }

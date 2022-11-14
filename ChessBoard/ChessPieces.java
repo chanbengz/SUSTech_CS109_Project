@@ -1,6 +1,4 @@
 package ChessBoard;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChessPieces
@@ -22,11 +20,8 @@ public class ChessPieces
             out.append(chess[i].transfer()).append(Player.pause);
         return out.toString();
     }
-    public static void FormatCheck(List<String> raw)
-    {
-        ArrayList<Point> pieces=new ArrayList<>();
+    public static void FormatCheck(List<String> raw) throws ChessException {
         for(String tmp:raw)
-            pieces.add(new Point(Integer.parseInt(tmp)));
-
+            new Point(Integer.parseInt(tmp)).check();
     }
 }

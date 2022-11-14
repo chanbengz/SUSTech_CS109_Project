@@ -185,7 +185,7 @@ public class ChessBoard
             {
                 opt=Input();
                 if(opt.isLoad()){LoadPoint();continue;}
-                if(!opt.isValid())throw new ChessException("Out of range.\nError Code:302");
+                if(!opt.isValid())throw new ChessException("Out of range.\nError Code:306");
                 opt_stack.add(opt);
             }
             steps++;
@@ -277,7 +277,10 @@ public class ChessBoard
         if(!data[0].equals(name))throw new ChessException("Wrong UUID.\nError Code:301");
         for(int i=0;i<=1;i++)
             ChessPieces.FormatCheck(Arrays.asList(data).subList(4+i*19,20+i*19));
-
+        int tmp=Integer.parseInt(data[39]);
+        if(tmp!=0 && tmp!=1)throw new ChessException("No sufficient turn.\nError Code:304");
+        int n=Integer.parseInt(data[40]);
+        if(n+41!=data.length)throw new ChessException("Wrong options size.\nError Code:307");
     }
     public void Load(String raw,String name)
     {
@@ -298,9 +301,10 @@ public class ChessBoard
             for(int j=0;j<=15;j++)
                 players[i].pieces.chess[j]=new Point(Integer.parseInt(data[4+j+i*19]));
         }
-        int n=Integer.parseInt(data[39]);
+        turn=Integer.parseInt(data[39]);
+        int n=Integer.parseInt(data[40]);
         for(int i=1;i<=n;i++)
-            opt_stack.add(new Operation(Integer.parseInt(data[39+i])));
+            opt_stack.add(new Operation(Integer.parseInt(data[40+i])));
     }
     public void Replay()
     {

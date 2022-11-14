@@ -34,6 +34,7 @@ public class FileOperation
         StringBuilder data= new StringBuilder();
         data.append(game.uuid.toString()).append(Player.pause);
         data.append(game.players[0].Msg()).append(game.players[1].Msg());
+        data.append(game.turn).append(Player.pause);
         int n=game.opt_stack.size();
         data.append(n).append(Player.pause);
         for(Operation tmp:game.opt_stack)
