@@ -79,7 +79,7 @@ public class FileOperation
         fos.close();
         return dirFile;
     }
-    public static String Load(String dir) throws IOException {
+    public static String Load(String dir) throws ChessException, IOException {
         File file=new File(dir);
         FileInputStream fis=new FileInputStream(file);
         byte[] buf=new byte[1000];
@@ -90,7 +90,8 @@ public class FileOperation
         String name=dir.substring(dir.lastIndexOf("/")+1);
         UUID uuid;
         if(name.contains(".chess"))uuid=UUID.fromString(name.substring(0,name.indexOf(".chess")));
-        else uuid=UUID.nameUUIDFromBytes(name.substring(0,name.indexOf(".usr")).getBytes());
+        else if(name.contains(".usr"))uuid=UUID.nameUUIDFromBytes(name.substring(0,name.indexOf(".usr")).getBytes());
+        else throw new ChessException("Invalid File Format.\nError Code:101");
         try {
             return Decrypt(input.toString(),uuid);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |

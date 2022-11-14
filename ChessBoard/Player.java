@@ -54,13 +54,26 @@ public class Player
             System.out.println(game);
         if(history.isEmpty())System.out.println("null");
     }
-    boolean FormatCheck(String raw)
-    {
-
+    void FormatCheck(String raw,String name) throws ChessException {
+        String[] data=raw.split(pause);
+        if(!data[0].equals(name))throw new ChessException("Wrong username.\nError Code:201");
+        if(!data[1].equals(UUID.nameUUIDFromBytes(name.getBytes()).toString()))throw new ChessException("Wrong user UUID.\nError Code:202");
+        int rat=Integer.parseInt(data[2]);
+        if(rat<0 || rat>10000)throw new ChessException("Wrong rating.\nError Code:203");
+        int n=Integer.parseInt(data[3]);
+        if(n+4!=data.length)throw new ChessException("Wrong history size.\nError Code:204");
+        for(int i=1;i<=n;i++)
+            if(!data[i+3].matches("([0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}?)"))
+                throw new ChessException("Wrong history UUID.\nError Code:205");
     }
-    public void Load(String input)
+    public void Load(String input,String name)
     {
-        if(!FormatCheck(input))return;
+        try {
+            FormatCheck(input,name);
+        } catch (ChessException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
         String[] data=input.split(pause);
         id=data[0];
         uuid=UUID.fromString(data[1]);

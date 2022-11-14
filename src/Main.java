@@ -18,10 +18,14 @@ public class Main
         String user;
         try {
             user = FileOperation.Load(dir);
+        } catch (ChessException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Bob.Load(user);
+        String name=dir.substring(dir.lastIndexOf("/")+1);
+        Bob.Load(user,name.substring(0,name.length()-4));
         Bob.Show();
     }
     static void test1()
@@ -67,6 +71,9 @@ public class Main
         String data;
         try {
             data=FileOperation.Load(dir);
+        } catch (ChessException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
