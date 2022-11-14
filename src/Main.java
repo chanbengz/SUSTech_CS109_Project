@@ -66,7 +66,8 @@ public class Main
         Player Tim=new Player("Tim",false);
         Player AI=new Player("AI",true);
         ChessBoard Game=new ChessBoard();
-        String dir=Game.Play(Tim,AI);
+        Game.Init(Tim,AI);
+        String dir=Game.Play();
         ChessBoard Replay=new ChessBoard();
         String data;
         try {

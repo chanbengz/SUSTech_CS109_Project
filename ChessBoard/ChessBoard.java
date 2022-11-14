@@ -185,6 +185,7 @@ public class ChessBoard
             {
                 opt=Input();
                 if(opt.isLoad()){LoadPoint();continue;}
+                if(opt.isSave()){}
                 if(!opt.isValid())throw new ChessException("Out of range.\nError Code:306");
                 opt_stack.add(opt);
             }
@@ -239,12 +240,15 @@ public class ChessBoard
             SavePoint();
         }
     }
-    public String Play(Player Alice,Player Bob)
+    public void Init(Player Alice,Player Bob)
     {
         players[0]=Alice;
         players[1]=Bob;
         uuid=UUID.randomUUID();
         CreatePieces();
+    }
+    public String Play()
+    {
         try {
             Go(false);
         } catch (ChessException e) {
