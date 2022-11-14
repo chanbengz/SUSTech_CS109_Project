@@ -79,8 +79,31 @@ public class Main
             throw new RuntimeException(e);
         }
         String name=dir.substring(dir.lastIndexOf("/")+1);
-        Replay.Load(data,name.substring(0,name.length()-6));
+        Replay.LoadReplay(data,name.substring(0,name.length()-6));
         Replay.Replay();
+    }
+    static void test4()
+    {
+        ChessBoard Game=new ChessBoard();
+        String dir,data,name;
+        Scanner input=new Scanner(System.in);
+        dir=input.next();
+        try {
+            data=FileOperation.Load(dir);
+        } catch (ChessException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        name=dir.substring(dir.lastIndexOf("/")+1);
+        try {
+            Game.GameContinue(data,name.substring(0,name.length()-5));
+        } catch (ChessException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        System.out.println("Save at"+Game.Play());
     }
     public static void main(String[] args)
     {
@@ -92,6 +115,7 @@ public class Main
             case 1 -> test1();
             case 2 -> test2();
             case 3 -> test3();
+            case 4 -> test4();
         }
     }
 }

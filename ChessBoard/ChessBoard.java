@@ -167,9 +167,6 @@ public class ChessBoard
     }
     void Go(boolean isReplay) throws ChessException {
         InitialMap();
-        turn=0;
-        steps=0;
-        boolean start=false;
         while(true)
         {
             Show();
@@ -185,7 +182,17 @@ public class ChessBoard
             {
                 opt=Input();
                 if(opt.isLoad()){LoadPoint();continue;}
-                if(opt.isSave()){}
+                if(opt.isSave())
+                {
+                    String dir;
+                    try {
+                        dir = FileOperation.GamePause(this);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("Game pause file at "+dir);
+                    continue;
+                }
                 if(!opt.isValid())throw new ChessException("Out of range.\nError Code:306");
                 opt_stack.add(opt);
             }
@@ -198,7 +205,7 @@ public class ChessBoard
             if(fun[0]==fun[1])
             {
                 fun[0].show=true;
-                if(!start)
+                if(steps==1)
                 {
                     if(map[fun[0].x][fun[0].y].player==1)
                     {
@@ -209,7 +216,6 @@ public class ChessBoard
                         players[1].pieces=tmp;
                         InitialMap();
                     }
-                    start=true;
                 }
             }
             else
@@ -246,6 +252,8 @@ public class ChessBoard
         players[1]=Bob;
         uuid=UUID.randomUUID();
         CreatePieces();
+        turn=0;
+        steps=0;
     }
     public String Play()
     {
@@ -286,7 +294,7 @@ public class ChessBoard
         int n=Integer.parseInt(data[40]);
         if(n+41!=data.length)throw new ChessException("Wrong options size.\nError Code:307");
     }
-    public void Load(String raw,String name)
+    public void LoadReplay(String raw,String name)
     {
         try {
             FormatCheck(raw,name);
@@ -309,6 +317,8 @@ public class ChessBoard
         int n=Integer.parseInt(data[40]);
         for(int i=1;i<=n;i++)
             opt_stack.add(new Operation(Integer.parseInt(data[40+i])));
+        turn=0;
+        steps=0;
     }
     public void Replay()
     {
@@ -323,5 +333,18 @@ public class ChessBoard
         System.out.println(guid);
         for(int i=0;i<=1;i++)
             System.out.printf("id: %s rating: %d score: %d\n",players[i].id,players[i].rating,players[i].score);
+    }
+    public void GameContinue(String raw,String name) throws ChessException {
+        String[] Segment=raw.split(Player.BigPause);
+        if(!Segment[0].equals(name))throw new ChessException("Wrong UUID.\nError Code:401");
+        uuid=UUID.fromString(name);
+        players[0].LoadGaming(Segment[1]);
+        players[1].LoadGaming(Segment[2]);
+        String[] data=Segment[3].split(Player.pause);
+        turn=Integer.parseInt(data[0]);
+        steps=Integer.parseInt(data[1]);
+        int n=Integer.parseInt(data[2]);
+        for(int i=1;i<=n;i++)
+            opt_stack.add(new Operation(Integer.parseInt(data[2+i])));
     }
 }

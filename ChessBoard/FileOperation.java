@@ -31,8 +31,7 @@ public class FileOperation
         return new String(cipher.doFinal(Base64.getDecoder().decode(data)));
     }
     public static String SaveGame(ChessBoard game) throws IOException {
-        StringBuilder data= new StringBuilder();
-        data.append(game.uuid.toString()).append(Player.pause);
+        StringBuilder data= new StringBuilder(game.uuid.toString()+Player.pause);
         data.append(game.players[0].Msg()).append(game.players[1].Msg());
         data.append(game.turn).append(Player.pause);
         int n=game.opt_stack.size();
@@ -92,6 +91,7 @@ public class FileOperation
         UUID uuid;
         if(name.contains(".chess"))uuid=UUID.fromString(name.substring(0,name.indexOf(".chess")));
         else if(name.contains(".usr"))uuid=UUID.nameUUIDFromBytes(name.substring(0,name.indexOf(".usr")).getBytes());
+        else if(name.contains(".game"))uuid=UUID.fromString(name.substring(0,name.indexOf(".game")));
         else throw new ChessException("Invalid File Format.\nError Code:101");
         try {
             return Decrypt(input.toString(),uuid);
@@ -99,5 +99,35 @@ public class FileOperation
                  BadPaddingException e) {
             throw new RuntimeException(e);
         }
+    }
+    public static String GamePause(ChessBoard game) throws IOException {
+        StringBuilder data= new StringBuilder(game.uuid.toString()+Player.BigPause);
+        data.append(game.players[0].GamingMsg()).append(Player.BigPause);
+        data.append(game.players[1].GamingMsg()).append(Player.BigPause);
+        data.append(game.turn).append(Player.pause);
+        data.append(game.steps).append(Player.pause);
+        int n=game.opt_stack.size();
+        data.append(n).append(Player.pause);
+        for(Operation tmp:game.opt_stack)
+            data.append(tmp.transfer()).append(Player.pause);
+        String dir="Save/";
+        File dictionary=new File(dir);
+        if(!dictionary.exists())
+            if(!dictionary.mkdir())
+                throw new IOException();
+        String dirFile=dir+game.uuid.toString()+".game";
+        File file=new File(dirFile);
+        if(!file.exists())
+            if(!file.createNewFile())
+                throw new IOException();
+        FileOutputStream fos=new FileOutputStream(file);
+        try {
+            fos.write((Encrypt(data.toString(),game.uuid)));
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
+                 BadPaddingException e) {
+            throw new RuntimeException(e);
+        }
+        fos.close();
+        return dir;
     }
 }

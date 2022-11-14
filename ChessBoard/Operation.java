@@ -27,6 +27,10 @@ public class Operation
     {
         return x1==0 && y1==0 && x2==0 && y2==0;
     }
+    public boolean isSave()
+    {
+        return x1==5 && y1==5 && x2==5 && y2==5;
+    }
     public boolean isValid()
     {
         return 1<=x1 && x1<=8 && 1<=y1 && y1<=4 && 1<=x2 && x2<=8 && 1<=y2 && y2<=4;

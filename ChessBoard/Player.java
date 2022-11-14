@@ -13,6 +13,7 @@ public class Player
     UUID uuid;
     public ArrayList<String> history=new ArrayList<>();
     public static String pause="?!-.";
+    public static String BigPause="!?.-";
     public Player()
     {
         id="Player";
@@ -38,14 +39,6 @@ public class Player
     {
         return id+pause+isAI+pause+rating+pause+pieces.Msg();
     }
-    public String UserMsg()
-    {
-        StringBuilder out= new StringBuilder(id+pause+uuid.toString()+pause+rating+pause);
-        out.append(history.size()).append(pause);
-        for(String game:history)
-            out.append(game).append(pause);
-        return out.toString();
-    }
     public void Show()
     {
         System.out.printf("id: %s rating: %d\n",id,rating);
@@ -66,6 +59,14 @@ public class Player
             if(!data[i+3].matches("([0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}?)"))
                 throw new ChessException("Wrong history UUID.\nError Code:205");
     }
+    public String UserMsg()
+    {
+        StringBuilder out= new StringBuilder(id+pause+uuid.toString()+pause+rating+pause);
+        out.append(history.size()).append(pause);
+        for(String game:history)
+            out.append(game).append(pause);
+        return out.toString();
+    }
     public void Load(String input,String name)
     {
         try {
@@ -81,5 +82,26 @@ public class Player
         int n=Integer.parseInt(data[3]);
         history.clear();
         if(n>0)history.addAll(Arrays.asList(data).subList(4, n + 4));
+    }
+    public String GamingMsg()
+    {
+        StringBuilder out= new StringBuilder(id+pause+isAI+pause+rating+pause+score+pause+pieces.Msg());
+        out.append(history.size()).append(pause);
+        for(String game:history)
+            out.append(game).append(pause);
+        return out.toString();
+    }
+    public void LoadGaming(String input)
+    {
+        String[] data=input.split(pause);
+        id=data[0];
+        isAI=data[1].equals("true");
+        rating=Integer.parseInt(data[2]);
+        score=Integer.parseInt(data[3]);
+        for(int i=0;i<=15;i++)
+            pieces.chess[i]=new Point(Integer.parseInt(data[4+i]));
+        history.clear();
+        int n=Integer.parseInt(data[20]);
+        history.addAll(Arrays.asList(data).subList(21, n + 21));
     }
 }
