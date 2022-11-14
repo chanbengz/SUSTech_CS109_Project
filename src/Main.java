@@ -77,7 +77,8 @@ public class Main
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Replay.Load(data);
+        String name=dir.substring(dir.lastIndexOf("/")+1);
+        Replay.Load(data,name.substring(0,name.length()-6));
         Replay.Replay();
     }
     public static void main(String[] args)

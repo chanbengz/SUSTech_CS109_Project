@@ -161,12 +161,11 @@ public class ChessBoard
     void Click()
     {
         Scanner input=new Scanner(System.in);
-        System.out.println("Enter");
+        System.out.println("input any string.");
         String useless=input.next();
         System.out.println(useless);
     }
-    void Go(boolean isReplay)
-    {
+    void Go(boolean isReplay) throws ChessException {
         InitialMap();
         turn=0;
         steps=0;
@@ -186,6 +185,7 @@ public class ChessBoard
             {
                 opt=Input();
                 if(opt.isLoad()){LoadPoint();continue;}
+                if(!opt.isValid())throw new ChessException("Out of range.\nError Code:302");
                 opt_stack.add(opt);
             }
             steps++;
@@ -213,6 +213,7 @@ public class ChessBoard
             }
             else
             {
+                if(map[fun[0].x][fun[0].y].player!=turn)throw new ChessException("Invalid move.\nError Code:305");
                 if(fun[0].level==7)
                 {
                     fun[1].alive=false;
@@ -244,7 +245,12 @@ public class ChessBoard
         players[1]=Bob;
         uuid=UUID.randomUUID();
         CreatePieces();
-        Go(false);
+        try {
+            Go(false);
+        } catch (ChessException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
         double p=1.0/(1.0+Math.pow(10,1.0*(players[1].rating-players[0].rating)/400));
         int sign=(players[0].score>players[1].score ? 1 : -1);
         players[0].rating+=sign*20*(1-p);
@@ -265,13 +271,22 @@ public class ChessBoard
         }
         return dir;
     }
-    boolean FormatCheck(String raw)
+    void FormatCheck(String raw,String name) throws ChessException
     {
+        String[] data=raw.split(Player.pause);
+        if(!data[0].equals(name))throw new ChessException("Wrong UUID.\nError Code:301");
+        for(int i=0;i<=1;i++)
+            ChessPieces.FormatCheck(Arrays.asList(data).subList(4+i*19,20+i*19));
 
     }
-    public void Load(String raw)
+    public void Load(String raw,String name)
     {
-        if(!FormatCheck(raw))return;
+        try {
+            FormatCheck(raw,name);
+        } catch (ChessException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
         String[] data=raw.split(Player.pause);
         uuid=UUID.fromString(data[0]);
         for(int i=0;i<=1;i++)
@@ -289,7 +304,12 @@ public class ChessBoard
     }
     public void Replay()
     {
-        Go(true);
+        try {
+            Go(true);
+        } catch (ChessException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
         System.out.println("Game over!");
         String guid=uuid.toString();
         System.out.println(guid);
