@@ -11,7 +11,8 @@ public class ChessPieces
     }
     public void init(Point[] A)
     {
-        System.arraycopy(A, 0, this.chess, 0, 16);
+        for(int i=0;i<=15;i++)
+            this.chess[i]=new Point(A[i]);
     }
     public String Msg()
     {

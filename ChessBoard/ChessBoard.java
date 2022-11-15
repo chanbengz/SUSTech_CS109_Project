@@ -39,22 +39,6 @@ public class ChessBoard
             for(int i=0;i<=1;i++)
                 this.players[i]=new Player(players[i]);
         }
-        public void Show()
-        {
-            System.out.printf("Turn: %d\n Steps: %d\n",this.turn,this.steps);
-            for(int i=1;i<=8;i++)
-                for(int j=1;j<=4;j++)
-                {
-                    int who=this.map[i][j].player;
-                    if(who==-1)System.out.printf("%2d ",9);
-                    else
-                    {
-                        int value=(int)Math.pow(-1,who)*this.players[who].pieces.chess[map[i][j].index].level;
-                        System.out.printf("%2d ",value);
-                    }
-                }
-            for()
-        }
     }
     ArrayList<Cache> game_stack=new ArrayList<>();
     void SavePoint()
@@ -138,7 +122,7 @@ public class ChessBoard
                 if(who==-1)System.out.printf("%2d ",9);
                 else
                 {
-                    if(this.players[who].pieces.chess[map[i][j].index].show)
+                    if(players[who].pieces.chess[map[i][j].index].show)
                     {
                         int value=(int)Math.pow(-1,who)*players[who].pieces.chess[map[i][j].index].level;
                         System.out.printf("%2d ",value);
