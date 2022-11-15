@@ -18,14 +18,16 @@ public class FileOperation
         return new SecretKeySpec(secretKey.getEncoded(), "AES");
     }
     static byte[] Encrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher=Cipher.getInstance("AES");
+        return data.getBytes();
+        /*Cipher cipher=Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE,GenerateKey(uuid));
-        return Base64.getEncoder().encode(cipher.doFinal(data.getBytes()));
+        return Base64.getEncoder().encode(cipher.doFinal(data.getBytes()));*/
     }
     static String Decrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher=Cipher.getInstance("AES");
+        return data;
+        /*Cipher cipher=Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE,GenerateKey(uuid));
-        return new String(cipher.doFinal(Base64.getDecoder().decode(data)));
+        return new String(cipher.doFinal(Base64.getDecoder().decode(data)));*/
     }
     public static String SaveGame(ChessBoard game) throws IOException {
         StringBuilder data= new StringBuilder(game.uuid.toString()+Player.pause);
@@ -53,7 +55,7 @@ public class FileOperation
             throw new RuntimeException(e);
         }
         fos.close();
-        return dir;
+        return dirFile;
     }
     public static String SaveUser(Player Alice) throws IOException {
         String dir="User/";

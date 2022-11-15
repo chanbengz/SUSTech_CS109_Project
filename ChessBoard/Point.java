@@ -40,7 +40,7 @@ public class Point//行列均由1为起始下标
     }
     public int transfer()
     {
-        return x+y*10+level*10;
+        return x+y*10+level*100;
     }
     public void check() throws ChessException
     {

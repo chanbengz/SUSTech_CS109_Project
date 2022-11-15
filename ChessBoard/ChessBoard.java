@@ -298,7 +298,7 @@ public class ChessBoard
         int tmp=Integer.parseInt(data[39]);
         if(tmp!=0 && tmp!=1)throw new ChessException("No sufficient turn.\nError Code:304");
         int n=Integer.parseInt(data[40]);
-        if(n+41!=data.length)throw new ChessException("Wrong options size.\nError Code:307");
+        if(n+42!=data.length)throw new ChessException("Wrong options size.\nError Code:307");
     }
     public void LoadReplay(String raw,String name)
     {

@@ -12,8 +12,8 @@ public class Player
     public boolean isAI=false;
     UUID uuid;
     public ArrayList<String> history=new ArrayList<>();
-    public static String pause="?!-.";
-    public static String BigPause="!?.-";
+    public static String pause="_=_~";
+    public static String BigPause="_~=_";
     public Player()
     {
         id="Player";

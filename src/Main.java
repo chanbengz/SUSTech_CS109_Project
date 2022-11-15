@@ -69,7 +69,7 @@ public class Main
         Game.Init(Tim,AI);
         String dir=Game.Play();
         String anything;
-        System.out.println("Check1");
+        System.out.println("Check1: "+dir);
         Scanner input=new Scanner(System.in);
         anything=input.next();
         System.out.println(anything);
