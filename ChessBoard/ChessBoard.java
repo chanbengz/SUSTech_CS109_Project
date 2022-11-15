@@ -39,6 +39,22 @@ public class ChessBoard
             for(int i=0;i<=1;i++)
                 this.players[i]=new Player(players[i]);
         }
+        public void Show()
+        {
+            System.out.printf("Turn: %d\n Steps: %d\n",this.turn,this.steps);
+            for(int i=1;i<=8;i++)
+                for(int j=1;j<=4;j++)
+                {
+                    int who=this.map[i][j].player;
+                    if(who==-1)System.out.printf("%2d ",9);
+                    else
+                    {
+                        int value=(int)Math.pow(-1,who)*this.players[who].pieces.chess[map[i][j].index].level;
+                        System.out.printf("%2d ",value);
+                    }
+                }
+            for()
+        }
     }
     ArrayList<Cache> game_stack=new ArrayList<>();
     void SavePoint()
@@ -47,8 +63,8 @@ public class ChessBoard
     }
     void LoadPoint()
     {
-        Cache page=game_stack.get(game_stack.size()-1);
         game_stack.remove(game_stack.size()-1);
+        Cache page=game_stack.get(game_stack.size()-1);
         turn=page.turn;
         steps=page.steps;
         for(int i=1;i<=8;i++)
@@ -137,7 +153,9 @@ public class ChessBoard
         {
             ArtificialIdiot AI=new ArtificialIdiot();
             AI.LoadMap(this);
-            return AI.Easy();
+            Operation opt=AI.Easy();
+            System.out.printf("%d %d %d %d\n",opt.x1,opt.y1,opt.x2,opt.y2);
+            return opt;
         }
         else
         {
@@ -181,7 +199,11 @@ public class ChessBoard
             else
             {
                 opt=Input();
-                if(opt.isLoad()){LoadPoint();continue;}
+                if(opt.isLoad())
+                {
+                    if(steps!=0){LoadPoint();Show();continue;}
+                    else throw new ChessException("Invalid regret.\nError Code:307");
+                }
                 if(opt.isSave())
                 {
                     String dir;
@@ -246,7 +268,7 @@ public class ChessBoard
             SavePoint();
         }
     }
-    public void Init(Player Alice,Player Bob)
+    public void Init(Player Alice, Player Bob)
     {
         players[0]=Alice;
         players[1]=Bob;

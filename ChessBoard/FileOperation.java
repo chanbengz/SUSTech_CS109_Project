@@ -10,24 +10,21 @@ import java.util.UUID;
 
 public class FileOperation
 {
-    static byte[] Encrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    static SecretKeySpec GenerateKey(UUID uuid) throws NoSuchAlgorithmException {
         String password=uuid.toString();
         KeyGenerator gen=KeyGenerator.getInstance("AES");
         gen.init(128,new SecureRandom(password.getBytes()));
         SecretKey secretKey=gen.generateKey();
-        SecretKeySpec key=new SecretKeySpec(secretKey.getEncoded(), "AES");
+        return new SecretKeySpec(secretKey.getEncoded(), "AES");
+    }
+    static byte[] Encrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher=Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE,key);
+        cipher.init(Cipher.ENCRYPT_MODE,GenerateKey(uuid));
         return Base64.getEncoder().encode(cipher.doFinal(data.getBytes()));
     }
     static String Decrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        String password=uuid.toString();
-        KeyGenerator gen=KeyGenerator.getInstance("AES");
-        gen.init(128,new SecureRandom(password.getBytes()));
-        SecretKey secretKey=gen.generateKey();
-        SecretKeySpec key=new SecretKeySpec(secretKey.getEncoded(), "AES");
         Cipher cipher=Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE,key);
+        cipher.init(Cipher.DECRYPT_MODE,GenerateKey(uuid));
         return new String(cipher.doFinal(Base64.getDecoder().decode(data)));
     }
     public static String SaveGame(ChessBoard game) throws IOException {
