@@ -63,11 +63,16 @@ public class Main
     }
     static void test3()
     {
-        Player Tim=new Player("Tim",false);
+        Player Tim=new Player("Tim",true);
         Player AI=new Player("AI",true);
         ChessBoard Game=new ChessBoard();
         Game.Init(Tim,AI);
         String dir=Game.Play();
+        String anything;
+        System.out.println("Check1");
+        Scanner input=new Scanner(System.in);
+        anything=input.next();
+        System.out.println(anything);
         ChessBoard Replay=new ChessBoard();
         String data;
         try {
@@ -78,6 +83,9 @@ public class Main
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Check2");
+        anything=input.next();
+        System.out.println(anything);
         String name=dir.substring(dir.lastIndexOf("/")+1);
         Replay.LoadReplay(data,name.substring(0,name.length()-6));
         Replay.Replay();
