@@ -20,6 +20,7 @@ public class ChessBoard
     Pair[][] map=new Pair[10][10];
     int turn,steps;
     Player[] players=new Player[2];
+    ChessPieces[] initPieces=new ChessPieces[2];
     ArrayList<Operation> opt_stack=new ArrayList<>();
     UUID uuid;
     static class Cache
@@ -87,7 +88,11 @@ public class ChessBoard
             x=(tmp-y)/4+1;
             BlackStart[i]=new Point(x,y,level,false,true);
         }
+        for(int i=0;i<=1;i++)
+            initPieces[i]=new ChessPieces();
+        initPieces[0].init(RedStart);
         players[0].pieces.init(RedStart);
+        initPieces[1].init(BlackStart);
         players[1].pieces.init(BlackStart);
     }
     void InitialMap()
@@ -137,9 +142,7 @@ public class ChessBoard
         {
             ArtificialIdiot AI=new ArtificialIdiot();
             AI.LoadMap(this);
-            Operation opt=AI.Easy();
-            System.out.printf("%d %d %d %d\n",opt.x1,opt.y1,opt.x2,opt.y2);
-            return opt;
+            return AI.Easy();
         }
         else
         {
@@ -160,12 +163,12 @@ public class ChessBoard
             case 6-> tmp.score+=1;
         }
     }
-    void Click()
+    boolean Click()
     {
         Scanner input=new Scanner(System.in);
-        System.out.println("input any string.");
-        String useless=input.next();
-        System.out.println(useless);
+        System.out.println("input 1 to forward, 0 to back");
+        int flag=input.nextInt();
+        return flag==1;
     }
     void Go(boolean isReplay) throws ChessException {
         InitialMap();
@@ -177,8 +180,9 @@ public class ChessBoard
             Operation opt;
             if(isReplay)
             {
-                Click();
-                opt=opt_stack.get(steps);
+                boolean flag=Click();
+                if(flag)opt=opt_stack.get(steps);
+                else {LoadPoint();Show();continue;}
             }
             else
             {
@@ -203,6 +207,7 @@ public class ChessBoard
                 opt_stack.add(opt);
             }
             steps++;
+            System.out.printf("%d %d %d %d\n",opt.x1,opt.y1,opt.x2,opt.y2);
             fun[0]=players[map[opt.x1][opt.y1].player].pieces.chess[map[opt.x1][opt.y1].index];
             if(map[opt.x2][opt.y2].player==-1)
                 fun[1]=new Point(opt.x2,opt.y2,0,true,true);
@@ -281,6 +286,8 @@ public class ChessBoard
             System.out.printf("id: %s rating: %d score: %d\n",players[i].id,players[i].rating,players[i].score);
         players[0].history.add(guid);
         players[1].history.add(guid);
+        players[0].pieces=initPieces[0];
+        players[1].pieces=initPieces[1];
         String dir;
         try {
             dir=FileOperation.SaveGame(this);

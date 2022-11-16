@@ -68,11 +68,6 @@ public class Main
         ChessBoard Game=new ChessBoard();
         Game.Init(Tim,AI);
         String dir=Game.Play();
-        String anything;
-        System.out.println("Check1: "+dir);
-        Scanner input=new Scanner(System.in);
-        anything=input.next();
-        System.out.println(anything);
         ChessBoard Replay=new ChessBoard();
         String data;
         try {
@@ -83,9 +78,6 @@ public class Main
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("Check2");
-        anything=input.next();
-        System.out.println(anything);
         String name=dir.substring(dir.lastIndexOf("/")+1);
         Replay.LoadReplay(data,name.substring(0,name.length()-6));
         Replay.Replay();
