@@ -172,6 +172,8 @@ public class ChessBoard
     }
     void Go(boolean isReplay) throws ChessException {
         InitialMap();
+        SavePoint();
+        int loop=0,lastScore=0;
         while(true)
         {
             Show();
@@ -182,7 +184,11 @@ public class ChessBoard
             {
                 boolean flag=Click();
                 if(flag)opt=opt_stack.get(steps);
-                else {LoadPoint();Show();continue;}
+                else
+                {
+                    if(steps!=0){LoadPoint();Show();continue;}
+                    else throw new ChessException("Invalid regret.\nError Code:307");
+                }
             }
             else
             {
@@ -254,6 +260,9 @@ public class ChessBoard
                 }
             }
             turn^=1;
+            if(players[0].score+players[1].score==lastScore)loop++;
+            else {lastScore=players[0].score+players[1].score;loop=0;}
+            if(loop>=50)return;
             SavePoint();
         }
     }
@@ -274,13 +283,28 @@ public class ChessBoard
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
-        double p=1.0/(1.0+Math.pow(10,1.0*(players[1].rating-players[0].rating)/400));
-        int sign=(players[0].score>players[1].score ? 1 : -1);
-        players[0].rating+=sign*20*(1-p);
-        players[1].rating+=-1*sign*20*(1-p);
         System.out.println("Game over!");
+        double p=1.0/(1.0+Math.pow(10,1.0*(players[1].rating-players[0].rating)/400));
+        double sign;
+        if(players[0].score<60 && players[1].score<60)
+        {
+            System.out.println("Draw!");
+            sign=0.5*(players[0].rating<=players[1].rating ? 1 : -1);
+        }
+        else if(players[0].score>players[1].score)
+        {
+            System.out.println(players[0].id+" Win!");
+            sign=1;
+        }
+        else
+        {
+            System.out.println(players[1].id+" Win!");
+            sign=-1;
+        }
         String guid=uuid.toString();
         System.out.println(guid);
+        players[0].rating+=sign*20*(1-p);
+        players[1].rating+=-1*sign*20*(1-p);
         System.out.println("Rating is updated!");
         for(int i=0;i<=1;i++)
             System.out.printf("id: %s rating: %d score: %d\n",players[i].id,players[i].rating,players[i].score);
@@ -305,7 +329,9 @@ public class ChessBoard
         int tmp=Integer.parseInt(data[39]);
         if(tmp!=0 && tmp!=1)throw new ChessException("No sufficient turn.\nError Code:304");
         int n=Integer.parseInt(data[40]);
-        if(n+42!=data.length)throw new ChessException("Wrong options size.\nError Code:307");
+        System.out.println(n);
+        System.out.println(data.length);
+        if(n+41!=data.length)throw new ChessException("Wrong options size.\nError Code:307");
     }
     public void LoadReplay(String raw,String name)
     {
@@ -351,6 +377,8 @@ public class ChessBoard
         String[] Segment=raw.split(Player.BigPause);
         if(!Segment[0].equals(name))throw new ChessException("Wrong UUID.\nError Code:401");
         uuid=UUID.fromString(name);
+        for(int i=0;i<=1;i++)
+            players[i]=new Player();
         players[0].LoadGaming(Segment[1]);
         players[1].LoadGaming(Segment[2]);
         String[] data=Segment[3].split(Player.pause);

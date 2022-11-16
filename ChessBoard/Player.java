@@ -95,6 +95,7 @@ public class Player
     {
         String[] data=input.split(pause);
         id=data[0];
+        uuid=UUID.nameUUIDFromBytes(id.getBytes());
         isAI=data[1].equals("true");
         rating=Integer.parseInt(data[2]);
         score=Integer.parseInt(data[3]);

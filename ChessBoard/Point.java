@@ -30,17 +30,19 @@ public class Point//行列均由1为起始下标
     }
     public Point(int status)
     {
+        this.show=(status%10==1);
+        status/=10;
+        this.alive=(status%10==1);
+        status/=10;
         this.x=status%10;
         status/=10;
         this.y=status%10;
         status/=10;
         this.level=status;
-        this.show=false;
-        this.alive=true;
     }
     public int transfer()
     {
-        return x+y*10+level*100;
+        return (show?1:0)+(alive?10:0)+x*100+y*1000+level*10000;
     }
     public void check() throws ChessException
     {

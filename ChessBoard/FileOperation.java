@@ -2,6 +2,9 @@ package ChessBoard;
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -10,24 +13,24 @@ import java.util.UUID;
 
 public class FileOperation
 {
-    static SecretKeySpec GenerateKey(UUID uuid) throws NoSuchAlgorithmException {
+    public static SecretKeySpec GenerateKey(UUID uuid) throws NoSuchAlgorithmException {
         String password=uuid.toString();
         KeyGenerator gen=KeyGenerator.getInstance("AES");
-        gen.init(128,new SecureRandom(password.getBytes()));
+        SecureRandom secRandom=SecureRandom.getInstance("SHA1PRNG");
+        secRandom.setSeed(password.getBytes());
+        gen.init(128,secRandom);
         SecretKey secretKey=gen.generateKey();
         return new SecretKeySpec(secretKey.getEncoded(), "AES");
     }
     static byte[] Encrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        return data.getBytes();
-        /*Cipher cipher=Cipher.getInstance("AES");
+        Cipher cipher=Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE,GenerateKey(uuid));
-        return Base64.getEncoder().encode(cipher.doFinal(data.getBytes()));*/
+        return Base64.getEncoder().encode(cipher.doFinal(data.getBytes()));
     }
     static String Decrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        return data;
-        /*Cipher cipher=Cipher.getInstance("AES");
+        Cipher cipher=Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE,GenerateKey(uuid));
-        return new String(cipher.doFinal(Base64.getDecoder().decode(data)));*/
+        return new String(cipher.doFinal(Base64.getDecoder().decode(data)));
     }
     public static String SaveGame(ChessBoard game) throws IOException {
         StringBuilder data= new StringBuilder(game.uuid.toString()+Player.pause);
@@ -79,13 +82,8 @@ public class FileOperation
         return dirFile;
     }
     public static String Load(String dir) throws ChessException, IOException {
-        File file=new File(dir);
-        FileInputStream fis=new FileInputStream(file);
-        byte[] buf=new byte[1000];
-        StringBuilder input=new StringBuilder();
-        while(fis.read(buf,0, buf.length)!=-1)
-            input.append(new String(buf));
-        fis.close();
+        Path path= Paths.get(dir);
+        String input=Files.readString(path);
         String name=dir.substring(dir.lastIndexOf("/")+1);
         UUID uuid;
         if(name.contains(".chess"))uuid=UUID.fromString(name.substring(0,name.indexOf(".chess")));
@@ -93,7 +91,7 @@ public class FileOperation
         else if(name.contains(".game"))uuid=UUID.fromString(name.substring(0,name.indexOf(".game")));
         else throw new ChessException("Invalid File Format.\nError Code:101");
         try {
-            return Decrypt(input.toString(),uuid);
+            return Decrypt(input,uuid);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
                  BadPaddingException e) {
             throw new RuntimeException(e);
@@ -127,6 +125,6 @@ public class FileOperation
             throw new RuntimeException(e);
         }
         fos.close();
-        return dir;
+        return dirFile;
     }
 }

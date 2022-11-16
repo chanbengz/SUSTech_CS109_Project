@@ -63,7 +63,7 @@ public class Main
     }
     static void test3()
     {
-        Player Tim=new Player("Tim",true);
+        Player Tim=new Player("Tim",false);
         Player AI=new Player("AI",true);
         ChessBoard Game=new ChessBoard();
         Game.Init(Tim,AI);
@@ -108,14 +108,21 @@ public class Main
     public static void main(String[] args)
     {
         Scanner input=new Scanner(System.in);
-        int flag=input.nextInt();
-        switch (flag)
+        int ack=0;
+        while(ack==0)
         {
-            case 0 -> test0();
-            case 1 -> test1();
-            case 2 -> test2();
-            case 3 -> test3();
-            case 4 -> test4();
+            System.out.println("input flag:");
+            int flag=input.nextInt();
+            switch (flag)
+            {
+                case 0 -> test0();
+                case 1 -> test1();
+                case 2 -> test2();
+                case 3 -> test3();
+                case 4 -> test4();
+                default -> ack=1;
+            }
         }
+
     }
 }
