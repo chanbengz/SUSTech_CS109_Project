@@ -137,20 +137,29 @@ public class ChessBoard
                 }
             }
     }
-    Operation Input()
-    {
-        if(players[turn].isAI)
+    Operation Input() throws ChessException {
+        switch(players[turn].isAI)//check isAI tag
         {
-            ArtificialIdiot AI=new ArtificialIdiot();
-            AI.LoadMap(new Cache(turn,map,players));
-            return AI.Easy();
-        }
-        else
-        {
-            Scanner input=new Scanner(System.in);
-            System.out.println("Input: src dest");
-            int x1=input.nextInt(),y1=input.nextInt(),x2=input.nextInt(),y2=input.nextInt();
-            return new Operation(x1,y1,x2,y2);
+            case 0 ->
+            {
+                Scanner input=new Scanner(System.in);
+                System.out.println("Input: src dest");
+                int x1=input.nextInt(),y1=input.nextInt(),x2=input.nextInt(),y2=input.nextInt();
+                return new Operation(x1,y1,x2,y2);
+            }
+            case 1 ->
+            {
+                ArtificialIdiot AI=new ArtificialIdiot();
+                AI.LoadMap(new Cache(turn,map,players));
+                return AI.Easy();
+            }
+            case 2 ->
+            {
+                ArtificialIdiot AI=new ArtificialIdiot();
+                AI.LoadMap(this);
+                return AI.Normal();
+            }
+            default -> throw new ChessException("Invalid player's type.\nError Code:202");
         }
     }
     void Scoring(int player,int cost)
@@ -171,6 +180,23 @@ public class ChessBoard
         int flag=input.nextInt();
         return flag==1;
     }
+    void Go_Show(Point funny)
+    {
+        funny.show=true;
+        if(steps==1)
+        {
+            if(map[funny.x][funny.y].player==1)
+            {
+                ChessPieces tmp=new ChessPieces();
+                for(int i=0;i<=15;i++)
+                    tmp.chess[i]=new Point(players[0].pieces.chess[i]);
+                players[0].pieces=players[1].pieces;
+                players[1].pieces=tmp;
+                InitialMap();
+            }
+        }
+        turn^=1;
+    }
     void Go(boolean isReplay) throws ChessException {
         InitialMap();
         SavePoint();
@@ -179,7 +205,6 @@ public class ChessBoard
         {
             Show();
             if(Math.max(players[0].score,players[1].score)>=60)break;
-            Point[] fun=new Point[2];
             Operation opt;
             if(isReplay)
             {
@@ -215,27 +240,14 @@ public class ChessBoard
             }
             steps++;
             System.out.printf("%d %d %d %d\n",opt.x1,opt.y1,opt.x2,opt.y2);
+            Point[] fun=new Point[2];
             fun[0]=players[map[opt.x1][opt.y1].player].pieces.chess[map[opt.x1][opt.y1].index];
             if(map[opt.x2][opt.y2].player==-1)
                 fun[1]=new Point(opt.x2,opt.y2,0,true,true);
             else
                 fun[1]=players[map[opt.x2][opt.y2].player].pieces.chess[map[opt.x2][opt.y2].index];
             if(fun[0]==fun[1])
-            {
-                fun[0].show=true;
-                if(steps==1)
-                {
-                    if(map[fun[0].x][fun[0].y].player==1)
-                    {
-                        ChessPieces tmp=new ChessPieces();
-                        for(int i=0;i<=15;i++)
-                            tmp.chess[i]=new Point(players[0].pieces.chess[i]);
-                        players[0].pieces=players[1].pieces;
-                        players[1].pieces=tmp;
-                        InitialMap();
-                    }
-                }
-            }
+                Go_Show(fun[0]);
             else
             {
                 if(map[fun[0].x][fun[0].y].player!=turn)throw new ChessException("Invalid move.\nError Code:305");
@@ -259,8 +271,8 @@ public class ChessBoard
                     fun[0].y=fun[1].y;
                     Scoring(turn,cost);
                 }
+                turn^=1;
             }
-            turn^=1;
             if(players[0].score+players[1].score==lastScore)loop++;
             else {lastScore=players[0].score+players[1].score;loop=0;}
             if(loop>=50)return;
@@ -348,7 +360,7 @@ public class ChessBoard
         {
             String id=data[1+i*19];
             String isAI=data[2+i*19];
-            players[i]=new Player(id,isAI.equals("true"));
+            players[i]=new Player(id,Integer.parseInt(isAI));
             players[i].rating=Integer.parseInt(data[3+i*19]);
             for(int j=0;j<=15;j++)
                 players[i].pieces.chess[j]=new Point(Integer.parseInt(data[4+j+i*19]));

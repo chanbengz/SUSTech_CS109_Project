@@ -7,7 +7,7 @@ public class Main
 {
     static void test0()
     {
-        Player Alice=new Player("Alice",false);
+        Player Alice=new Player("Alice",0);
         String dir;
         try {
             dir=FileOperation.SaveUser(Alice);
@@ -63,8 +63,8 @@ public class Main
     }
     static void test3()
     {
-        Player Tim=new Player("Tim",false);
-        Player AI=new Player("AI",true);
+        Player Tim=new Player("Tim",0);
+        Player AI=new Player("AI",1);
         ChessBoard Game=new ChessBoard();
         Game.Init(Tim,AI);
         String dir=Game.Play();

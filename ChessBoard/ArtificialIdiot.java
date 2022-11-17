@@ -1,10 +1,11 @@
 package ChessBoard;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 
-public class ArtificialIdiot
+public class ArtificialIdiot//change isAI tag
 {
     int[] dx={-1,1,0,0},dy={0,0,-1,1};
     static class State
@@ -38,7 +39,6 @@ public class ArtificialIdiot
     {
         background=new ChessBoard();
         background.Init(board);
-
     }
     boolean Movable(int x,int y)
     {
@@ -123,33 +123,11 @@ public class ArtificialIdiot
                         for(int k=0;k<=3;k++)
                         {
                             int nx=i+dx[k],ny=j+dy[k],nl=Math.abs(init.map[nx][ny]);
-                            if(!Check(nx,ny))continue;
-                            if(init.map[nx][ny]!=9 && init.map[nx][ny]*init.turn<0)
+                            if(!Check(nx,ny) || init.map[nx][ny]==9 || init.map[nx][ny]*init.turn>=0)continue;
+                            if((level==6 && nl==1) || (level<nl && nl<cost1 && (level!=1 || nl<=5)))
                             {
-                                if(level==6)
-                                {
-                                    if(nl==1)
-                                    {
-                                        cost1=nl;
-                                        opt=new Operation(i,j,nx,ny);
-                                    }
-                                }
-                                else if(level==1)
-                                {
-                                    if(2<=nl && nl<=5)
-                                    {
-                                        cost1=nl;
-                                        opt=new Operation(i,j,nx,ny);
-                                    }
-                                }
-                                else
-                                {
-                                    if(level<nl && nl<cost1)
-                                    {
-                                        cost1=nl;
-                                        opt=new Operation(i,j,nx,ny);
-                                    }
-                                }
+                                cost1=nl;
+                                opt=new Operation(i,j,nx,ny);
                             }
                         }
                     }
@@ -186,28 +164,78 @@ public class ArtificialIdiot
     }
     static class Value
     {
-        int score,alpha=-100,beta=100;
+        int score;
         Operation opt;
-        public Value(int score,Operation opt,int alpha,int beta)
+        public Value(int score,Operation opt)
         {
             this.score=score;
             this.opt=opt;
-            this.alpha=alpha;
-            this.beta=beta;
         }
     }
-    public Value Alpha_Beta(ChessBoard now)
+    static class Pig
+    {
+        int x,y;
+        public Pig(int x,int y)
+        {
+            this.x=x;
+            this.y=y;
+        }
+    }
+    public Value Alpha_Beta(ChessBoard now,int alpha,int beta)
     {
         if(Math.max(now.players[0].score,now.players[1].score)>=60)
         {
             int score=(now.players[0].score>now.players[1].score ? 1 : -1)*(background.turn==0 ? 1 : -1)*90;
             Operation opt=new Operation(-1,-1,-1,-1);
-            return new Value(score,opt,score,score);
+            return new Value(score,opt);
         }
         Value ans;
+        ArrayList<Pig> buf=new ArrayList<>();
+        State game=new State(new Cache(now.turn,now.map, now.players));
+        for(int i=1;i<=8;i++)
+            for(int j=1;j<=4;j++)
+            {
+                if(game.map[i][j]*now.turn<0 || game.map[i][j]==9)continue;
+                buf.add(new Pig(i,j));
+            }
+        Collections.shuffle(buf, new Random());
         if(now.turn==background.turn)
         {
+            for(Pig tmp:buf)
+            {
+                int level=Math.abs(game.map[tmp.x][tmp.y]);
+                if(level==0)
+                {
+                    ChessBoard next=new ChessBoard();
+                    next.Init(now);
+                    next.Go_Show(next.players[next.map[tmp.x][tmp.y].player].pieces.chess[next.map[tmp.x][tmp.y].index]);
+                    if(alpha<0)
+                    {
+                        alpha=0;
+                        ans=new Value(alpha,new Operation(tmp.x,tmp.y,tmp.x,tmp.y));
+                    }
+                }
+                else
+                {
+                    int cost1=10;
+                    Operation opt;
+                    for(int k=0;k<=3;k++)
+                    {
+                        int nx=tmp.x+dx[k],ny=tmp.y+dy[k],nl=Math.abs(game.map[nx][ny]);
+                        if(!Check(nx,ny) || game.map[nx][ny]==9 || game.map[nx][ny]*game.turn>=0)continue;
+                        if((level==6 && nl==1) || (level<nl && nl<cost1 && (level!=1 || nl<=5)))
+                        {
+                            cost1=nl;
+                            opt=new Operation(tmp.x,tmp.y,nx,ny);
+                        }
+                    }
+                    if(cost1!=10)
+                    {
 
+                    }
+                }
+                if(alpha>=beta)break;
+            }
             return ans;
         }
         else
@@ -217,6 +245,6 @@ public class ArtificialIdiot
     }
     public Operation Normal()
     {
-        return Alpha_Beta(background).opt;
+        return Alpha_Beta(background,-100,100).opt;
     }
 }
