@@ -23,25 +23,26 @@ public class ChessBoard
     ChessPieces[] initPieces=new ChessPieces[2];
     ArrayList<Operation> opt_stack=new ArrayList<>();
     UUID uuid;
-    static class Cache
-    {
-        int turn,steps;
-        Pair[][] map=new Pair[10][10];
-        ArrayList<Operation> opt_stack=new ArrayList<>();
-        Player[] players=new Player[2];
-        public Cache(int turn,int steps,Pair[][] map,ArrayList<Operation> opt_stack,Player[] players)
-        {
-            this.turn=turn;
-            this.steps=steps;
-            for(int i=1;i<=8;i++)
-                for(int j=1;j<=4;j++)
-                    this.map[i][j]=new Pair(map[i][j]);
-            this.opt_stack.addAll(opt_stack);
-            for(int i=0;i<=1;i++)
-                this.players[i]=new Player(players[i]);
-        }
-    }
     ArrayList<Cache> game_stack=new ArrayList<>();
+    public void Init(ChessBoard p)
+    {
+        this.turn=p.turn;
+        this.steps=p.steps;
+        for(int i=1;i<=8;i++)
+            for(int j=1;j<=4;j++)
+                this.map[i][j]=new Pair(p.map[i][j]);
+        this.players[0]=new Player(p.players[0]);
+        this.players[1]=new Player(p.players[1]);
+        /*this.initPieces[0]=new ChessPieces();
+        this.initPieces[0].init(p.initPieces[0]);
+        this.initPieces[1]=new ChessPieces();
+        this.initPieces[1].init(p.initPieces[1]);
+        this.opt_stack.clear();
+        this.opt_stack.addAll(p.opt_stack);
+        this.uuid=UUID.fromString(p.uuid.toString());
+        this.game_stack.clear();
+        this.game_stack.addAll(p.game_stack);*/
+    }
     void SavePoint()
     {
         game_stack.add(new Cache(turn,steps,map,opt_stack,players));
@@ -141,7 +142,7 @@ public class ChessBoard
         if(players[turn].isAI)
         {
             ArtificialIdiot AI=new ArtificialIdiot();
-            AI.LoadMap(this);
+            AI.LoadMap(new Cache(turn,map,players));
             return AI.Easy();
         }
         else
