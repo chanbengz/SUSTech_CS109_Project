@@ -50,35 +50,36 @@ public class ArtificialIdiot//change isAI tag
         }
         return false;
     }
-    Operation Attack(int x,int y,int ndx,int ndy,int cost1)
+    Operation Attack(int x,int y,int ndx,int ndy,int cost1,State now)
     {
         Operation opt1=null;
         for(int nx=x+ndx,ny=y+ndy,tot=0;Check(nx,ny);nx+=ndx,ny+=ndy)
         {
-            if(init.map[nx][ny]==9)continue;
+            if(now.map[nx][ny]==9)continue;
             if(tot==0){tot++;continue;}
-            if(tot==1 && init.map[nx][ny]*init.turn<0)
+            int nl=Math.abs(now.map[nx][ny]);
+            if(tot==1 && now.map[nx][ny]*(-2*now.turn+1)<0)
             {
-                if(init.map[nx][ny]<cost1)
+                if(nl<cost1 || (cost1==6 && nl!=6))
                     opt1=new Operation(x,y,nx,ny);
                 break;
             }
         }
         return opt1;
     }
-    Operation Search(int x,int y)
+    Operation Search(int x,int y,State now)
     {
         int tx=0,ty=0,tl=10,dis=100;
         for(int i=1;i<=8;i++)
             for(int j=1;j<=4;j++)
             {
-                if(init.map[i][j]==9)continue;
-                if(init.map[i][j]*init.turn<0)
+                if(now.map[i][j]==9)continue;
+                if(now.map[i][j]*(-2*now.turn+1)<0)
                 {
-                    int nl=Math.abs(init.map[i][j]),ndis=Math.abs(x-i)+Math.abs(y-j);
+                    int nl=Math.abs(now.map[i][j]),ndis=Math.abs(x-i)+Math.abs(y-j);
                     if(nl<tl || (nl==tl && ndis<dis))
                     {
-                        tl=Math.abs(init.map[i][j]);
+                        tl=Math.abs(now.map[i][j]);
                         tx=i;
                         ty=j;
                         dis=ndis;
@@ -86,31 +87,30 @@ public class ArtificialIdiot//change isAI tag
                 }
             }
         int nx=x+(tx<x ? -1 : 1),ny=y+(ty<y ? -1 : 1);
-        if(init.map[nx][y]==9)return new Operation(x,y,nx,y);
-        if(init.map[x][ny]==9)return new Operation(x,y,x,ny);
+        if(now.map[nx][y]==9)return new Operation(x,y,nx,y);
+        if(now.map[x][ny]==9)return new Operation(x,y,x,ny);
         for(int k=0;k<=3;k++)
         {
             int ax=x+dx[k],ay=y+dy[k];
             if(!Check(ax,ay))continue;
-            if(init.map[ax][ay]==9)return new Operation(x,y,ax,ay);
+            if(now.map[ax][ay]==9)return new Operation(x,y,ax,ay);
         }
         return null;
     }
     public Operation Easy()
     {
-        init.turn=-2*init.turn+1;
         int cost1=10;
         Operation opt=null;
         for(int i=1;i<=8;i++)
             for(int j=1;j<=4;j++)
-                if(init.map[i][j]!=9 && init.map[i][j]*init.turn>0)
+                if(init.map[i][j]!=9 && init.map[i][j]*(-2*init.turn+1)>0)
                 {
                     int level=Math.abs(init.map[i][j]);
                     if(level==7)
                     {
                         for(int k=0;k<=3;k++)
                         {
-                            Operation opt2=Attack(i,j,dx[k],dy[k],cost1);
+                            Operation opt2=Attack(i,j,dx[k],dy[k],cost1,init);
                             if(opt2!=null)
                             {
                                 cost1=Math.abs(init.map[opt2.x2][opt2.y2]);
@@ -123,8 +123,8 @@ public class ArtificialIdiot//change isAI tag
                         for(int k=0;k<=3;k++)
                         {
                             int nx=i+dx[k],ny=j+dy[k],nl=Math.abs(init.map[nx][ny]);
-                            if(!Check(nx,ny) || init.map[nx][ny]==9 || init.map[nx][ny]*init.turn>=0)continue;
-                            if((level==6 && nl==1) || (level<nl && nl<cost1 && (level!=1 || nl<=5)))
+                            if(!Check(nx,ny) || init.map[nx][ny]==9 || init.map[nx][ny]*(-2*init.turn+1)>=0)continue;
+                            if((level==6 && nl==1) || (level<nl && (nl<cost1 || (cost1==6 && nl!=6)) && (level!=1 || nl<=5)))
                             {
                                 cost1=nl;
                                 opt=new Operation(i,j,nx,ny);
@@ -148,7 +148,7 @@ public class ArtificialIdiot//change isAI tag
             for(int j=1;j<=4;j++)
             {
                 if(init.map[i][j]==9)continue;
-                if(init.map[i][j]*init.turn>0)
+                if(init.map[i][j]*(-2*init.turn+1)>0)
                 {
                     if(Math.abs(init.map[i][j])<level && Movable(i,j))
                     {
@@ -158,8 +158,7 @@ public class ArtificialIdiot//change isAI tag
                     }
                 }
             }
-        opt=Search(x,y);
-        init.turn=(1-init.turn)/2;
+        opt=Search(x,y,init);
         return opt;
     }
     static class Value
@@ -181,70 +180,135 @@ public class ArtificialIdiot//change isAI tag
             this.y=y;
         }
     }
-    public Value Alpha_Beta(ChessBoard now,int alpha,int beta)
+    public int Scoring(int level)
     {
+        int tmp=0;
+        switch(level)
+        {
+            case 1-> tmp=30;
+            case 2-> tmp=10;
+            case 3, 4, 5, 7 -> tmp=5;
+            case 6-> tmp=1;
+        }
+        return tmp;
+    }
+    public Value Alpha_Beta(ChessBoard now,int alpha,int beta,int depth) throws ChessException {
+        Value ans=new Value(0,new Operation(-1,-1,-1,-1));
         if(Math.max(now.players[0].score,now.players[1].score)>=60)
         {
-            int score=(now.players[0].score>now.players[1].score ? 1 : -1)*(background.turn==0 ? 1 : -1)*90;
-            Operation opt=new Operation(-1,-1,-1,-1);
-            return new Value(score,opt);
+            ans.score=100;
+            return ans;
         }
-        Value ans;
+        if(depth==0) return ans;
+        depth--;
         ArrayList<Pig> buf=new ArrayList<>();
         State game=new State(new Cache(now.turn,now.map, now.players));
         for(int i=1;i<=8;i++)
             for(int j=1;j<=4;j++)
             {
-                if(game.map[i][j]*now.turn<0 || game.map[i][j]==9)continue;
+                if(game.map[i][j]*(-2*now.turn+1)<0 || game.map[i][j]==9)continue;
                 buf.add(new Pig(i,j));
             }
         Collections.shuffle(buf, new Random());
-        if(now.turn==background.turn)
+        int tot_level0=0;
+        for(Pig tmp:buf)
         {
-            for(Pig tmp:buf)
+            int level=Math.abs(game.map[tmp.x][tmp.y]);
+            if(level==0)
             {
-                int level=Math.abs(game.map[tmp.x][tmp.y]);
-                if(level==0)
+                tot_level0++;
+                if(tot_level0>=10)continue;
+                ChessBoard next=new ChessBoard();
+                next.Init(now);
+                next.Go_Show(next.players[next.map[tmp.x][tmp.y].player].pieces.chess[next.map[tmp.x][tmp.y].index]);
+                Value get=Alpha_Beta(next,alpha,beta,depth);
+                if(now.turn==background.turn)
                 {
-                    ChessBoard next=new ChessBoard();
-                    next.Init(now);
-                    next.Go_Show(next.players[next.map[tmp.x][tmp.y].player].pieces.chess[next.map[tmp.x][tmp.y].index]);
-                    if(alpha<0)
+                    if(alpha<=get.score)
                     {
-                        alpha=0;
+                        alpha=get.score;
                         ans=new Value(alpha,new Operation(tmp.x,tmp.y,tmp.x,tmp.y));
                     }
                 }
                 else
                 {
-                    int cost1=10;
-                    Operation opt;
+                    if(beta>=-get.score)
+                    {
+                        beta=-get.score;
+                        ans=new Value(beta,new Operation(tmp.x,tmp.y,tmp.x,tmp.y));
+                    }
+                }
+            }
+            else
+            {
+                int cost1=10;
+                Operation opt=null;
+                if(level==7)
+                {
+                    for(int k=0;k<=3;k++)
+                    {
+                        Operation opt2=Attack(tmp.x,tmp.y,dx[k],dy[k],cost1,game);
+                        if(opt2!=null)
+                        {
+                            cost1=Math.abs(game.map[opt2.x2][opt2.y2]);
+                            opt=opt2;
+                        }
+                    }
+                    if(opt==null)continue;
+                }
+                else
+                {
                     for(int k=0;k<=3;k++)
                     {
                         int nx=tmp.x+dx[k],ny=tmp.y+dy[k],nl=Math.abs(game.map[nx][ny]);
-                        if(!Check(nx,ny) || game.map[nx][ny]==9 || game.map[nx][ny]*game.turn>=0)continue;
+                        if(!Check(nx,ny) || game.map[nx][ny]==9 || game.map[nx][ny]*(-2*game.turn+1)>=0)continue;
                         if((level==6 && nl==1) || (level<nl && nl<cost1 && (level!=1 || nl<=5)))
                         {
                             cost1=nl;
                             opt=new Operation(tmp.x,tmp.y,nx,ny);
                         }
                     }
-                    if(cost1!=10)
+                    if(cost1==10)opt=Search(tmp.x,tmp.y,game);
+                }
+                if(opt==null)continue;
+                ChessBoard next=new ChessBoard();
+                next.Init(now);
+                Point fun0=next.players[next.map[opt.x1][opt.y1].player].pieces.chess[next.map[opt.x1][opt.y1].index];
+                Point fun1;
+                if(next.map[opt.x2][opt.y2].player==-1)
+                    fun1=new Point(opt.x2,opt.y2,0,true,true);
+                else
+                    fun1=next.players[next.map[opt.x2][opt.y2].player].pieces.chess[next.map[opt.x2][opt.y2].index];
+                next.Go_Move(fun0,fun1);
+                Value get=Alpha_Beta(next,alpha,beta,depth);
+                if(now.turn==background.turn)
+                {
+                    if(alpha<=get.score+Scoring(cost1))
                     {
-
+                        alpha=get.score+Scoring(cost1);
+                        ans=new Value(alpha,opt);
                     }
                 }
-                if(alpha>=beta)break;
+                else
+                {
+                    if(beta>=get.score-Scoring(cost1))
+                    {
+                        beta=get.score-Scoring(cost1);
+                        ans=new Value(beta,opt);
+                    }
+                }
             }
-            return ans;
+            if(alpha>=beta)break;
         }
-        else
-        {
-            return ans;
-        }
+        return ans;
     }
     public Operation Normal()
     {
-        return Alpha_Beta(background,-100,100).opt;
+        try {
+            return Alpha_Beta(background,-100,100,6).opt;
+        } catch (ChessException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 }

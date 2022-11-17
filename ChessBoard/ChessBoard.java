@@ -197,6 +197,31 @@ public class ChessBoard
         }
         turn^=1;
     }
+    void Go_Move(Point fun0,Point fun1) throws ChessException {
+        if(map[fun0.x][fun0.y].player!=turn)
+            throw new ChessException("Invalid move.\nError Code:305");
+        if(fun0.level==7)
+        {
+            fun1.alive=false;
+            int who=map[fun1.x][fun1.y].player;
+            map[fun1.x][fun1.y].player=-1;
+            Scoring(who^1,fun1.level);
+        }
+        else
+        {
+            int cost=fun1.level;
+            int TmpPlayer=map[fun0.x][fun0.y].player;
+            int TmpIndex=map[fun0.x][fun0.y].index;
+            map[fun0.x][fun0.y].player=-1;
+            fun1.alive=false;
+            map[fun1.x][fun1.y].player=TmpPlayer;
+            map[fun1.x][fun1.y].index=TmpIndex;
+            fun0.x=fun1.x;
+            fun0.y=fun1.y;
+            Scoring(turn,cost);
+        }
+        turn^=1;
+    }
     void Go(boolean isReplay) throws ChessException {
         InitialMap();
         SavePoint();
@@ -249,30 +274,7 @@ public class ChessBoard
             if(fun[0]==fun[1])
                 Go_Show(fun[0]);
             else
-            {
-                if(map[fun[0].x][fun[0].y].player!=turn)throw new ChessException("Invalid move.\nError Code:305");
-                if(fun[0].level==7)
-                {
-                    fun[1].alive=false;
-                    int who=map[fun[1].x][fun[1].y].player;
-                    map[fun[1].x][fun[1].y].player=-1;
-                    Scoring(who^1,fun[1].level);
-                }
-                else
-                {
-                    int cost=fun[1].level;
-                    int TmpPlayer=map[fun[0].x][fun[0].y].player;
-                    int TmpIndex=map[fun[0].x][fun[0].y].index;
-                    map[fun[0].x][fun[0].y].player=-1;
-                    fun[1].alive=false;
-                    map[fun[1].x][fun[1].y].player=TmpPlayer;
-                    map[fun[1].x][fun[1].y].index=TmpIndex;
-                    fun[0].x=fun[1].x;
-                    fun[0].y=fun[1].y;
-                    Scoring(turn,cost);
-                }
-                turn^=1;
-            }
+                Go_Move(fun[0],fun[1]);
             if(players[0].score+players[1].score==lastScore)loop++;
             else {lastScore=players[0].score+players[1].score;loop=0;}
             if(loop>=50)return;

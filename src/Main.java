@@ -105,6 +105,15 @@ public class Main
         }
         System.out.println("Save at"+Game.Play());
     }
+    static void test5()
+    {
+        Player AI1=new Player("Easy",1);
+        Player AI2=new Player("Normal",2);
+        ChessBoard Game=new ChessBoard();
+        Game.Init(AI1,AI2);
+        String dir=Game.Play();
+        System.out.println(dir);
+    }
     public static void main(String[] args)
     {
         Scanner input=new Scanner(System.in);
@@ -120,6 +129,7 @@ public class Main
                 case 2 -> test2();
                 case 3 -> test3();
                 case 4 -> test4();
+                case 5 -> test5();
                 default -> ack=1;
             }
         }
