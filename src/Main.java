@@ -10,7 +10,7 @@ public class Main
 {
     static void test0()
     {
-        Player Alice=new Player("Alice",false);
+        Player Alice=new Player("Alice",0);
         String dir;
         try {
             dir=FileOperation.SaveUser(Alice);
@@ -66,8 +66,8 @@ public class Main
     }
     static void test3()
     {
-        Player Tim=new Player("Tim",false);
-        Player AI=new Player("AI",true);
+        Player Tim=new Player("Tim",0);
+        Player AI=new Player("AI",1);
         ChessBoard Game=new ChessBoard();
         Game.Init(Tim,AI);
         String dir=Game.Play();
@@ -108,6 +108,15 @@ public class Main
         }
         System.out.println("Save at"+Game.Play());
     }
+    static void test5()
+    {
+        Player AI1=new Player("Easy",1);
+        Player AI2=new Player("Normal",2);
+        ChessBoard Game=new ChessBoard();
+        Game.Init(AI1,AI2);
+        String dir=Game.Play();
+        System.out.println(dir);
+    }
     public static void main(String[] args)
     {
         Scanner input=new Scanner(System.in);
@@ -123,6 +132,7 @@ public class Main
                 case 2 -> test2();
                 case 3 -> test3();
                 case 4 -> test4();
+                case 5 -> test5();
                 default -> ack=1;
             }
         }

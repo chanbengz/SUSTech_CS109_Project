@@ -9,7 +9,7 @@ public class Player
     public int score=0;
     public String id;
     public int rating=1500;
-    public boolean isAI=false;
+    public int isAI=0;
     UUID uuid;
     public ArrayList<String> history=new ArrayList<>();
     public static String pause="_=_~";
@@ -19,7 +19,7 @@ public class Player
         id="Player";
         uuid=UUID.nameUUIDFromBytes(id.getBytes());
     }
-    public Player(String userid,boolean isAI)
+    public Player(String userid,int isAI)
     {
         id=userid;
         this.isAI=isAI;
@@ -50,7 +50,8 @@ public class Player
     void FormatCheck(String raw,String name) throws ChessException {
         String[] data=raw.split(pause);
         if(!data[0].equals(name))throw new ChessException("Wrong username.\nError Code:201");
-        if(!data[1].equals(UUID.nameUUIDFromBytes(name.getBytes()).toString()))throw new ChessException("Wrong user UUID.\nError Code:202");
+        int isAI=Integer.parseInt(data[1]);
+        if(isAI!=0 && isAI!=1)throw new ChessException("Invalid player's type.\nError Code:202");//check isAI tag
         int rat=Integer.parseInt(data[2]);
         if(rat<0 || rat>10000)throw new ChessException("Wrong rating.\nError Code:203");
         int n=Integer.parseInt(data[3]);
@@ -61,7 +62,7 @@ public class Player
     }
     public String UserMsg()
     {
-        StringBuilder out= new StringBuilder(id+pause+uuid.toString()+pause+rating+pause);
+        StringBuilder out= new StringBuilder(id+pause+isAI+pause+rating+pause);
         out.append(history.size()).append(pause);
         for(String game:history)
             out.append(game).append(pause);
@@ -77,7 +78,8 @@ public class Player
         }
         String[] data=input.split(pause);
         id=data[0];
-        uuid=UUID.fromString(data[1]);
+        uuid=UUID.nameUUIDFromBytes(id.getBytes());
+        isAI=Integer.parseInt(data[1]);
         rating=Integer.parseInt(data[2]);
         int n=Integer.parseInt(data[3]);
         history.clear();
@@ -96,7 +98,7 @@ public class Player
         String[] data=input.split(pause);
         id=data[0];
         uuid=UUID.nameUUIDFromBytes(id.getBytes());
-        isAI=data[1].equals("true");
+        isAI=Integer.parseInt(data[1]);
         rating=Integer.parseInt(data[2]);
         score=Integer.parseInt(data[3]);
         for(int i=0;i<=15;i++)

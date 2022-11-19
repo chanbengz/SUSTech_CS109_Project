@@ -9,6 +9,11 @@ public class ChessPieces
         for(int i=0;i<=15;i++)
             this.chess[i]=new Point();
     }
+    public void init(ChessPieces p)
+    {
+        for(int i=0;i<=15;i++)
+            this.chess[i]=new Point(p.chess[i]);
+    }
     public void init(Point[] A)
     {
         for(int i=0;i<=15;i++)
