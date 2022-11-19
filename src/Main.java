@@ -117,6 +117,14 @@ public class Main
         String dir=Game.Play();
         System.out.println(dir);
     }
+    static void test6(){
+        /* Player Tim=new Player("Tim",0);
+        Player AI=new Player("AI",1);
+        ChessBoard Game=new ChessBoard();
+        Game.Init(Tim,AI);
+        String dir=Game.Play(); */
+        JFrame start = new MainFrame("DarkChess");
+    }
     public static void main(String[] args)
     {
         Scanner input=new Scanner(System.in);
@@ -133,9 +141,9 @@ public class Main
                 case 3 -> test3();
                 case 4 -> test4();
                 case 5 -> test5();
+                case 6 -> test6();
                 default -> ack=1;
             }
         }
-        JFrame start = new MainFrame("DarkChess");
     }
 }
