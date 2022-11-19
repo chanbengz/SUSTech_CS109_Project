@@ -1,5 +1,8 @@
 package src;
 import ChessBoard.*;
+import GUI.MainFrame;
+
+import javax.swing.*;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -123,6 +126,6 @@ public class Main
                 default -> ack=1;
             }
         }
-
+        JFrame start = new MainFrame("DarkChess");
     }
 }
