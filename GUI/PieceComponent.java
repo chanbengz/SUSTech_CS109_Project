@@ -10,21 +10,21 @@ public class PieceComponent extends JButton {
     public PieceComponent(int player, int rank) {
         this.rank = rank;
         this.player = player;
-        this.setContentAreaFilled(false);
-        this.setBackground(Color.white);
+        // this.setIcon(new ImageIcon("resources/hide.png"));
         this.setBorder(null);
-        this.setIcon(new ImageIcon("resources/hide.png"));
-        this.setSize(100,98);
+        this.setOpaque(false);
+        this.setContentAreaFilled(false);
+        this.setSize(75,75);
     }
     public boolean canMoveTo(PieceComponent target) {
         return false;
     }
-    public boolean caputre(PieceComponent target) {
-        return false;
+    public void Caputre(PieceComponent target) {
+
     }
 
     public String getPath() {
-        String color = player == 0 ? "B" : "R";
-        return "data/" + color + Integer.toString(rank) + ".png";
+        String color = this.player == 0 ? "B" : "R";
+        return "resources/" + color + Integer.toString(rank) + ".png";
     }
 }
