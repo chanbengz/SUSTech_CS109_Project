@@ -6,8 +6,8 @@ public class ChessBoardFrame extends JLabel {
     ImageIcon img = new ImageIcon("resources/board.jpg");
     public int width, height;
     public ChessBoardFrame(int x, int y) {
-        setIcon(img);
         setOpaque(false);
+        setVisible(true);
         width = img.getIconWidth();
         height = img.getIconHeight();
         setBounds(x, y, width, height);

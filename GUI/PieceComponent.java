@@ -10,10 +10,17 @@ public class PieceComponent extends JButton {
     public PieceComponent(int player, int rank) {
         this.rank = rank;
         this.player = player;
-        setOpaque(true);
-        setContentAreaFilled(false);
-        setBackground(Color.white);
-        setBorder(null);
+        this.setContentAreaFilled(false);
+        this.setBackground(Color.white);
+        this.setBorder(null);
+        this.setIcon(new ImageIcon("resources/hide.png"));
+        this.setSize(100,98);
+    }
+    public boolean canMoveTo(PieceComponent target) {
+        return false;
+    }
+    public boolean caputre(PieceComponent target) {
+        return false;
     }
 
     public String getPath() {

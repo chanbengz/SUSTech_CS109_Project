@@ -118,11 +118,6 @@ public class Main
         System.out.println(dir);
     }
     static void test6(){
-        /* Player Tim=new Player("Tim",0);
-        Player AI=new Player("AI",1);
-        ChessBoard Game=new ChessBoard();
-        Game.Init(Tim,AI);
-        String dir=Game.Play(); */
         JFrame start = new MainFrame("DarkChess");
     }
     public static void main(String[] args)
