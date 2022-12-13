@@ -10,7 +10,7 @@ public class PieceComponent extends JButton {
     public PieceComponent(int player, int rank) {
         this.rank = rank;
         this.player = player;
-        // this.setIcon(new ImageIcon("resources/hide.png"));
+        this.setIcon(new ImageIcon("resources/hide.png"));
         this.setBorder(null);
         this.setOpaque(false);
         this.setContentAreaFilled(false);

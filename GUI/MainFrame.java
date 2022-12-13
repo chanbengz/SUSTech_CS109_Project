@@ -39,23 +39,7 @@ public class MainFrame extends JFrame {
         this.setVisible(true);
         this.setResizable(false);
         this.setLayout(null);
-        ChessboardBackg = new JLabel();
-        this.Startbutton = new JButton();
-        this.StopButton = new JButton();
-        this.LoadButton = new JButton();
-        this.WdButton = new JButton();
-        this.ConnectButton = new JButton();
-        this.pro1 = new JLabel();
-        this.pro2 = new JLabel();
-        this.PlayerName1 = new JTextPane();
-        this.PlayerName2 = new JTextPane();
-        this.scrollPane1 = new JScrollPane();
-        this.MessagePane = new JTextPane();
-        this.scrollPane2 = new JScrollPane();
-        this.RankPane = new JTextPane();
-        this.TurnLabel = new JLabel();
-        this.RoundLabel = new JLabel();
-
+        this.ChessboardBackg = new JLabel();
         this.started = false;
 
         AddChess();
@@ -75,20 +59,42 @@ public class MainFrame extends JFrame {
             for(int x = 0; x < 4; x++) {
                 GameBoard[x][y] = new PieceComponent(0,0);
                 GameBoard[x][y].setLocation(boardX + 73 * x, boardY + 74 * y);
+                GameBoard[x][y].setVisible(false);
                 this.add(GameBoard[x][y]);
             }
         }
     }
 
     private void generate() {
+        for(int y = 0; y < 8; y++) {
+            for(int x = 0; x < 4; x++) {
+                GameBoard[x][y].setVisible(true);
 
+            }
+        }
     }
 
     private void AddButton() {
+        //---- Init ----
+        this.Startbutton = new JButton();
+        this.StopButton = new JButton();
+        this.LoadButton = new JButton();
+        this.WdButton = new JButton();
+        this.ConnectButton = new JButton();
+
         //---- Startbutton ----
         Startbutton.setText("Start");
         this.add(Startbutton);
         Startbutton.setBounds(10, 615, 100, 45);
+        Startbutton.addActionListener((e)->{
+            if (this.started) {
+                JOptionPane.showMessageDialog(this,"You've started a game!");
+            } else {
+                this.started = true;
+                Game = new ChessBoard();
+                generate();
+            }
+        });
 
         //---- StopButton ----
         StopButton.setText("Stop");
@@ -112,6 +118,10 @@ public class MainFrame extends JFrame {
     }
 
     private void AddLabel() {
+        //---- Init ----
+        this.TurnLabel = new JLabel();
+        this.RoundLabel = new JLabel();
+
         //---- TurnLabel ----
         TurnLabel.setText("BLACK's TURN");
         TurnLabel.setFont(new Font("Rockwell", Font.PLAIN, 14));
@@ -126,6 +136,12 @@ public class MainFrame extends JFrame {
     }
 
     private void AddInfoArea() {
+        //---- Init ----
+        this.scrollPane1 = new JScrollPane();
+        this.MessagePane = new JTextPane();
+        this.scrollPane2 = new JScrollPane();
+        this.RankPane = new JTextPane();
+
         //======== scrollPane1 ========
         //---- MessagePane ----
         MessagePane.setEditable(false);
@@ -143,6 +159,12 @@ public class MainFrame extends JFrame {
     }
 
     private void AddPlayerInfo() {
+        //---- Init ----
+        this.pro1 = new JLabel();
+        this.pro2 = new JLabel();
+        this.PlayerName1 = new JTextPane();
+        this.PlayerName2 = new JTextPane();
+
         //---- pro1 ----
         pro1.setIcon(new ImageIcon("resources/profile1.png"));
         this.add(pro1);
