@@ -3,7 +3,7 @@ import java.util.List;
 
 public class ChessPieces
 {
-    Point[] chess=new Point[16];
+    public Point[] chess=new Point[16];
     public ChessPieces()
     {
         for(int i=0;i<=15;i++)

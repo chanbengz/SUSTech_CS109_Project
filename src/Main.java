@@ -118,7 +118,7 @@ public class Main
         System.out.println(dir);
     }
     static void test6(){
-        JFrame start = new MainFrame("DarkChess");
+        JFrame mainFrame = new MainFrame("DarkChess");
     }
     public static void main(String[] args)
     {

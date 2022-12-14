@@ -1,11 +1,14 @@
 package ChessBoard;
+import GUI.Controller;
+import GUI.PieceComponent;
+
 import java.io.IOException;
 import java.util.*;
 public class ChessBoard
 {
-    static class Pair
+    public static class Pair
     {
-        int player,index;
+        public int player,index;
         public Pair(int player, int index)
         {
             this.player=player;
@@ -17,13 +20,14 @@ public class ChessBoard
             this.index=x.index;
         }
     }
-    Pair[][] map=new Pair[10][10];
+    public Pair[][] map=new Pair[10][10];
     int turn,steps;
-    Player[] players=new Player[2];
+    public Player[] players=new Player[2];
     ChessPieces[] initPieces=new ChessPieces[2];
     ArrayList<Operation> opt_stack=new ArrayList<>();
     UUID uuid;
     ArrayList<Cache> game_stack=new ArrayList<>();
+    public Controller controller;
     public void Init(ChessBoard p)
     {
         this.turn=p.turn;
@@ -158,6 +162,13 @@ public class ChessBoard
                 ArtificialIdiot AI=new ArtificialIdiot();
                 AI.LoadMap(this);
                 return AI.Normal();
+            }
+            case 3 ->
+            {
+                PieceComponent first = controller.getFirst();
+                PieceComponent second = controller.getSecond();
+                int x1 = first.x, y1 = first.y, x2 = second.x, y2 = second.y;
+                return new Operation(x1,y1,x2,y2);
             }
             default -> throw new ChessException("Invalid player's type.\nError Code:202");
         }

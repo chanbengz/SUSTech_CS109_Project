@@ -1,6 +1,7 @@
 package GUI;
 
 import ChessBoard.ChessBoard;
+import ChessBoard.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,14 +9,12 @@ import java.awt.*;
 public class MainFrame extends JFrame {
     private boolean started;
     public ChessBoard Game;
-    final private int Distance_X = 4;
-    final private int Distance_Y = 7;
     public int boardY = 10;
     public int boardX = 120;
 
     public PieceComponent[][] GameBoard;
     private JLabel ChessboardBackg;
-    private JButton Startbutton;
+    private JButton StartButton;
     private JButton StopButton;
     private JButton LoadButton;
     private JButton WdButton;
@@ -30,6 +29,7 @@ public class MainFrame extends JFrame {
     private JButton ConnectButton;
     private JLabel TurnLabel;
     private JLabel RoundLabel;
+    Controller controller;
 
     public MainFrame(String title) {
         super(title);
@@ -55,11 +55,13 @@ public class MainFrame extends JFrame {
 
     private void AddChess() {
         this.GameBoard = new PieceComponent[4][8];
+        this.controller = new Controller();
         for(int y = 0; y < 8; y++) {
             for(int x = 0; x < 4; x++) {
                 GameBoard[x][y] = new PieceComponent(0,0);
                 GameBoard[x][y].setLocation(boardX + 73 * x, boardY + 74 * y);
                 GameBoard[x][y].setVisible(false);
+                GameBoard[x][y].addActionListener(this.controller);
                 this.add(GameBoard[x][y]);
             }
         }
@@ -69,29 +71,37 @@ public class MainFrame extends JFrame {
         for(int y = 0; y < 8; y++) {
             for(int x = 0; x < 4; x++) {
                 GameBoard[x][y].setVisible(true);
-
+                int who = Game.map[x+1][y+1].player;
+                int value = (int)Math.pow(-1,who)*Game.players[who].pieces.chess[Game.map[x+1][y+1].index].level;
+                GameBoard[x][y].rank = value > 0 ? value : -value;
+                GameBoard[x][y].player = value > 0 ? 0 : 1;
+                GameBoard[x][y].x = x + 1; GameBoard[x][y].y = y + 1;
             }
         }
     }
 
     private void AddButton() {
         //---- Init ----
-        this.Startbutton = new JButton();
+        this.StartButton = new JButton();
         this.StopButton = new JButton();
         this.LoadButton = new JButton();
         this.WdButton = new JButton();
         this.ConnectButton = new JButton();
 
         //---- Startbutton ----
-        Startbutton.setText("Start");
-        this.add(Startbutton);
-        Startbutton.setBounds(10, 615, 100, 45);
-        Startbutton.addActionListener((e)->{
+        StartButton.setText("Start");
+        this.add(StartButton);
+        StartButton.setBounds(10, 615, 100, 45);
+        StartButton.addActionListener((e)->{
             if (this.started) {
                 JOptionPane.showMessageDialog(this,"You've started a game!");
             } else {
                 this.started = true;
                 Game = new ChessBoard();
+                Player Tim=new Player("Tim",3);
+                Player AI=new Player("AI",1);
+                Game.Init(Tim, AI);
+                Game.controller = controller;
                 generate();
             }
         });
@@ -100,16 +110,25 @@ public class MainFrame extends JFrame {
         StopButton.setText("Stop");
         this.add(StopButton);
         StopButton.setBounds(120, 615, 100, 45);
+        StopButton.addActionListener((e)->{
+
+        });
 
         //---- LoadButton ----
         LoadButton.setText("Load");
         this.add(LoadButton);
         LoadButton.setBounds(230, 615, 100, 45);
+        LoadButton.addActionListener((e)->{
+
+        });
 
         //---- WdButton ----
         WdButton.setText("Withdraw");
         this.add(WdButton);
         WdButton.setBounds(340, 615, 100, 45);
+        LoadButton.addActionListener((e)->{
+
+        });
 
         //---- ConnectButton ----
         ConnectButton.setText("Connect");
@@ -125,12 +144,14 @@ public class MainFrame extends JFrame {
         //---- TurnLabel ----
         TurnLabel.setText("BLACK's TURN");
         TurnLabel.setFont(new Font("Rockwell", Font.PLAIN, 14));
+        TurnLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(TurnLabel);
         TurnLabel.setBounds(430, 60, 115, 40);
 
         //---- RoundLabel ----
         RoundLabel.setText("ROUND 1");
         RoundLabel.setFont(new Font("Rockwell", Font.PLAIN, 22));
+        RoundLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(RoundLabel);
         RoundLabel.setBounds(430, 25, 105, 40);
     }
@@ -168,12 +189,12 @@ public class MainFrame extends JFrame {
         //---- pro1 ----
         pro1.setIcon(new ImageIcon("resources/profile1.png"));
         this.add(pro1);
-        pro1.setBounds(40, 50, 35, 40);
+        pro1.setBounds(40, 50, 33, 33);
 
         //---- pro2 ----
         pro2.setIcon(new ImageIcon("resources/profile2.png"));
         this.add(pro2);
-        pro2.setBounds(460, 520, 35, 40);
+        pro2.setBounds(460, 520, 33, 33);
 
         //---- PlayerName1 ----
         PlayerName1.setText("Player 1");
