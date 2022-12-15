@@ -175,7 +175,7 @@ public class ChessBoard
             {
                 ArtificialIdiot AI=new ArtificialIdiot();
                 AI.LoadMap(this);
-                return AI.Hard();
+                return AI.Beginner();
             }
             default -> throw new ChessException("Invalid player's type.\nError Code:202");
         }

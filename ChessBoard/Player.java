@@ -51,7 +51,7 @@ public class Player
         String[] data=raw.split(pause);
         if(!data[0].equals(name))throw new ChessException("Wrong username.\nError Code:201");
         int isAI=Integer.parseInt(data[1]);
-        if(isAI!=0 && isAI!=1)throw new ChessException("Invalid player's type.\nError Code:202");//check isAI tag
+        if(isAI!=0 && isAI!=1 && isAI!=2 && isAI!=3 && isAI!=4)throw new ChessException("Invalid player's type.\nError Code:202");//check isAI tag
         int rat=Integer.parseInt(data[2]);
         if(rat<0 || rat>10000)throw new ChessException("Wrong rating.\nError Code:203");
         int n=Integer.parseInt(data[3]);

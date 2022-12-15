@@ -161,7 +161,137 @@ public class ArtificialIdiot//change isAI tag
         opt=Search(x,y,init);
         return opt;
     }
-    static class Value
+    int Max(int l1,int l2)
+    {
+        l1=Math.abs(l1);
+        l2=Math.abs(l2);
+        int p=Math.min(l1,l2);
+        if(p>=6)return Math.max(l1,l2);
+        return Math.min(l1,l2);
+    }
+    boolean CheckBig(int l1,int l2)
+    {
+        l1=Math.abs(l1);
+        l2=Math.abs(l2);
+        if(l1==1)return l2!=6;
+        else if(l1==7)return true;
+        else if(l1==6)return l2==1;
+        else return l1>l2;
+    }
+    public Operation Beginner()
+    {
+        LoadMap(new Cache(background.turn,background.map,background.players));
+        ArrayList<Value> ans=new ArrayList<>();
+        for(int i=1;i<=8;i++)
+            for(int j=1;j<=4;j++)
+            {
+                int turn=(-2*init.turn+1);
+                if(init.map[i][j]==9 || turn*init.map[i][j]<0)continue;
+                if(init.map[i][j]==0)
+                {
+                    Operation opt=new Operation(i,j,i,j);
+                    int tmp=0,sc=0;
+                    for(int k=0;k<=3;k++)
+                    {
+                        int nx=i+dx[k],ny=j+dy[k];
+                        if(Check(nx,ny) && turn*init.map[nx][ny]<0)
+                        {
+                            tmp++;
+                            sc=Max(sc,Math.abs(init.map[nx][ny]));
+                        }
+                    }
+                    if(tmp>0)
+                    {
+                        int to;
+                        switch (sc)
+                        {
+                            case 1 -> to=0;
+                            case 2 -> to=2;
+                            case 3 -> to=4;
+                            case 4 -> to=6;
+                            case 5 -> to=8;
+                            case 6 -> to=13;
+                            case 7 -> to=15;
+                            default -> to=16;
+                        }
+                        int cnt=0;
+                        for(int k=15;k>=to;k--)
+                            cnt+=background.players[init.turn].pieces.chess[k].alive && !background.players[init.turn].pieces.chess[k].show ? 1 : 0;
+                        ans.add(new Value(cnt*Scoring(sc),opt));
+                    }
+                    else
+                    {
+                        int Score=0;
+                        for(int k=0;k<=15;k++)
+                            if(background.players[init.turn].pieces.chess[k].alive && !background.players[init.turn].pieces.chess[k].show)
+                                for(int l=15;l>=k;l--)
+                                    if(CheckBig(Math.abs(init.map[i][j]),background.players[init.turn].pieces.chess[l].level))
+                                        Score+=Scoring(background.players[init.turn].pieces.chess[l].level);
+                        if((i==1 && j==1) || (i==1 && j==4) || (i==8 && j==1) || (i==8 && j==4))Score/=2;
+                        else if(i==1 || j==1 || i==8 || j==4)Score=Score*3/4;
+                        ans.add(new Value(Score,opt));
+                    }
+                }
+                else if(Math.abs(init.map[i][j])!=7)
+                {
+                    int Score=0,cnt=0;
+                    int tmp_score=0;
+                    Operation opt=null;
+                    for(int k=0;k<=3;k++)
+                    {
+                        int nx=i+dx[k],ny=j+dy[k];
+                        if(!Check(nx,ny) || init.map[nx][ny]==9 || turn*init.map[nx][ny]>0)continue;
+                        cnt++;
+                        if(init.map[nx][ny]==0)
+                            for(int l=15;l>=0;l--)
+                                if(CheckBig(Math.abs(init.map[i][j]),background.players[init.turn].pieces.chess[l].level))
+                                    Score+=Scoring(background.players[init.turn].pieces.chess[l].level);
+                        else if(CheckBig(init.map[i][j],init.map[nx][ny]))
+                        {
+                            int pop=Scoring(init.map[nx][ny]);
+                            for(int p=0;p<=3;p++)
+                            {
+                                int nnx=nx+dx[p],nny=ny+dy[p];
+                                if(Check(nnx,nny) && turn*init.map[nnx][nny]<0 && CheckBig(Math.abs(init.map[nnx][nny]),Math.abs(init.map[i][j])))
+                                    pop-=Scoring(init.map[i][j]);
+                            }
+                            if(pop>tmp_score)
+                            {
+                                tmp_score=pop;
+                                opt=new Operation(i,j,nx,ny);
+                            }
+                            Score+=pop;
+                        }
+                    }
+                    if(opt==null)
+                        opt=Search(i,j,init);
+                    Score=Score*cnt/4;
+                    ans.add(new Value(Score,opt));
+                }
+                else
+                {
+                    int cost1=10;
+                    Operation opt=null;
+                    int Score;
+                    for(int k=0;k<=3;k++)
+                    {
+                        Operation opt2=Attack(i,j,dx[k],dy[k],cost1,init);
+                        if(opt2!=null)
+                        {
+                            cost1=Math.abs(init.map[opt2.x2][opt2.y2]);
+                            opt=opt2;
+                        }
+                    }
+                    Score=Scoring(cost1);
+                    ans.add(new Value(Score,opt));
+                }
+            }
+        for(Value chose:ans)
+            if(chose.opt!=null)
+                return chose.opt;
+        return null;
+    }
+    static class Value implements Comparable<Value>
     {
         int score;
         Operation opt;
@@ -169,6 +299,10 @@ public class ArtificialIdiot//change isAI tag
         {
             this.score=score;
             this.opt=opt;
+        }
+        public int compareTo(Value o)
+        {
+            return o.score-score;
         }
     }
     static class Pig
@@ -182,13 +316,15 @@ public class ArtificialIdiot//change isAI tag
     }
     public int Scoring(int level)
     {
-        int tmp=0;
+        level=Math.abs(level);
+        int tmp;
         switch(level)
         {
             case 1-> tmp=30;
             case 2-> tmp=10;
             case 3, 4, 5, 7 -> tmp=5;
             case 6-> tmp=1;
+            default -> tmp=-100;
         }
         return tmp;
     }

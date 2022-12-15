@@ -33,7 +33,7 @@ public class Main
     }
     static void test1()
     {
-        Network net=new Network();
+        /*Network net=new Network();
         Scanner input=new Scanner(System.in);
         System.out.print("Port: ");
         int port=input.nextInt();
@@ -45,11 +45,11 @@ public class Main
             net.ServerShutdown();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
     static void test2()
     {
-        Network net=new Network();
+        /*Network net=new Network();
         Scanner input=new Scanner(System.in);
         System.out.println("IP Port");
         String ip=input.next();
@@ -62,7 +62,7 @@ public class Main
             net.ClientShutdown();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
     static void test3()
     {
@@ -111,7 +111,7 @@ public class Main
     static void test5()
     {
         Player AI1=new Player("Easy",1);
-        Player AI2=new Player("Normal",2);
+        Player AI2=new Player("Beginner",4);
         ChessBoard Game=new ChessBoard();
         Game.Init(AI1,AI2);
         String dir=Game.Play();
@@ -126,7 +126,7 @@ public class Main
         int ack=0;
         while(ack==0)
         {
-            System.out.println("input flag:");
+            System.out.print("input flag:");
             int flag=input.nextInt();
             switch (flag)
             {
