@@ -69,7 +69,7 @@ public class MainFrame extends JFrame {
     }
 
     private void generate() {
-        this.controller.GameBoard = GameBoard;
+        this.controller.mainFrame = this;
         for(int y = 0; y < 8; y++) {
             for(int x = 0; x < 4; x++) {
                 GameBoard[x][y].setVisible(true);
@@ -99,6 +99,7 @@ public class MainFrame extends JFrame {
             if (this.started) {
                 JOptionPane.showMessageDialog(this,"You've started a game!");
             } else {
+
                 this.started = true;
                 Game = new ChessBoard();
                 Player Tim = new Player("Tim",3);
@@ -107,6 +108,7 @@ public class MainFrame extends JFrame {
                 Game.mainFrame = this;
                 Game.InitialMap();
                 Game.Show();
+                printTurnAndRound();
                 generate();
             }
         });
@@ -162,16 +164,16 @@ public class MainFrame extends JFrame {
         this.RoundLabel = new JLabel();
 
         //---- TurnLabel ----
-        TurnLabel.setText("BLACK's TURN");
         TurnLabel.setFont(new Font("Rockwell", Font.PLAIN, 14));
         TurnLabel.setHorizontalAlignment(JLabel.CENTER);
+        TurnLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.add(TurnLabel);
         TurnLabel.setBounds(430, 60, 115, 40);
 
         //---- RoundLabel ----
-        RoundLabel.setText("ROUND 1");
-        RoundLabel.setFont(new Font("Rockwell", Font.PLAIN, 22));
+        RoundLabel.setFont(new Font("Rockwell", Font.PLAIN, 20));
         RoundLabel.setHorizontalAlignment(JLabel.CENTER);
+        RoundLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.add(RoundLabel);
         RoundLabel.setBounds(430, 25, 105, 40);
     }
@@ -244,5 +246,13 @@ public class MainFrame extends JFrame {
 
     public void printRank(String mess) {
         RankPane.setText(mess);
+    }
+
+    public void printTurnAndRound() {
+        int turn = Game.turn;
+        String player = turn == 0 ? "BLACK" : "RED";
+        int round = Game.steps;
+        RoundLabel.setText(String.format("ROUND %2d", round));
+        TurnLabel.setText(player + "'s Turn");
     }
 }

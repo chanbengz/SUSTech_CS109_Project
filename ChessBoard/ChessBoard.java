@@ -22,7 +22,8 @@ public class ChessBoard
         }
     }
     public Pair[][] map=new Pair[10][10];
-    int turn,steps;
+    public int turn;
+    public int steps;
     public Player[] players=new Player[2];
     ChessPieces[] initPieces=new ChessPieces[2];
     ArrayList<Operation> opt_stack=new ArrayList<>();
