@@ -1,5 +1,6 @@
 package ChessBoard;
 import GUI.Controller;
+import GUI.MainFrame;
 import GUI.PieceComponent;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class ChessBoard
     ArrayList<Operation> opt_stack=new ArrayList<>();
     UUID uuid;
     ArrayList<Cache> game_stack=new ArrayList<>();
-    public Controller controller;
+    public MainFrame mainFrame;
     public void Init(ChessBoard p)
     {
         this.turn=p.turn;
@@ -165,8 +166,8 @@ public class ChessBoard
             }
             case 3 ->
             {
-                PieceComponent first = controller.getFirst();
-                PieceComponent second = controller.getSecond();
+                PieceComponent first = mainFrame.controller.getFirst();
+                PieceComponent second = mainFrame.controller.getSecond();
                 int x1 = first.x, y1 = first.y, x2 = second.x, y2 = second.y;
                 return new Operation(x1,y1,x2,y2);
             }

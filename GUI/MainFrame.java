@@ -30,7 +30,7 @@ public class MainFrame extends JFrame {
     private JLabel TurnLabel;
     private JLabel RoundLabel;
     private String Message = "";
-    Controller controller;
+    public Controller controller;
 
     public MainFrame(String title) {
         super(title);
@@ -104,7 +104,7 @@ public class MainFrame extends JFrame {
                 Player Tim = new Player("Tim",3);
                 Player AI = new Player("AI",1);
                 Game.Init(Tim, AI);
-                Game.controller = controller;
+                Game.mainFrame = this;
                 Game.InitialMap();
                 Game.Show();
                 generate();

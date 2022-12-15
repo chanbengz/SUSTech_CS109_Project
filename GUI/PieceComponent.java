@@ -51,11 +51,7 @@ public class PieceComponent extends JButton {
         target.player = this.player;
         target.rank = this.rank;
         target.isRevealed = this.isRevealed;
-        for(int i = 0; i < 5; i++) {
-            for(int j = 0; j < 9; j++) {
-                validCord[i][j] = false;
-            }
-        }
+        EmptyValid();
     }
 
     public void EmptyValid() {
@@ -72,7 +68,11 @@ public class PieceComponent extends JButton {
         rank = 0;
         player = -1;
         EmptyValid();
-        this.setVisible(false);
+        this.setIcon(null);
+        this.setBorder(null);
+        this.setOpaque(false);
+        this.setContentAreaFilled(false);
+        this.repaint();
     }
 
     public void update() {

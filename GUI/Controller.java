@@ -12,21 +12,18 @@ public class Controller implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         PieceComponent target =  (PieceComponent) e.getSource();
         if(first == null) {
-            if(handleFirst(target)){
+            if(handleFirst(target)){ // not empty
                 first = target;
-                first.selected = true;
                 checkValid(target);
             }
         } else {
-            if (target == first) {
-                if( target.isRevealed ) {
-                    first.selected = false;
-                } else {
+            if (target == first) { // reveal
+                if( !target.isRevealed ) {
                     target.Reveal();
                     first = null;
                 }
             } else {
-                if(handleSecond(target)) {
+                if(handleSecond(target)) { // move
                     second = target;
                     first.Move2(second);
                     first = null;
@@ -41,6 +38,7 @@ public class Controller implements ActionListener {
     }
 
     public boolean handleSecond(PieceComponent o) {
+        if(!first.isRevealed) return false;
         // return first.canMoveTo(o);
         return true;
     }
