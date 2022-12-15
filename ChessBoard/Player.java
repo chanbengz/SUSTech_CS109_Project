@@ -51,7 +51,7 @@ public class Player
         String[] data=raw.split(pause);
         if(!data[0].equals(name))throw new ChessException("Wrong username.\nError Code:201");
         int isAI=Integer.parseInt(data[1]);
-        if(isAI!=0 && isAI!=1 && isAI!=2 && isAI!=3 && isAI!=4)throw new ChessException("Invalid player's type.\nError Code:202");//check isAI tag
+        if(isAI!=0 && isAI!=1 && isAI!=2 && isAI!=3 && isAI!=4 && isAI!=5)throw new ChessException("Invalid player's type.\nError Code:202");//check isAI tag
         int rat=Integer.parseInt(data[2]);
         if(rat<0 || rat>10000)throw new ChessException("Wrong rating.\nError Code:203");
         int n=Integer.parseInt(data[3]);
@@ -62,11 +62,19 @@ public class Player
     }
     public String UserMsg()
     {
-        StringBuilder out= new StringBuilder(id+pause+isAI+pause+rating+pause);
+        StringBuilder out=new StringBuilder(id+pause+isAI+pause+rating+pause);
         out.append(history.size()).append(pause);
         for(String game:history)
             out.append(game).append(pause);
         return out.toString();
+    }
+    public void NetLoad(String input)
+    {
+        String[] data=input.split(pause);
+        id=data[0];
+        uuid=UUID.nameUUIDFromBytes(id.getBytes());
+        isAI=Integer.parseInt(data[1]);
+        rating=Integer.parseInt(data[2]);
     }
     public void Load(String input,String name)
     {
@@ -87,7 +95,7 @@ public class Player
     }
     public String GamingMsg()
     {
-        StringBuilder out= new StringBuilder(id+pause+isAI+pause+rating+pause+score+pause+pieces.Msg());
+        StringBuilder out=new StringBuilder(id+pause+isAI+pause+rating+pause+score+pause+pieces.Msg());
         out.append(history.size()).append(pause);
         for(String game:history)
             out.append(game).append(pause);

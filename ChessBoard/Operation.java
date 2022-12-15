@@ -19,6 +19,10 @@ public class Operation
         status/=10;
         this.y2=status;
     }
+    public String toString()
+    {
+        return String.valueOf(transfer());
+    }
     public int transfer()
     {
         return x1+y1*10+x2*100+y2*1000;

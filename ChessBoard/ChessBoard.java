@@ -1,8 +1,6 @@
 package ChessBoard;
-import GUI.Controller;
 import GUI.MainFrame;
 import GUI.PieceComponent;
-
 import java.io.IOException;
 import java.util.*;
 public class ChessBoard
@@ -24,6 +22,7 @@ public class ChessBoard
     public Pair[][] map=new Pair[10][10];
     public int turn;
     public int steps;
+    public long seed;
     public Player[] players=new Player[2];
     ChessPieces[] initPieces=new ChessPieces[2];
     ArrayList<Operation> opt_stack=new ArrayList<>();
@@ -71,7 +70,7 @@ public class ChessBoard
     {
         LinkedList<Integer> All= new LinkedList<>();
         for(int i=1;i<=32;i++) All.add(i);
-        Collections.shuffle(All, new Random());
+        Collections.shuffle(All, new Random(seed));
         Point[] RedStart=new Point[16];
         Point[] BlackStart=new Point[16];
         for(int i=0;i<=15;i++)
@@ -172,11 +171,19 @@ public class ChessBoard
                 int x1 = first.x, y1 = first.y, x2 = second.x, y2 = second.y;
                 return new Operation(x1,y1,x2,y2);
             }
-            case 4->
+            case 4 ->
             {
                 ArtificialIdiot AI=new ArtificialIdiot();
                 AI.LoadMap(this);
                 return AI.Beginner();
+            }
+            case 5 ->
+            {
+                try {
+                    return new Operation(Integer.parseInt(FileOperation.NetReceive(uuid)));
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
             default -> throw new ChessException("Invalid player's type.\nError Code:202");
         }
@@ -280,6 +287,19 @@ public class ChessBoard
                     continue;
                 }
                 if(!opt.isValid())throw new ChessException("Out of range.\nError Code:306");
+                if(players[turn^1].isAI==5)
+                {
+                    if(turn==0)
+                    {
+                        try {Server.sendMsg(FileOperation.NetSend(opt.toString(),uuid));}
+                        catch (IOException e) {throw new RuntimeException(e);}
+                    }
+                    else
+                    {
+                        try {Client.sendMsg(FileOperation.NetSend(opt.toString(),uuid));}
+                        catch (Exception e) {throw new RuntimeException(e);}
+                    }
+                }
                 opt_stack.add(opt);
             }
             steps++;
@@ -305,9 +325,66 @@ public class ChessBoard
         players[0]=Alice;
         players[1]=Bob;
         uuid=UUID.randomUUID();
+        Random r=new Random();
+        seed=r.nextLong();
         CreatePieces();
         turn=0;
         steps=0;
+        opt_stack=new ArrayList<>();
+        game_stack=new ArrayList<>();
+    }
+    public void NetworkInit(String ip,int port,int who,Player Tim)
+    {
+        if(who==0)
+        {
+            Client.start(ip,port);
+            try {
+                Client.sendMsg(FileOperation.NetSend(Tim.Msg(),UUID.nameUUIDFromBytes("bonus".getBytes())));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else
+        {
+            Server.start(port);
+            try {
+                Server.sendMsg(FileOperation.NetSend(Tim.Msg(),UUID.nameUUIDFromBytes("bonus".getBytes())));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try {
+            players[who].NetLoad(FileOperation.NetReceive(UUID.nameUUIDFromBytes("bonus".getBytes())));
+        } catch (IOException | InterruptedException | ChessException e) {
+            throw new RuntimeException(e);
+        }
+        if(who==0)
+        {
+            String msg;
+            try {
+                msg = FileOperation.NetReceive(UUID.nameUUIDFromBytes("bonus".getBytes()));
+            } catch (IOException | InterruptedException | ChessException e) {
+                throw new RuntimeException(e);
+            }
+            String[] data=msg.split("&");
+            uuid=UUID.fromString(data[0]);
+            seed=Long.parseLong(data[1]);
+            players[1]=Tim;
+        }
+        else
+        {
+            try {
+                Server.sendMsg(FileOperation.NetSend(uuid.toString()+"&"+seed,UUID.nameUUIDFromBytes("bonus".getBytes())));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            players[0]=Tim;
+        }
+        CreatePieces();
+        turn=0;
+        steps=0;
+        opt_stack=new ArrayList<>();
+        game_stack=new ArrayList<>();
     }
     public String GameOver()
     {
@@ -367,8 +444,6 @@ public class ChessBoard
         int tmp=Integer.parseInt(data[39]);
         if(tmp!=0 && tmp!=1)throw new ChessException("No sufficient turn.\nError Code:304");
         int n=Integer.parseInt(data[40]);
-        System.out.println(n);
-        System.out.println(data.length);
         if(n+41!=data.length)throw new ChessException("Wrong options size.\nError Code:307");
     }
     public void LoadReplay(String raw,String name)

@@ -162,4 +162,18 @@ public class FileOperation
             throw new RuntimeException(e);
         }
     }
+    public static String NetReceive(UUID uuid) throws IOException, InterruptedException, ChessException {
+        int cnt=150;
+        while(cnt>=0)
+        {
+            String msg;
+            msg=FileOperation.NetRead(uuid);
+            if(msg==null)
+                Thread.sleep(1000);
+            else
+                return msg;
+            cnt--;
+        }
+        throw new ChessException("Connection error");
+    }
 }

@@ -9,6 +9,7 @@ public class Server
     {
         stop();
         serverHandle=new ServerHandle(port);
+        new Thread(serverHandle,"DarkChessServer").start();
     }
     public static void stop()
     {

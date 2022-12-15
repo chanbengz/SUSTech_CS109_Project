@@ -33,36 +33,26 @@ public class Main
     }
     static void test1()
     {
-        /*Network net=new Network();
-        Scanner input=new Scanner(System.in);
-        System.out.print("Port: ");
-        int port=input.nextInt();
+        Server.start();
         try {
-            net.ServerSetup(port);
-            net.Send("Server");
-            String data=net.Receive();
-            System.out.println(data);
-            net.ServerShutdown();
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            Server.sendMsg("".getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }*/
+        }
     }
     static void test2()
     {
-        /*Network net=new Network();
-        Scanner input=new Scanner(System.in);
-        System.out.println("IP Port");
-        String ip=input.next();
-        int port=input.nextInt();
+        Client.start();
         try {
-            net.ClientSetup(ip,port);
-            net.Send("Client");
-            String data=net.Receive();
-            System.out.println(data);
-            net.ClientShutdown();
-        } catch (IOException e) {
+            Client.sendMsg("".getBytes());
+        } catch (Exception e) {
             throw new RuntimeException(e);
-        }*/
+        }
     }
     static void test3()
     {
@@ -119,6 +109,15 @@ public class Main
     }
     static void test6(){
         JFrame mainFrame = new MainFrame("DarkChess");
+        System.out.println(mainFrame);
+    }
+    static void test7()
+    {
+        Player Alice=new Player("Alice",0);
+        Player Bob=new Player("Bob",0);
+        ChessBoard Game=new ChessBoard();
+        Game.Init(Alice,Bob);
+        Game.NetworkInit("127,0,0,1",20864,1,Alice);
     }
     public static void main(String[] args)
     {
@@ -137,6 +136,7 @@ public class Main
                 case 4 -> test4();
                 case 5 -> test5();
                 case 6 -> test6();
+                case 7 -> test7();
                 default -> ack=1;
             }
         }

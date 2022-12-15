@@ -11,6 +11,7 @@ public class Client
     {
         stop();
         clientHandle=new ClientHandle(ip, port);
+        new Thread(clientHandle,"DarkChessClient").start();
     }
     public static void stop()
     {
