@@ -82,7 +82,7 @@ public class FileOperation
         return dirFile;
     }
     public static String Load(String dir) throws ChessException, IOException {
-        Path path= Paths.get(dir);
+        Path path=Paths.get(dir);
         String input=Files.readString(path);
         String name=dir.substring(dir.lastIndexOf("/")+1);
         UUID uuid;
@@ -119,12 +119,47 @@ public class FileOperation
                 throw new IOException();
         FileOutputStream fos=new FileOutputStream(file);
         try {
-            fos.write((Encrypt(data.toString(),game.uuid)));
+            fos.write(Encrypt(data.toString(),game.uuid));
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
                  BadPaddingException e) {
             throw new RuntimeException(e);
         }
         fos.close();
         return dirFile;
+    }
+    public static void NetWrite(byte[] buf) throws IOException {
+        String dirFile="Network.tmp";
+        File file=new File(dirFile);
+        if(!file.exists())
+            if(!file.createNewFile())
+                throw new IOException();
+        FileOutputStream fos=new FileOutputStream(file);
+        fos.write(buf);
+        fos.close();
+    }
+    public static String NetRead(UUID uuid) throws IOException {
+        Path path=Paths.get("Network.tmp");
+        String input=Files.readString(path);
+        if(input.equals("qwq"))return null;
+        String dirFile="Network.tmp";
+        File file=new File(dirFile);
+        FileWriter fileWriter=new FileWriter(file);
+        fileWriter.write("qwq");
+        fileWriter.flush();
+        fileWriter.close();
+        try {
+            return Decrypt(input,uuid);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
+                 BadPaddingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static byte[] NetSend(String msg,UUID uuid) throws RuntimeException {
+        try {
+            return Encrypt(msg,uuid);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
+                 BadPaddingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
