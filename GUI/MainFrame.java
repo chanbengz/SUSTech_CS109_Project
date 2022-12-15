@@ -20,8 +20,8 @@ public class MainFrame extends JFrame {
     private JButton WdButton;
     private JLabel pro1;
     private JLabel pro2;
-    private JTextPane PlayerName1;
-    private JTextPane PlayerName2;
+    private JLabel PlayerName1;
+    private JLabel PlayerName2;
     private JScrollPane scrollPane1;
     private JTextPane MessagePane;
     private JScrollPane scrollPane2;
@@ -68,11 +68,12 @@ public class MainFrame extends JFrame {
     }
 
     private void generate() {
+        this.controller.GameBoard = GameBoard;
         for(int y = 0; y < 8; y++) {
             for(int x = 0; x < 4; x++) {
                 GameBoard[x][y].setVisible(true);
-                int who = Game.map[x+1][y+1].player;
-                int value = (int)Math.pow(-1,who)*Game.players[who].pieces.chess[Game.map[x+1][y+1].index].level;
+                int who = this.Game.map[y + 1][x + 1].player;
+                int value = (int)Math.pow(-1,who) * this.Game.players[who].pieces.chess[this.Game.map[y+1][x+1].index].level;
                 GameBoard[x][y].rank = value > 0 ? value : -value;
                 GameBoard[x][y].player = value > 0 ? 0 : 1;
                 GameBoard[x][y].x = x + 1; GameBoard[x][y].y = y + 1;
@@ -98,10 +99,12 @@ public class MainFrame extends JFrame {
             } else {
                 this.started = true;
                 Game = new ChessBoard();
-                Player Tim=new Player("Tim",3);
-                Player AI=new Player("AI",1);
+                Player Tim = new Player("Tim",3);
+                Player AI = new Player("AI",1);
                 Game.Init(Tim, AI);
                 Game.controller = controller;
+                GameThread play = new GameThread();
+                play.start();
                 generate();
             }
         });
@@ -183,8 +186,8 @@ public class MainFrame extends JFrame {
         //---- Init ----
         this.pro1 = new JLabel();
         this.pro2 = new JLabel();
-        this.PlayerName1 = new JTextPane();
-        this.PlayerName2 = new JTextPane();
+        this.PlayerName1 = new JLabel();
+        this.PlayerName2 = new JLabel();
 
         //---- pro1 ----
         pro1.setIcon(new ImageIcon("resources/profile1.png"));
@@ -197,23 +200,37 @@ public class MainFrame extends JFrame {
         pro2.setBounds(460, 520, 33, 33);
 
         //---- PlayerName1 ----
-        PlayerName1.setText("Player 1");
+        PlayerName1.setText("AI");
         PlayerName1.setFont(PlayerName1.getFont().deriveFont(PlayerName1.getFont().getSize() + 6f));
-        PlayerName1.setEditable(false);
         PlayerName1.setBorder(null);
         PlayerName1.setOpaque(false);
+        PlayerName1.setHorizontalAlignment(SwingConstants.CENTER);
+        PlayerName1.setHorizontalTextPosition(SwingConstants.CENTER);
         this.add(PlayerName1);
-        PlayerName1.setBounds(25, 20, 75, PlayerName1.getPreferredSize().height);
+        PlayerName1.setBounds(15, 25, 85, 25);
 
         //---- PlayerName2 ----
-        PlayerName2.setText("Player 2");
+        PlayerName2.setText("Tim");
         PlayerName2.setFont(PlayerName2.getFont().deriveFont(PlayerName2.getFont().getSize() + 6f));
-        PlayerName2.setEditable(false);
-        PlayerName2.setAutoscrolls(false);
-        PlayerName2.setDragEnabled(false);
         PlayerName2.setBorder(null);
         PlayerName2.setOpaque(false);
+        PlayerName2.setHorizontalAlignment(SwingConstants.CENTER);
+        PlayerName2.setHorizontalTextPosition(SwingConstants.CENTER);
         this.add(PlayerName2);
-        PlayerName2.setBounds(445, 565, 75, 23);
+        PlayerName2.setBounds(435, 570, 85, 25);
+    }
+
+    private class GameThread extends Thread {
+        private Thread t;
+        public void run() {
+            String dir = Game.Play();
+        }
+
+        public void start() {
+            if(t == null) {
+                t = new Thread(this, "Play");
+                t.start();
+            }
+        }
     }
 }
