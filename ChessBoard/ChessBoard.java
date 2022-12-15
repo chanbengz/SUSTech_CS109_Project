@@ -100,7 +100,7 @@ public class ChessBoard
         initPieces[1].init(BlackStart);
         players[1].pieces.init(BlackStart);
     }
-    void InitialMap()
+    public void InitialMap()
     {
         for(int player=0;player<=1;player++)
             for(int i=0;i<=15;i++)

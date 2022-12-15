@@ -9,8 +9,8 @@ import java.awt.*;
 public class MainFrame extends JFrame {
     private boolean started;
     public ChessBoard Game;
-    public int boardY = 10;
-    public int boardX = 120;
+    final private int boardY = 10;
+    final private int boardX = 120;
 
     public PieceComponent[][] GameBoard;
     private JLabel ChessboardBackg;
@@ -29,6 +29,7 @@ public class MainFrame extends JFrame {
     private JButton ConnectButton;
     private JLabel TurnLabel;
     private JLabel RoundLabel;
+    private String Message = "";
     Controller controller;
 
     public MainFrame(String title) {
@@ -77,6 +78,7 @@ public class MainFrame extends JFrame {
                 GameBoard[x][y].rank = value > 0 ? value : -value;
                 GameBoard[x][y].player = value > 0 ? 0 : 1;
                 GameBoard[x][y].x = x + 1; GameBoard[x][y].y = y + 1;
+                GameBoard[x][y].update();
             }
         }
     }
@@ -103,8 +105,8 @@ public class MainFrame extends JFrame {
                 Player AI = new Player("AI",1);
                 Game.Init(Tim, AI);
                 Game.controller = controller;
-                GameThread play = new GameThread();
-                play.start();
+                Game.InitialMap();
+                Game.Show();
                 generate();
             }
         });
@@ -114,7 +116,19 @@ public class MainFrame extends JFrame {
         this.add(StopButton);
         StopButton.setBounds(120, 615, 100, 45);
         StopButton.addActionListener((e)->{
-
+            if( started ) {
+                Game = null;
+                this.started = false;
+                for(int y = 0; y < 8; y++) {
+                    for(int x = 0; x < 4; x++) {
+                        GameBoard[x][y].setVisible(false);
+                        GameBoard[x][y].rank = -1;
+                        GameBoard[x][y].player = -1;
+                        GameBoard[x][y].isRevealed = false;
+                        GameBoard[x][y].repaint();
+                    }
+                }
+            }
         });
 
         //---- LoadButton ----
@@ -137,6 +151,9 @@ public class MainFrame extends JFrame {
         ConnectButton.setText("Connect");
         this.add(ConnectButton);
         ConnectButton.setBounds(450, 615, 100, 45);
+        ConnectButton.addActionListener((e)->{
+
+        });
     }
 
     private void AddLabel() {
@@ -207,7 +224,7 @@ public class MainFrame extends JFrame {
         PlayerName1.setHorizontalAlignment(SwingConstants.CENTER);
         PlayerName1.setHorizontalTextPosition(SwingConstants.CENTER);
         this.add(PlayerName1);
-        PlayerName1.setBounds(15, 25, 85, 25);
+        PlayerName1.setBounds(15, 15, 85, 25);
 
         //---- PlayerName2 ----
         PlayerName2.setText("Tim");
@@ -220,17 +237,12 @@ public class MainFrame extends JFrame {
         PlayerName2.setBounds(435, 570, 85, 25);
     }
 
-    private class GameThread extends Thread {
-        private Thread t;
-        public void run() {
-            String dir = Game.Play();
-        }
+    public void printMess(String mess) {
+        this.Message += mess;
+        MessagePane.setText(this.Message);
+    }
 
-        public void start() {
-            if(t == null) {
-                t = new Thread(this, "Play");
-                t.start();
-            }
-        }
+    public void printRank(String mess) {
+        RankPane.setText(mess);
     }
 }

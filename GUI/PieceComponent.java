@@ -1,7 +1,8 @@
 package GUI;
 
 import javax.swing.*;
-import java.awt.event.MouseEvent;
+// rank 0 is empty
+// player -1 is empty
 
 public class PieceComponent extends JButton {
     public boolean isRevealed;
@@ -9,7 +10,7 @@ public class PieceComponent extends JButton {
     public int rank;
     public int player;
     public int x, y;
-    public boolean [][]validCord = new boolean[6][10];
+    public boolean [][]validCord = new boolean[5][9];
 
     public PieceComponent(int player, int rank) {
         this.rank = rank;
@@ -23,10 +24,12 @@ public class PieceComponent extends JButton {
         this.setSize(75,75);
     }
 
-    public boolean canMoveTo(PieceComponent target) {
-        if(target.isRevealed||target.player == this.player||target.rank > this.rank) {
+    public boolean canMoveTo(PieceComponent target) { // rank is not 7
+        if(!target.isRevealed || target.player == this.player) {
             return false;
-        } else if(!validCord[target.x][target.y]) {
+        } else if (this.rank == 6 && target.rank == 1) {
+            return true;
+        } else if (target.rank > this.rank) {
             return false;
         } else {
             return true;
@@ -35,7 +38,7 @@ public class PieceComponent extends JButton {
 
     public void Move2(PieceComponent target) {
         this.transfer2(target);
-        this.empty();
+        this.Empty();
         target.update();
     }
 
@@ -55,21 +58,29 @@ public class PieceComponent extends JButton {
         }
     }
 
-    public void empty() {
-        isRevealed = true;
-        selected = false;
-        rank = 0;
-        player = -1;
+    public void EmptyValid() {
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 9; j++) {
                 validCord[i][j] = false;
             }
         }
+    }
+
+    public void Empty() {
+        isRevealed = true;
+        selected = false;
+        rank = 0;
+        player = -1;
+        EmptyValid();
         this.setVisible(false);
     }
 
-    private void update() {
-        this.setIcon(new ImageIcon(this.getPath()));
+    public void update() {
+        if(isRevealed) {
+            this.setIcon(new ImageIcon(this.getPath()));
+        } else {
+            this.setIcon(new ImageIcon("resources/hide.png"));
+        }
         this.setBorder(null);
         this.setOpaque(false);
         this.setContentAreaFilled(false);

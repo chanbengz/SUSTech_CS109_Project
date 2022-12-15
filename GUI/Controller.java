@@ -21,47 +21,59 @@ public class Controller implements ActionListener {
             if (target == first) {
                 if( target.isRevealed ) {
                     first.selected = false;
-                    first = null;
-                    second = null;
                 } else {
                     target.Reveal();
+                    first = null;
                 }
             } else {
                 if(handleSecond(target)) {
                     second = target;
                     first.Move2(second);
+                    first = null;
                 }
             }
         }
     }
 
     public boolean handleFirst(PieceComponent o) {
-        if (o.rank == 0) return false;
+        if (o.rank == 0) return false; // empty
         return true;
     }
 
     public boolean handleSecond(PieceComponent o) {
-        return first.canMoveTo(o);
+        // return first.canMoveTo(o);
+        return true;
     }
 
     public void checkValid(PieceComponent target) {
-        int x = target.x - 1; int y = target.y - 1;
+        int x = target.x; int y = target.y;
         if(target.rank == 7) {
+            for (int i = x; i < 4; i++) { // right
 
+            } for (int i = x; i >=1 ; i--) { // left
+
+            } for (int i = y; i <= 8; i++) { // down
+
+            } for (int i = y; i >= 1; i--) { // up
+
+            }
         } else {
-
+            if(x > 1)  target.validCord[x - 1][y] = target.canMoveTo(GameBoard[x - 2][y - 1]); // left
+            if(x < 4)  target.validCord[x + 1][y] = target.canMoveTo(GameBoard[x][y - 1]); //right
+            if(y > 1)  target.validCord[x][y - 1] = target.canMoveTo(GameBoard[x - 1][y - 2]); // up
+            if(y < 8)  target.validCord[x][y + 1] = target.canMoveTo(GameBoard[x - 1][y]); // down
         }
     }
 
     public PieceComponent getFirst() {
-        while(first == null) {}
-        return first;
+        while(true) {
+            if(first != null) return first;
+        }
     }
 
     public PieceComponent getSecond() {
-        while(second == null) {}
-        PieceComponent rec = second;
-        first = null; second = null;
-        return rec;
+        while(true) {
+            if(second != null) return second;
+        }
     }
 }
