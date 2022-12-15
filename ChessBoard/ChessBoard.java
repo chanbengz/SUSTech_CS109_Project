@@ -38,7 +38,7 @@ public class ChessBoard
                 this.map[i][j]=new Pair(p.map[i][j]);
         this.players[0]=new Player(p.players[0]);
         this.players[1]=new Player(p.players[1]);
-        /*this.initPieces[0]=new ChessPieces();
+        this.initPieces[0]=new ChessPieces();
         this.initPieces[0].init(p.initPieces[0]);
         this.initPieces[1]=new ChessPieces();
         this.initPieces[1].init(p.initPieces[1]);
@@ -46,7 +46,7 @@ public class ChessBoard
         this.opt_stack.addAll(p.opt_stack);
         this.uuid=UUID.fromString(p.uuid.toString());
         this.game_stack.clear();
-        this.game_stack.addAll(p.game_stack);*/
+        this.game_stack.addAll(p.game_stack);
     }
     void SavePoint()
     {
@@ -170,6 +170,12 @@ public class ChessBoard
                 PieceComponent second = mainFrame.controller.getSecond();
                 int x1 = first.x, y1 = first.y, x2 = second.x, y2 = second.y;
                 return new Operation(x1,y1,x2,y2);
+            }
+            case 4->
+            {
+                ArtificialIdiot AI=new ArtificialIdiot();
+                AI.LoadMap(this);
+                return AI.Hard();
             }
             default -> throw new ChessException("Invalid player's type.\nError Code:202");
         }
@@ -302,14 +308,8 @@ public class ChessBoard
         turn=0;
         steps=0;
     }
-    public String Play()
+    public String GameOver()
     {
-        try {
-            Go(false);
-        } catch (ChessException e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
         System.out.println("Game over!");
         double p=1.0/(1.0+Math.pow(10,1.0*(players[1].rating-players[0].rating)/400));
         double sign;
@@ -346,6 +346,16 @@ public class ChessBoard
             throw new RuntimeException(e);
         }
         return dir;
+    }
+    public String Play()
+    {
+        try {
+            Go(false);
+        } catch (ChessException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return GameOver();
     }
     void FormatCheck(String raw,String name) throws ChessException
     {
