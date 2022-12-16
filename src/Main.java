@@ -56,7 +56,7 @@ public class Main
     }
     static void test3()
     {
-        Player Tim=new Player("Tim",0);
+        Player Tim=new Player("Tim",1);
         Player AI=new Player("AI",1);
         ChessBoard Game=new ChessBoard();
         Game.Init(Tim,AI);

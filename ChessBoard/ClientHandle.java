@@ -85,7 +85,7 @@ public class ClientHandle implements Runnable
             }
             if(key.isReadable())
             {
-                ByteBuffer buffer=ByteBuffer.allocate(10240);
+                ByteBuffer buffer=ByteBuffer.allocate(1024);
                 int readBytes=sc.read(buffer);
                 if(readBytes>0)
                 {

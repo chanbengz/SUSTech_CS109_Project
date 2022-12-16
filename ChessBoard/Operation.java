@@ -19,10 +19,7 @@ public class Operation
         status/=10;
         this.y2=status;
     }
-    public String toString()
-    {
-        return String.valueOf(transfer());
-    }
+    public String toString() { return String.valueOf(transfer()); }
     public int transfer()
     {
         return x1+y1*10+x2*100+y2*1000;
@@ -35,8 +32,5 @@ public class Operation
     {
         return x1==5 && y1==5 && x2==5 && y2==5;
     }
-    public boolean isValid()
-    {
-        return 1<=x1 && x1<=8 && 1<=y1 && y1<=4 && 1<=x2 && x2<=8 && 1<=y2 && y2<=4;
-    }
+    public boolean isValid() { return 1<=x1 && x1<=8 && 1<=y1 && y1<=4 && 1<=x2 && x2<=8 && 1<=y2 && y2<=4; }
 }

@@ -266,6 +266,8 @@ public class ChessBoard
                     if(steps!=0){LoadPoint();Show();continue;}
                     else throw new ChessException("Invalid regret.\nError Code:307");
                 }
+                if(opt.isValid()) System.out.println("Forward");
+                else throw new ChessException("Invalid operation.\nError Code:306");
             }
             else
             {

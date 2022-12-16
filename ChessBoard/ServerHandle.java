@@ -75,7 +75,7 @@ public class ServerHandle implements Runnable
             if(key.isReadable())
             {
                 sc=(SocketChannel) key.channel();
-                ByteBuffer buffer=ByteBuffer.allocate(10240);
+                ByteBuffer buffer=ByteBuffer.allocate(1024);
                 int readBytes=sc.read(buffer);
                 if(readBytes>0)
                 {
