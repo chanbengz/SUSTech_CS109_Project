@@ -121,6 +121,8 @@ public class MainFrame extends JFrame {
             if( started ) {
                 Game = null;
                 this.started = false;
+                RoundLabel.setText("");
+                TurnLabel.setText("");
                 for(int y = 0; y < 8; y++) {
                     for(int x = 0; x < 4; x++) {
                         GameBoard[x][y].setVisible(false);
@@ -171,11 +173,11 @@ public class MainFrame extends JFrame {
         TurnLabel.setBounds(430, 60, 115, 40);
 
         //---- RoundLabel ----
-        RoundLabel.setFont(new Font("Rockwell", Font.PLAIN, 20));
+        RoundLabel.setFont(new Font("Rockwell", Font.PLAIN, 18));
         RoundLabel.setHorizontalAlignment(JLabel.CENTER);
         RoundLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.add(RoundLabel);
-        RoundLabel.setBounds(430, 25, 105, 40);
+        RoundLabel.setBounds(430, 25, 110, 40);
     }
 
     private void AddInfoArea() {
@@ -254,5 +256,9 @@ public class MainFrame extends JFrame {
         int round = Game.steps;
         RoundLabel.setText(String.format("ROUND %2d", round));
         TurnLabel.setText(player + "'s Turn");
+    }
+
+    public void showSuccess() {
+        JOptionPane.showMessageDialog(this,"You Won!");
     }
 }

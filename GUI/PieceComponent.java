@@ -35,11 +35,17 @@ public class PieceComponent extends JButton {
             return true;
         }
     }
+    public boolean canMoveTo7(PieceComponent target) { // rank is not 7
+        if (!target.isRevealed) return true;
+        return target.player != this.player;
+    }
 
     public void Move2(PieceComponent target) {
-        this.transfer2(target);
-        this.Empty();
-        target.update();
+        if( this.rank != 7) {
+            this.transfer2(target);
+            this.Empty();
+            target.update();
+        }
     }
 
     public void Reveal() {

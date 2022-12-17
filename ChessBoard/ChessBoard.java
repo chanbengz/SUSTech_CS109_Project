@@ -1,6 +1,8 @@
 package ChessBoard;
 import GUI.MainFrame;
 import GUI.PieceComponent;
+
+import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
 public class ChessBoard
@@ -19,6 +21,7 @@ public class ChessBoard
             this.index=x.index;
         }
     }
+    public int loop,lastScore;
     public Pair[][] map=new Pair[10][10];
     public int turn;
     public int steps;
@@ -103,6 +106,7 @@ public class ChessBoard
     }
     public void InitialMap()
     {
+        loop = 0; lastScore = 0; steps = 0;
         for(int player=0;player<=1;player++)
             for(int i=0;i<=15;i++)
                 map[players[player].pieces.chess[i].x][players[player].pieces.chess[i].y]=new Pair(player, i);
@@ -166,10 +170,7 @@ public class ChessBoard
             }
             case 3 ->
             {
-                PieceComponent first = mainFrame.controller.getFirst();
-                PieceComponent second = mainFrame.controller.getSecond();
-                int x1 = first.x, y1 = first.y, x2 = second.x, y2 = second.y;
-                return new Operation(x1,y1,x2,y2);
+                return null;
             }
             case 4 ->
             {
@@ -251,7 +252,7 @@ public class ChessBoard
     void Go(boolean isReplay) throws ChessException {
         InitialMap();
         SavePoint();
-        int loop=0,lastScore=0;
+
         while(true)
         {
             Show();
@@ -502,5 +503,68 @@ public class ChessBoard
         int n=Integer.parseInt(data[2]);
         for(int i=1;i<=n;i++)
             opt_stack.add(new Operation(Integer.parseInt(data[2+i])));
+    }
+
+    public void nextStep(Operation opt, int isAI) throws ChessException
+    {
+        Show();
+        if(Math.max(players[0].score,players[1].score)>=60) {
+            mainFrame.showSuccess();
+        }
+        if(isAI != 3) {
+            opt=Input();
+        }
+        if(opt.isLoad())
+        {
+            if(steps!=0){LoadPoint();Show();return;}
+            else throw new ChessException("Invalid regret.\nError Code:307");
+        }
+        if(opt.isSave())
+        {
+            String dir;
+            try {
+                dir = FileOperation.GamePause(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Game pause file at "+dir);
+            return;
+        }
+        if(!opt.isValid())throw new ChessException("Out of range.\nError Code:306");
+        if(players[turn^1].isAI==5)
+        {
+            if(turn==0)
+            {
+                try {Server.sendMsg(FileOperation.NetSend(opt.toString(),uuid));}
+                catch (IOException e) {throw new RuntimeException(e);}
+            }
+            else
+            {
+                try {Client.sendMsg(FileOperation.NetSend(opt.toString(),uuid));}
+                catch (Exception e) {throw new RuntimeException(e);}
+            }
+        }
+        opt_stack.add(opt);
+        steps++;
+        System.out.printf("%d %d %d %d\n",opt.x1,opt.y1,opt.x2,opt.y2);
+        Point[] fun=new Point[2];
+        fun[0]=players[map[opt.x1][opt.y1].player].pieces.chess[map[opt.x1][opt.y1].index];
+        if(map[opt.x2][opt.y2].player==-1)
+            fun[1]=new Point(opt.x2,opt.y2,0,true,true);
+        else
+            fun[1]=players[map[opt.x2][opt.y2].player].pieces.chess[map[opt.x2][opt.y2].index];
+        if(fun[0]==fun[1]){
+            Go_Show(fun[0]);
+            mainFrame.GameBoard[opt.y1-1][opt.x1-1].Reveal();
+        }
+        else {
+            Go_Move(fun[0],fun[1]);
+            mainFrame.GameBoard[opt.y1-1][opt.x1-1].Move2(mainFrame.GameBoard[opt.y2-1][opt.x2-1]);
+        }
+
+        if(players[0].score+players[1].score==lastScore)loop++;
+        else {lastScore=players[0].score+players[1].score;loop=0;}
+        if(loop>=50) return;
+        SavePoint();
     }
 }

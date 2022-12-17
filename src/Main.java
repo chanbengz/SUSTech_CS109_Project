@@ -108,8 +108,10 @@ public class Main
         System.out.println(dir);
     }
     static void test6(){
-        JFrame mainFrame = new MainFrame("DarkChess");
-        System.out.println(mainFrame);
+        SwingUtilities.invokeLater(()->{
+            JFrame mainFrame = new MainFrame("DarkChess");
+            System.out.println(mainFrame);
+        });
     }
     static void test7()
     {
