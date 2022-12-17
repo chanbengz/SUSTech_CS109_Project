@@ -89,6 +89,7 @@ public class MainFrame extends JFrame {
                     GameBoard[x][y].rank = 0;
                     GameBoard[x][y].player = -1;
                 }
+                GameBoard[x][y].isRevealed = this.Game.players[who].pieces.chess[this.Game.map[y+1][x+1].index].show;
                 GameBoard[x][y].x = x + 1; GameBoard[x][y].y = y + 1;
                 GameBoard[x][y].update();
             }
@@ -125,6 +126,7 @@ public class MainFrame extends JFrame {
                     pvp = false;
                 } else {
                     pvp = true;
+
                 }
                 Game.mainFrame = this;
                 Game.InitialMap();
@@ -357,5 +359,9 @@ public class MainFrame extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this,"You Lost!\nSave at: " + dir);
         }
+    }
+
+    private void Connect() {
+
     }
 }

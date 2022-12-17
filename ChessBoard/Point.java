@@ -2,7 +2,7 @@ package ChessBoard;
 public class Point//行列均由1为起始下标
 {
     public int x, y, level;
-    boolean show;
+    public boolean show;
     boolean alive;
     public Point()
     {
