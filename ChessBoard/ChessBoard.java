@@ -115,9 +115,13 @@ public class ChessBoard
     {
         System.out.printf("Turn: %d\n",turn);
         System.out.printf("Steps: %d\n",steps);
-        System.out.println("Score:");
-        for(int i=0;i<=1;i++)
-            System.out.printf("id: %s rating: %d score: %d\n",players[i].id,players[i].rating,players[i].score);
+        System.out.println();
+        String rankmess = "";
+        for(int i=0;i<=1;i++) {
+            // System.out.printf("id: %s rating: %d score: %d\n",players[i].id,players[i].rating,players[i].score);
+            rankmess += String.format("%5s %8d %7d\n",players[i].id,players[i].rating,players[i].score);
+        }
+        mainFrame.printRank(rankmess);
         for(int i=1;i<=8;i++,System.out.println())
             for(int j=1;j<=4;j++)
             {
@@ -507,7 +511,7 @@ public class ChessBoard
 
     public void nextStep(Operation opt, int isAI) throws ChessException
     {
-        Show();
+
         if(Math.max(players[0].score,players[1].score)>=60) {
             mainFrame.showSuccess();
         }
@@ -546,7 +550,11 @@ public class ChessBoard
         }
         opt_stack.add(opt);
         steps++;
-        System.out.printf("%d %d %d %d\n",opt.x1,opt.y1,opt.x2,opt.y2);
+        if(opt.x1 == opt.x2 && opt.y1 == opt.y2) {
+            mainFrame.printMess(String.format("[%d, %d] is revealed\n",opt.x1,opt.y1));
+        } else {
+            mainFrame.printMess(String.format("Move [%d, %d] to [%d, %d]\n",opt.x1,opt.y1, opt.x2, opt.y2));
+        }
         Point[] fun=new Point[2];
         fun[0]=players[map[opt.x1][opt.y1].player].pieces.chess[map[opt.x1][opt.y1].index];
         if(map[opt.x2][opt.y2].player==-1)
@@ -556,12 +564,11 @@ public class ChessBoard
         if(fun[0]==fun[1]){
             Go_Show(fun[0]);
             mainFrame.GameBoard[opt.y1-1][opt.x1-1].Reveal();
-        }
-        else {
+        } else {
             Go_Move(fun[0],fun[1]);
             mainFrame.GameBoard[opt.y1-1][opt.x1-1].Move2(mainFrame.GameBoard[opt.y2-1][opt.x2-1]);
         }
-
+        Show();
         if(players[0].score+players[1].score==lastScore)loop++;
         else {lastScore=players[0].score+players[1].score;loop=0;}
         if(loop>=50) return;

@@ -26,7 +26,7 @@ public class MainFrame extends JFrame {
     private JTextPane MessagePane;
     private JScrollPane scrollPane2;
     private JTextPane RankPane;
-    private JButton ConnectButton;
+    private JButton ReplayButton;
     private JLabel TurnLabel;
     private JLabel RoundLabel;
     private String Message = "";
@@ -89,7 +89,7 @@ public class MainFrame extends JFrame {
         this.StopButton = new JButton();
         this.LoadButton = new JButton();
         this.WdButton = new JButton();
-        this.ConnectButton = new JButton();
+        this.ReplayButton = new JButton();
 
         //---- Startbutton ----
         StartButton.setText("Start");
@@ -97,13 +97,15 @@ public class MainFrame extends JFrame {
         StartButton.setBounds(10, 615, 100, 45);
         StartButton.addActionListener((e)->{
             if (this.started) {
-                JOptionPane.showMessageDialog(this,"You've started a game!");
+                JOptionPane.showMessageDialog(this,"You've started a game!", "Warning", JOptionPane.PLAIN_MESSAGE);
             } else {
-
+                String []option = {"Connect", "Medium", "Easy"};
+                int select = JOptionPane.showOptionDialog(this, "Please choose the level of AI or connect to others", "Start",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, option, null);
                 this.started = true;
                 Game = new ChessBoard();
                 Player Tim = new Player("Tim",3);
-                Player AI = new Player("AI",1);
+                int level = select == 1 ? 2 : 1;
+                Player AI = new Player("AI",level);
                 Game.Init(Tim, AI);
                 Game.mainFrame = this;
                 Game.InitialMap();
@@ -123,6 +125,8 @@ public class MainFrame extends JFrame {
                 this.started = false;
                 RoundLabel.setText("");
                 TurnLabel.setText("");
+                MessagePane.setText("");
+                RankPane.setText("");
                 for(int y = 0; y < 8; y++) {
                     for(int x = 0; x < 4; x++) {
                         GameBoard[x][y].setVisible(false);
@@ -140,6 +144,7 @@ public class MainFrame extends JFrame {
         this.add(LoadButton);
         LoadButton.setBounds(230, 615, 100, 45);
         LoadButton.addActionListener((e)->{
+            JFileChooser fileChooser = new JFileChooser();
 
         });
 
@@ -152,10 +157,10 @@ public class MainFrame extends JFrame {
         });
 
         //---- ConnectButton ----
-        ConnectButton.setText("Connect");
-        this.add(ConnectButton);
-        ConnectButton.setBounds(450, 615, 100, 45);
-        ConnectButton.addActionListener((e)->{
+        ReplayButton.setText("Replay");
+        this.add(ReplayButton);
+        ReplayButton.setBounds(450, 615, 100, 45);
+        ReplayButton.addActionListener((e)->{
 
         });
     }
@@ -197,6 +202,7 @@ public class MainFrame extends JFrame {
         //======== scrollPane2 ========
         //---- RankPane ----
         RankPane.setEditable(false);
+        RankPane.setFont(new Font("Space Mono", Font.PLAIN, 14));
         scrollPane2.setViewportView(RankPane);
         this.add(scrollPane2);
         scrollPane2.setBounds(560, 435, 215, 230);
@@ -247,7 +253,8 @@ public class MainFrame extends JFrame {
     }
 
     public void printRank(String mess) {
-        RankPane.setText(mess);
+        String info = "+----+--------+-------+\n| ID | Rating | Score |\n+----+--------+-------+\n";
+        RankPane.setText(info + mess);
     }
 
     public void printTurnAndRound() {

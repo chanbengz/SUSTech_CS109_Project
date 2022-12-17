@@ -110,7 +110,6 @@ public class Main
     static void test6(){
         SwingUtilities.invokeLater(()->{
             JFrame mainFrame = new MainFrame("DarkChess");
-            System.out.println(mainFrame);
         });
     }
     static void test7()

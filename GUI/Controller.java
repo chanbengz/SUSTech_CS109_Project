@@ -38,7 +38,7 @@ public class Controller implements ActionListener {
                     }
                     SwapPlayer();
                 } else {
-                    first = null;
+                    first = null; // cancel
                 }
             } else {
                 if(handleSecond(target)) { // move
@@ -62,7 +62,7 @@ public class Controller implements ActionListener {
     }
 
     public boolean handleFirst(PieceComponent o) {
-        return o.rank != 0; // empty
+        return o.rank != 0 || o.player == mainFrame.Game.turn; // empty or other's piece
     }
 
     public boolean handleSecond(PieceComponent o) {

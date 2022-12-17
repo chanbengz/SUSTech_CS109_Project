@@ -17,10 +17,7 @@ public class PieceComponent extends JButton {
         this.player = player;
         selected = false;
         isRevealed = false;
-        this.setIcon(new ImageIcon("resources/hide.png"));
-        this.setBorder(null);
-        this.setOpaque(false);
-        this.setContentAreaFilled(false);
+        update();
         this.setSize(75,75);
     }
 
@@ -35,7 +32,7 @@ public class PieceComponent extends JButton {
             return true;
         }
     }
-    public boolean canMoveTo7(PieceComponent target) { // rank is not 7
+    public boolean canMoveTo7(PieceComponent target) { // rank is 7
         if (!target.isRevealed) return true;
         return target.player != this.player;
     }
@@ -45,6 +42,8 @@ public class PieceComponent extends JButton {
             this.transfer2(target);
             this.Empty();
             target.update();
+        } else {
+            target.Empty();
         }
     }
 
