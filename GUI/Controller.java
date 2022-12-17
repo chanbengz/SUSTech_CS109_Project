@@ -31,10 +31,12 @@ public class Controller implements ActionListener {
                         throw new RuntimeException(ex);
                     }
                     SwapPlayer();
-                    try {
-                        mainFrame.Game.nextStep(new Operation(0,0,0,0),0);
-                    } catch (ChessException ex) {
-                        throw new RuntimeException(ex);
+                    if (!mainFrame.pvp){
+                        try {
+                            mainFrame.Game.nextStep(null,0);
+                        } catch (ChessException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                     SwapPlayer();
                 } else {
@@ -49,10 +51,12 @@ public class Controller implements ActionListener {
                         throw new RuntimeException(ex);
                     }
                     SwapPlayer();
-                    try {
-                        mainFrame.Game.nextStep(new Operation(0,0,0,0),0);
-                    } catch (ChessException ex) {
-                        throw new RuntimeException(ex);
+                    if (!mainFrame.pvp){
+                        try {
+                            mainFrame.Game.nextStep(null,0);
+                        } catch (ChessException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                     SwapPlayer();
                     first = null;

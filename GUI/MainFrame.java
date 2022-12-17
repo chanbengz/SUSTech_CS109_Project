@@ -2,9 +2,13 @@ package GUI;
 
 import ChessBoard.ChessBoard;
 import ChessBoard.Player;
+import ChessBoard.FileOperation;
+import ChessBoard.ChessException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class MainFrame extends JFrame {
     private boolean started;
@@ -30,7 +34,10 @@ public class MainFrame extends JFrame {
     private JLabel TurnLabel;
     private JLabel RoundLabel;
     private String Message = "";
+    private JButton ReplayLast;
+    private JButton ReplayNext;
     public Controller controller;
+    public boolean pvp;
 
     public MainFrame(String title) {
         super(title);
@@ -75,8 +82,13 @@ public class MainFrame extends JFrame {
                 GameBoard[x][y].setVisible(true);
                 int who = this.Game.map[y + 1][x + 1].player;
                 int value = (int)Math.pow(-1,who) * this.Game.players[who].pieces.chess[this.Game.map[y+1][x+1].index].level;
-                GameBoard[x][y].rank = value > 0 ? value : -value;
-                GameBoard[x][y].player = value > 0 ? 0 : 1;
+                if(value != 9) {
+                    GameBoard[x][y].rank = value > 0 ? value : -value;
+                    GameBoard[x][y].player = value > 0 ? 0 : 1;
+                } else {
+                    GameBoard[x][y].rank = 0;
+                    GameBoard[x][y].player = -1;
+                }
                 GameBoard[x][y].x = x + 1; GameBoard[x][y].y = y + 1;
                 GameBoard[x][y].update();
             }
@@ -90,6 +102,8 @@ public class MainFrame extends JFrame {
         this.LoadButton = new JButton();
         this.WdButton = new JButton();
         this.ReplayButton = new JButton();
+        this.ReplayLast = new JButton();
+        this.ReplayNext = new JButton();
 
         //---- Startbutton ----
         StartButton.setText("Start");
@@ -104,9 +118,14 @@ public class MainFrame extends JFrame {
                 this.started = true;
                 Game = new ChessBoard();
                 Player Tim = new Player("Tim",3);
-                int level = select == 1 ? 2 : 1;
-                Player AI = new Player("AI",level);
-                Game.Init(Tim, AI);
+                if(select != 0) {
+                    int level = select == 1 ? 2 : 1;
+                    Player AI = new Player("AI",level);
+                    Game.Init(Tim, AI);
+                    pvp = false;
+                } else {
+                    pvp = true;
+                }
                 Game.mainFrame = this;
                 Game.InitialMap();
                 Game.Show();
@@ -121,12 +140,20 @@ public class MainFrame extends JFrame {
         StopButton.setBounds(120, 615, 100, 45);
         StopButton.addActionListener((e)->{
             if( started ) {
+                String dir = null;
+                try {
+                    dir = FileOperation.GamePause(this.Game);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                JOptionPane.showMessageDialog(this, dir);
                 Game = null;
                 this.started = false;
                 RoundLabel.setText("");
                 TurnLabel.setText("");
                 MessagePane.setText("");
                 RankPane.setText("");
+                this.Message = "";
                 for(int y = 0; y < 8; y++) {
                     for(int x = 0; x < 4; x++) {
                         GameBoard[x][y].setVisible(false);
@@ -145,24 +172,81 @@ public class MainFrame extends JFrame {
         LoadButton.setBounds(230, 615, 100, 45);
         LoadButton.addActionListener((e)->{
             JFileChooser fileChooser = new JFileChooser();
-
+            if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+                File ret = fileChooser.getSelectedFile();
+                String dir = ret.getPath(), data = "";
+                try {
+                    data=FileOperation.Load(dir);
+                } catch (ChessException ex) {
+                    JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+                    throw new RuntimeException(ex);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                String name=dir.substring(dir.lastIndexOf("/")+1);
+                try {
+                    Game.GameContinue(data,name.substring(0,name.length()-5));
+                    generate();
+                } catch (ChessException ex) {
+                    JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+                    throw new RuntimeException(ex);
+                }
+            }
         });
 
         //---- WdButton ----
         WdButton.setText("Withdraw");
         this.add(WdButton);
         WdButton.setBounds(340, 615, 100, 45);
-        LoadButton.addActionListener((e)->{
-
+        WdButton.addActionListener((e)->{
+            if(Game.steps != 0){
+                Game.LoadPoint();
+                generate();
+                printTurnAndRound();
+            } else {
+                JOptionPane.showMessageDialog(this,"You can't withdraw", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
         });
 
-        //---- ConnectButton ----
+        //---- ReplayButton ----
         ReplayButton.setText("Replay");
         this.add(ReplayButton);
         ReplayButton.setBounds(450, 615, 100, 45);
         ReplayButton.addActionListener((e)->{
-
+            JFileChooser fileChooser = new JFileChooser();
+            if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File ret = fileChooser.getSelectedFile();
+                String dir = ret.getPath();
+                String data;
+                try {
+                    data = FileOperation.Load(dir);
+                } catch (ChessException ex) {
+                    System.out.println(ex.getMessage());
+                    throw new RuntimeException(ex);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                ChessBoard Replay = new ChessBoard();
+                String name = dir.substring(dir.lastIndexOf("/") + 1);
+                this.Game = Replay;
+                Game.LoadReplay(data, name.substring(0, name.length() - 6));
+                Game.Replay();
+                ReplayLast.setVisible(true);
+                ReplayNext.setVisible(true);
+            }
         });
+
+        ReplayLast.setText("<");
+        ReplayLast.setFont(new Font("Rockwell", Font.BOLD, 15));
+        ReplayLast.setBounds(35, 300, 50,50);
+        this.add(ReplayLast);
+        ReplayLast.setVisible(false);
+
+        ReplayNext.setText(">");
+        ReplayNext.setFont(new Font("Rockwell", Font.BOLD, 15));
+        ReplayNext.setBounds(450, 300, 50,50);
+        this.add(ReplayNext);
+        ReplayNext.setVisible(false);
     }
 
     private void AddLabel() {
@@ -265,7 +349,13 @@ public class MainFrame extends JFrame {
         TurnLabel.setText(player + "'s Turn");
     }
 
-    public void showSuccess() {
-        JOptionPane.showMessageDialog(this,"You Won!");
+    public void showGameOver(String dir, int status) {
+        if(status == 1) {
+            JOptionPane.showMessageDialog(this,"You Won!\nSave at: " + dir);
+        } else if(status == 0) {
+            JOptionPane.showMessageDialog(this,"Draw!\nSave at: " + dir);
+        } else {
+            JOptionPane.showMessageDialog(this,"You Lost!\nSave at: " + dir);
+        }
     }
 }

@@ -55,7 +55,7 @@ public class ChessBoard
     {
         game_stack.add(new Cache(turn,steps,map,opt_stack,players));
     }
-    void LoadPoint()
+    public void LoadPoint()
     {
         game_stack.remove(game_stack.size()-1);
         Cache page=game_stack.get(game_stack.size()-1);
@@ -395,7 +395,7 @@ public class ChessBoard
     }
     public String GameOver()
     {
-        System.out.println("Game over!");
+        JOptionPane.showMessageDialog(null, "Game over!");
         double p=1.0/(1.0+Math.pow(10,1.0*(players[1].rating-players[0].rating)/400));
         double sign;
         if(players[0].score<60 && players[1].score<60)
@@ -512,27 +512,14 @@ public class ChessBoard
     public void nextStep(Operation opt, int isAI) throws ChessException
     {
 
-        if(Math.max(players[0].score,players[1].score)>=60) {
-            mainFrame.showSuccess();
+        if (players[0].score>=60) {
+            mainFrame.showGameOver(GameOver(), 1);
+        }
+        if (players[1].score>=60) {
+            mainFrame.showGameOver(GameOver(), -1);
         }
         if(isAI != 3) {
             opt=Input();
-        }
-        if(opt.isLoad())
-        {
-            if(steps!=0){LoadPoint();Show();return;}
-            else throw new ChessException("Invalid regret.\nError Code:307");
-        }
-        if(opt.isSave())
-        {
-            String dir;
-            try {
-                dir = FileOperation.GamePause(this);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println("Game pause file at "+dir);
-            return;
         }
         if(!opt.isValid())throw new ChessException("Out of range.\nError Code:306");
         if(players[turn^1].isAI==5)
@@ -571,7 +558,10 @@ public class ChessBoard
         Show();
         if(players[0].score+players[1].score==lastScore)loop++;
         else {lastScore=players[0].score+players[1].score;loop=0;}
-        if(loop>=50) return;
+        if(loop>=50) {
+            mainFrame.showGameOver(GameOver(), 0);
+            return;
+        }
         SavePoint();
     }
 }

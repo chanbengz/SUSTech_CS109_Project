@@ -83,6 +83,8 @@ public class PieceComponent extends JButton {
     public void update() {
         if(isRevealed) {
             this.setIcon(new ImageIcon(this.getPath()));
+        } else if(rank == 0) {
+            this.setIcon(null);
         } else {
             this.setIcon(new ImageIcon("resources/hide.png"));
         }
