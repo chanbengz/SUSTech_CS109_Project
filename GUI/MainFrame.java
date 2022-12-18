@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainFrame extends JFrame {
     private boolean started;
@@ -40,6 +42,8 @@ public class MainFrame extends JFrame {
     public Controller controller;
     public boolean pvp;
     public boolean cheat;
+    public Player local;
+    public ArrayList<Player> list;
 
     public MainFrame(String title) {
         super(title);
@@ -61,6 +65,8 @@ public class MainFrame extends JFrame {
         ChessboardBackg.setIcon(new ImageIcon("resources/board.jpg"));
         this.add(ChessboardBackg);
         ChessboardBackg.setBounds(115, 0, 305, 610);
+        list = FileOperation.ScanUser("User/");
+        Collections.sort(list);
     }
 
     private void AddChess() {
@@ -114,15 +120,47 @@ public class MainFrame extends JFrame {
         this.add(StartButton);
         StartButton.setBounds(10, 615, 100, 45);
         StartButton.addActionListener((e)->{
-            String []option = {"Connect", "Medium", "Easy"};
-            int select = JOptionPane.showOptionDialog(this, "Please choose the level of AI or connect to others", "Start",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, option, null);
+            if(!started) {
+                String[] logoption = {"Sign in", "Sign up"};
+                int login = JOptionPane.showOptionDialog(this, "Sign up or Sign in", "Login",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, logoption, null);
+                if(login == 0) {
+                    while (local == null) {
+                        String id = JOptionPane.showInputDialog(this, "Account: ", "Login",JOptionPane.PLAIN_MESSAGE);
+                        for(Player o: list) {
+                            if(o.id.equals(id)) {
+                                local = o;
+                            }
+                        }
+                        if(local == null) {
+                            JOptionPane.showMessageDialog(this,"Invalid User!","Warning",JOptionPane.WARNING_MESSAGE);
+                        }
+                        if(local != null) {
+                            String passwd;
+                            do {
+                                passwd = JOptionPane.showInputDialog(this, "Password: ", "Login", JOptionPane.PLAIN_MESSAGE);
+                            } while(!local.login(passwd));
+                        }
+                    }
+                } else {
+                    String id = JOptionPane.showInputDialog(this, "Create User: ", "Sign up",JOptionPane.PLAIN_MESSAGE);
+                    String passwd = JOptionPane.showInputDialog(this, "Password: ", "Login", JOptionPane.PLAIN_MESSAGE);
+                    local = new Player(id, 3, passwd);
+                    try {
+                        FileOperation.SaveUser(local);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    JOptionPane.showMessageDialog(this,"User created","Success",JOptionPane.PLAIN_MESSAGE);
+                }
+            }
+            String[] options = {"Connect", "Medium", "Easy"};
+            int select = JOptionPane.showOptionDialog(this, "Please choose the level of AI or connect to others", "Start",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
             this.started = true;
             Game = new ChessBoard();
-            Player Tim = new Player("Tim",3);
             if(select != 0) {
                 int level = select == 1 ? 2 : 1;
                 Player AI = new Player("AI",level);
-                Game.Init(Tim, AI);
+                Game.Init(local, AI);
                 pvp = false;
             } else {
                 pvp = true;
@@ -132,6 +170,8 @@ public class MainFrame extends JFrame {
             Game.InitialMap();
             Game.Show();
             printTurnAndRound();
+            PlayerName1.setText(Game.players[1].id);
+            PlayerName2.setText(Game.players[0].id);
             generate();
         });
 
@@ -161,7 +201,6 @@ public class MainFrame extends JFrame {
                 RoundLabel.setText("");
                 TurnLabel.setText("");
                 MessagePane.setText("");
-                RankPane.setText("");
                 this.Message = "";
                 for(int y = 0; y < 8; y++) {
                     for(int x = 0; x < 4; x++) {
@@ -320,7 +359,7 @@ public class MainFrame extends JFrame {
         pro2.setBounds(460, 520, 33, 33);
 
         //---- PlayerName1 ----
-        PlayerName1.setText("AI");
+        PlayerName1.setText("");
         PlayerName1.setFont(PlayerName1.getFont().deriveFont(PlayerName1.getFont().getSize() + 6f));
         PlayerName1.setBorder(null);
         PlayerName1.setOpaque(false);
@@ -330,7 +369,7 @@ public class MainFrame extends JFrame {
         PlayerName1.setBounds(15, 15, 85, 25);
 
         //---- PlayerName2 ----
-        PlayerName2.setText("Tim");
+        PlayerName2.setText("");
         PlayerName2.setFont(PlayerName2.getFont().deriveFont(PlayerName2.getFont().getSize() + 6f));
         PlayerName2.setBorder(null);
         PlayerName2.setOpaque(false);

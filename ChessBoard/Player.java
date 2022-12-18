@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class Player
+public class Player implements Comparable<Player>
 {
     public ChessPieces pieces=new ChessPieces();
     public int score=0;
@@ -174,5 +174,10 @@ public class Player
         history.clear();
         int n=Integer.parseInt(data[20]);
         history.addAll(Arrays.asList(data).subList(21, n + 21));
+    }
+
+    @Override
+    public int compareTo(Player o) {
+        return this.rating - o.rating;
     }
 }
