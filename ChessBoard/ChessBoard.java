@@ -427,6 +427,12 @@ public class ChessBoard
         String dir;
         try {
             dir=FileOperation.SaveGame(this);
+            if(players[0].isAI != 1 && players[0].isAI != 2 && players[0].isAI != 4) {
+                FileOperation.SaveUser(players[0]);
+            }
+            if(players[1].isAI != 1 && players[1].isAI != 2 && players[1].isAI != 4) {
+                FileOperation.SaveUser(players[1]);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

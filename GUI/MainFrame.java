@@ -142,7 +142,13 @@ public class MainFrame extends JFrame {
                         }
                     }
                 } else {
-                    String id = JOptionPane.showInputDialog(this, "Create User: ", "Sign up",JOptionPane.PLAIN_MESSAGE);
+                    String id;
+                    do {
+                        id = JOptionPane.showInputDialog(this, "Create User: ", "Sign up",JOptionPane.PLAIN_MESSAGE);
+                        if(!id.matches("^[a-zA-Z0-9_]{0,15}$")) {
+                            JOptionPane.showMessageDialog(this,"Invalid Name","Warning",JOptionPane.PLAIN_MESSAGE);
+                        }
+                    } while (!id.matches("^[a-zA-Z0-9_]{0,15}$"));
                     String passwd = JOptionPane.showInputDialog(this, "Password: ", "Login", JOptionPane.PLAIN_MESSAGE);
                     local = new Player(id, 3, passwd);
                     try {
@@ -153,18 +159,24 @@ public class MainFrame extends JFrame {
                     JOptionPane.showMessageDialog(this,"User created","Success",JOptionPane.PLAIN_MESSAGE);
                 }
             }
-            String[] options = {"Connect", "Medium", "Easy"};
-            int select = JOptionPane.showOptionDialog(this, "Please choose the level of AI or connect to others", "Start",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+            String[] options = {"Connect", "Medium", "Easy", "Beginner"};
+            int select = JOptionPane.showOptionDialog(this, "Please choose the level of AI or connect to others", "Start",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
             this.started = true;
             Game = new ChessBoard();
             if(select != 0) {
-                int level = select == 1 ? 2 : 1;
-                Player AI = new Player("AI",level);
+                int level = 4;
+                if(select == 2) {
+                    level = 1;
+                } else if(select == 1) {
+                    level = 2;
+                }
+                Player AI = new Player("AI", level);
                 Game.Init(local, AI);
                 pvp = false;
             } else {
                 pvp = true;
-
+                Connect();
             }
             Game.mainFrame = this;
             Game.InitialMap();
@@ -195,7 +207,7 @@ public class MainFrame extends JFrame {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                JOptionPane.showMessageDialog(this, dir);
+                JOptionPane.showMessageDialog(this, "Save at " + dir);
                 Game = null;
                 this.started = false;
                 RoundLabel.setText("");
@@ -408,6 +420,23 @@ public class MainFrame extends JFrame {
     }
 
     private void Connect() {
+        String[] option = {"Guest", "Host"};
+        int select = JOptionPane.showOptionDialog(this, "Decide if you're the host", "Connect",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, option, null);
+        String ip = "";
+        if(select == 0) {
+            do {
+                ip = JOptionPane.showInputDialog(this, "Target IP: ", "Connect", JOptionPane.PLAIN_MESSAGE);
+                if(!ip.matches("((25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.){3}(25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))"))
+                    JOptionPane.showMessageDialog(this,"Invalid IP");
+            } while(!ip.matches("((25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.){3}(25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))"));
+        }
+        int port = 0;
+        do {
+            port = Integer.parseInt(JOptionPane.showInputDialog(this, "Target port: ", "Connect", JOptionPane.PLAIN_MESSAGE));
+            if(port < 1 || port > 65535)
+                JOptionPane.showMessageDialog(this,"Invalid port");
+        } while (port < 1 || port > 65535);
 
+        Game.NetworkInit(ip, port, select == 0 ? 1 : 0, local);
     }
 }

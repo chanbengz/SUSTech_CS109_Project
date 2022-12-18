@@ -63,6 +63,7 @@ public class Player implements Comparable<Player>
         id=userid;
         this.isAI=isAI;
         uuid=UUID.nameUUIDFromBytes(id.getBytes());
+        if(passwd.equals("")) passwd = "default";
         try {
             MessageDigest messageDigest=MessageDigest.getInstance("SHA-256");
             messageDigest.update((uuid.toString()+passwd).getBytes());

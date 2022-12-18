@@ -47,6 +47,12 @@ public class Controller implements ActionListener {
                             } catch (ChessException ex) {
                                 throw new RuntimeException(ex);
                             }
+                        } else {
+                            try {
+                                mainFrame.Game.nextStep(null,5);
+                            } catch (ChessException ex) {
+                                throw new RuntimeException(ex);
+                            }
                         }
                         SwapPlayer();
                     } else {
@@ -64,6 +70,12 @@ public class Controller implements ActionListener {
                         if (!mainFrame.pvp){
                             try {
                                 mainFrame.Game.nextStep(null,0);
+                            } catch (ChessException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        } else {
+                            try {
+                                mainFrame.Game.nextStep(null,5);
                             } catch (ChessException ex) {
                                 throw new RuntimeException(ex);
                             }
