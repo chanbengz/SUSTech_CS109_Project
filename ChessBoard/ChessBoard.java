@@ -28,7 +28,7 @@ public class ChessBoard
     public long seed;
     public Player[] players=new Player[2];
     ChessPieces[] initPieces=new ChessPieces[2];
-    ArrayList<Operation> opt_stack=new ArrayList<>();
+    public ArrayList<Operation> opt_stack=new ArrayList<>();
     UUID uuid;
     ArrayList<Cache> game_stack=new ArrayList<>();
     public MainFrame mainFrame;

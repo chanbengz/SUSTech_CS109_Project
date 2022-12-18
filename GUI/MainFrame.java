@@ -289,10 +289,12 @@ public class MainFrame extends JFrame {
                 ChessBoard Replay = new ChessBoard();
                 String name = dir.substring(dir.lastIndexOf("/") + 1);
                 this.Game = Replay;
-                Game.LoadReplay(data, name.substring(0, name.length() - 6));
-                Game.Replay();
+                Game.mainFrame = this;
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);
+                Game.LoadReplay(data, name.substring(0, name.length() - 6));
+                //generate();
+                Game.Show();
             }
         });
 
@@ -301,12 +303,22 @@ public class MainFrame extends JFrame {
         ReplayLast.setBounds(35, 300, 50,50);
         this.add(ReplayLast);
         ReplayLast.setVisible(false);
+        ReplayLast.addActionListener((e)->{
+            try {
+                Game.nextStep(Game.opt_stack.get(Game.steps), Game.players[Game.turn].isAI);
+            } catch (ChessException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
         ReplayNext.setText(">");
         ReplayNext.setFont(new Font("Rockwell", Font.BOLD, 15));
         ReplayNext.setBounds(450, 300, 50,50);
         this.add(ReplayNext);
         ReplayNext.setVisible(false);
+        ReplayNext.addActionListener((e)->{
+            if(Game.steps!=0){Game.LoadPoint(); Game.Show();}
+        });
     }
 
     private void AddLabel() {
