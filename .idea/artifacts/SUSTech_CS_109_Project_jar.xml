@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact name="SUSTech_CS_109_Project:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SUSTech_CS_109_Project_jar</output-path>
+    <root id="root">
+      <element id="archive" name="SUSTech_CS_109_Project.jar">
+        <element id="module-output" name="SUSTech_CS_109_Project" />
+      </element>
+    </root>
+  </artifact>
+</component>

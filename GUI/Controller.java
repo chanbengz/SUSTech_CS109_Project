@@ -6,6 +6,7 @@ import ChessBoard.Operation;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.TimeUnit;
 
 public class Controller implements ActionListener {
     public PieceComponent first;
@@ -14,55 +15,66 @@ public class Controller implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         PieceComponent target =  (PieceComponent) e.getSource();
-        if(first == null) {
-            if(handleFirst(target)){ // not empty
-                target.EmptyValid();
-                first = target;
-                checkValid(target);
+        if(mainFrame.cheat) {
+            if(handleFirst(target) && !target.isRevealed) {
+                target.Reveal();
+            } else {
+                target.isRevealed = false;
+                target.update();
+                mainFrame.cheat = false;
             }
         } else {
-            if (target == first) { // reveal
-                if( !target.isRevealed ) {
-                    int x = first.x, y = first.y;
-                    first = null;
-                    try {
-                        mainFrame.Game.nextStep(new Operation(y,x,y,x),3);
-                    } catch (ChessException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    SwapPlayer();
-                    if (!mainFrame.pvp){
-                        try {
-                            mainFrame.Game.nextStep(null,0);
-                        } catch (ChessException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
-                    SwapPlayer();
-                } else {
-                    first = null; // cancel
+            if(first == null) {
+                if(handleFirst(target)){ // not empty
+                    target.EmptyValid();
+                    first = target;
+                    checkValid(target);
                 }
             } else {
-                if(handleSecond(target)) { // move
-                    int x1 = first.x, y1 = first.y, x2 = target.x, y2 = target.y;
-                    try {
-                        mainFrame.Game.nextStep(new Operation(y1,x1,y2,x2),3);
-                    } catch (ChessException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    SwapPlayer();
-                    if (!mainFrame.pvp){
+                if (target == first) { // reveal
+                    if( !target.isRevealed ) {
+                        int x = first.x, y = first.y;
+                        first = null;
                         try {
-                            mainFrame.Game.nextStep(null,0);
+                            mainFrame.Game.nextStep(new Operation(y,x,y,x),3);
                         } catch (ChessException ex) {
                             throw new RuntimeException(ex);
                         }
+                        SwapPlayer();
+                        if (!mainFrame.pvp){
+                            try {
+                                mainFrame.Game.nextStep(null,0);
+                            } catch (ChessException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                        SwapPlayer();
+                    } else {
+                        first = null; // cancel
                     }
-                    SwapPlayer();
-                    first = null;
+                } else {
+                    if(handleSecond(target)) { // move
+                        int x1 = first.x, y1 = first.y, x2 = target.x, y2 = target.y;
+                        try {
+                            mainFrame.Game.nextStep(new Operation(y1,x1,y2,x2),3);
+                        } catch (ChessException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        SwapPlayer();
+                        if (!mainFrame.pvp){
+                            try {
+                                mainFrame.Game.nextStep(null,0);
+                            } catch (ChessException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                        SwapPlayer();
+                        first = null;
+                    }
                 }
             }
         }
+
     }
 
     public boolean handleFirst(PieceComponent o) {

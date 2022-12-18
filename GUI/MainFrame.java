@@ -31,6 +31,7 @@ public class MainFrame extends JFrame {
     private JScrollPane scrollPane2;
     private JTextPane RankPane;
     private JButton ReplayButton;
+    private JButton CheatButton;
     private JLabel TurnLabel;
     private JLabel RoundLabel;
     private String Message = "";
@@ -38,6 +39,7 @@ public class MainFrame extends JFrame {
     private JButton ReplayNext;
     public Controller controller;
     public boolean pvp;
+    public boolean cheat;
 
     public MainFrame(String title) {
         super(title);
@@ -105,35 +107,40 @@ public class MainFrame extends JFrame {
         this.ReplayButton = new JButton();
         this.ReplayLast = new JButton();
         this.ReplayNext = new JButton();
+        this.CheatButton = new JButton();
 
         //---- Startbutton ----
         StartButton.setText("Start");
         this.add(StartButton);
         StartButton.setBounds(10, 615, 100, 45);
         StartButton.addActionListener((e)->{
-            if (this.started) {
-                JOptionPane.showMessageDialog(this,"You've started a game!", "Warning", JOptionPane.PLAIN_MESSAGE);
+            String []option = {"Connect", "Medium", "Easy"};
+            int select = JOptionPane.showOptionDialog(this, "Please choose the level of AI or connect to others", "Start",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, option, null);
+            this.started = true;
+            Game = new ChessBoard();
+            Player Tim = new Player("Tim",3);
+            if(select != 0) {
+                int level = select == 1 ? 2 : 1;
+                Player AI = new Player("AI",level);
+                Game.Init(Tim, AI);
+                pvp = false;
             } else {
-                String []option = {"Connect", "Medium", "Easy"};
-                int select = JOptionPane.showOptionDialog(this, "Please choose the level of AI or connect to others", "Start",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, option, null);
-                this.started = true;
-                Game = new ChessBoard();
-                Player Tim = new Player("Tim",3);
-                if(select != 0) {
-                    int level = select == 1 ? 2 : 1;
-                    Player AI = new Player("AI",level);
-                    Game.Init(Tim, AI);
-                    pvp = false;
-                } else {
-                    pvp = true;
+                pvp = true;
 
-                }
-                Game.mainFrame = this;
-                Game.InitialMap();
-                Game.Show();
-                printTurnAndRound();
-                generate();
             }
+            Game.mainFrame = this;
+            Game.InitialMap();
+            Game.Show();
+            printTurnAndRound();
+            generate();
+        });
+
+        //---- CheatButton ----
+        CheatButton.setText("Cheat");
+        this.add(CheatButton);
+        CheatButton.setBounds(10,500,100,45);
+        CheatButton.addActionListener((e)->{
+            this.cheat = !this.cheat;
         });
 
         //---- StopButton ----
