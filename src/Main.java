@@ -110,15 +110,17 @@ public class Main
     static void test6(){
         SwingUtilities.invokeLater(()->{
             JFrame mainFrame = new MainFrame("DarkChess");
+            System.out.println(mainFrame);
         });
     }
     static void test7()
     {
-        Player Alice=new Player("Alice",0);
-        Player Bob=new Player("Bob",0);
-        ChessBoard Game=new ChessBoard();
-        Game.Init(Alice,Bob);
-        Game.NetworkInit("127,0,0,1",20864,1,Alice);
+        String passwd;
+        Scanner input=new Scanner(System.in);
+        passwd=input.next();
+        Player Bob=new Player("Alice",0,passwd);
+        passwd=input.next();
+        System.out.println(Bob.login(passwd));
     }
     public static void main(String[] args)
     {

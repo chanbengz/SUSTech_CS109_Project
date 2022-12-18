@@ -1,6 +1,6 @@
 package ChessBoard;
+
 import GUI.MainFrame;
-import GUI.PieceComponent;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -116,12 +116,12 @@ public class ChessBoard
         System.out.printf("Turn: %d\n",turn);
         System.out.printf("Steps: %d\n",steps);
         System.out.println();
-        String rankmess = "";
+        StringBuilder rankness = new StringBuilder();
         for(int i=0;i<=1;i++) {
             // System.out.printf("id: %s rating: %d score: %d\n",players[i].id,players[i].rating,players[i].score);
-            rankmess += String.format("%5s %8d %7d\n",players[i].id,players[i].rating,players[i].score);
+            rankness.append(String.format("%5s %8d %7d\n", players[i].id, players[i].rating, players[i].score));
         }
-        mainFrame.printRank(rankmess);
+        mainFrame.printRank(rankness.toString());
         for(int i=1;i<=8;i++,System.out.println())
             for(int j=1;j<=4;j++)
             {
