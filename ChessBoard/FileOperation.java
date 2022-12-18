@@ -26,12 +26,14 @@ public class FileOperation
     static byte[] Encrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher=Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE,GenerateKey(uuid));
-        return Base64.getEncoder().encode(cipher.doFinal(data.getBytes()));
+        RSCode rsCode=new RSCode();
+        return Base64.getEncoder().encode(rsCode.Encode(cipher.doFinal(data.getBytes())));
     }
     static String Decrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher=Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE,GenerateKey(uuid));
-        return new String(cipher.doFinal(Base64.getDecoder().decode(data)));
+        RSCode rsCode=new RSCode();
+        return new String(cipher.doFinal(rsCode.Decode(Base64.getDecoder().decode(data))));
     }
     public static String SaveGame(ChessBoard game) throws IOException {
         StringBuilder data= new StringBuilder(game.uuid.toString()+Player.pause);
