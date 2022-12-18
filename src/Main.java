@@ -4,6 +4,7 @@ import GUI.MainFrame;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main
@@ -122,6 +123,23 @@ public class Main
         passwd=input.next();
         System.out.println(Bob.login(passwd));
     }
+    static void test8()
+    {
+        Player Alice=new Player("Alice",1);
+        Player Bob=new Player("Bob",0);
+        String dir;
+        try {
+            dir=FileOperation.SaveUser(Alice);
+            System.out.println(dir);
+            dir=FileOperation.SaveUser(Bob);
+            System.out.println(dir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        ArrayList<Player> list=FileOperation.ScanUser("User/");
+        for(Player tmp:list)
+            System.out.println(tmp.UserMsg());
+    }
     public static void main(String[] args)
     {
         Scanner input=new Scanner(System.in);
@@ -140,6 +158,7 @@ public class Main
                 case 5 -> test5();
                 case 6 -> test6();
                 case 7 -> test7();
+                case 8 -> test8();
                 default -> ack=1;
             }
         }

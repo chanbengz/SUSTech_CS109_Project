@@ -11,7 +11,7 @@ public class Player
     public int score=0;
     public String id;
     public int rating=1500;
-    public int isAI=0;
+    public int isAI;
     UUID uuid;
     String passwd;
     public ArrayList<String> history=new ArrayList<>();
@@ -33,7 +33,16 @@ public class Player
     public Player()
     {
         id="Player";
+        this.isAI=0;
         uuid=UUID.nameUUIDFromBytes(id.getBytes());
+        String passwd="default";
+        try {
+            MessageDigest messageDigest=MessageDigest.getInstance("SHA-256");
+            messageDigest.update((uuid.toString()+passwd).getBytes());
+            this.passwd=byte2Hex(messageDigest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
     public Player(String userid,int isAI)
     {

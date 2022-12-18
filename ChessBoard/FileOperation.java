@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -175,5 +176,31 @@ public class FileOperation
             cnt--;
         }
         throw new ChessException("Connection error");
+    }
+    public static ArrayList<Player> ScanUser(String dir)
+    {
+        ArrayList<Player> list=new ArrayList<>();
+        File file=new File(dir);
+        File[] fs=file.listFiles();
+        if(fs==null)return list;
+        for(File f:fs)
+            if(!f.isDirectory())
+            {
+                String name=f.getName();
+                if(!name.contains(".usr"))continue;
+                UUID uuid=UUID.nameUUIDFromBytes(name.substring(0,name.indexOf(".usr")).getBytes());
+                try {
+                    BufferedReader reader=new BufferedReader(new FileReader(f));
+                    String input=reader.readLine();
+                    String data=Decrypt(input,uuid);
+                    Player tmp=new Player();
+                    tmp.Load(data,data.split(Player.pause)[0]);
+                    list.add(tmp);
+                } catch (IOException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
+                         BadPaddingException | InvalidKeyException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        return list;
     }
 }
