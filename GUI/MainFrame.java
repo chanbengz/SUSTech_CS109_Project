@@ -300,7 +300,11 @@ public class MainFrame extends JFrame {
                 } catch (ChessException ex) {
                     throw new RuntimeException(ex);
                 }
-                Game.Replay();
+                try {
+                    Game.Replay();
+                } catch (ChessException ex) {
+                    throw new RuntimeException(ex);
+                }
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);
             }

@@ -85,7 +85,11 @@ public class Main
         } catch (ChessException e) {
             throw new RuntimeException(e);
         }
-        Replay.Replay();
+        try {
+            Replay.Replay();
+        } catch (ChessException e) {
+            throw new RuntimeException(e);
+        }
     }
     static void test4()
     {

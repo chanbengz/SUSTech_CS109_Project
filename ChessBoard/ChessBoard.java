@@ -185,11 +185,12 @@ public class ChessBoard
             }
             case 5 ->
             {
-                try {
-                    return new Operation(Integer.parseInt(FileOperation.NetReceive(uuid)));
-                } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                try
+                    {return new Operation(Integer.parseInt(FileOperation.NetReceive(uuid)));}
+                catch (IOException | InterruptedException e)
+                    {throw new RuntimeException(e);}
+                catch (ChessException e)
+                    {throw new ChessException(e.getMessage());}
             }
             default -> throw new ChessException("Invalid player's type.\nError Code:202");
         }
@@ -480,14 +481,9 @@ public class ChessBoard
         turn=0;
         steps=0;
     }
-    public void Replay()
+    public void Replay() throws ChessException
     {
-        try {
-            Go(true);
-        } catch (ChessException e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
+        Go(true);
         System.out.println("Game over!");
         String guid=uuid.toString();
         System.out.println(guid);

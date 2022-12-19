@@ -178,7 +178,7 @@ public class FileOperation
                 return msg;
             cnt--;
         }
-        throw new ChessException("Connection error");
+        throw new ChessException("Connection error: Time out.");
     }
     public static ArrayList<Player> ScanUser(String dir)
     {
