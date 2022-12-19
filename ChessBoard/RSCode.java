@@ -125,9 +125,10 @@ public class RSCode
         System.arraycopy(data, 0, ans, 20, input.length);
         return ans;
     }
-    public byte[] Decode(byte[] input)
-    {
+    StringBuilder output;
+    public byte[][] Decode(byte[] input) throws ChessException {
         System.out.println("rawD: "+ Arrays.toString(input));
+        output=new StringBuilder();
         ArrayList<int[]> data=new ArrayList<>();
         int num=(input.length+BlockSize-1)/BlockSize;
         for(int i=0;i<num;i++)
@@ -156,7 +157,11 @@ public class RSCode
                 ans[i]=(byte)tpm[i-tail];
             tail+=tpm.length;
         }
-        return ans;
+        if(output.toString().contains("Too"))
+            throw new ChessException(output.toString());
+        if(output.isEmpty())
+            return new byte[][]{ans, "qwq".getBytes()};
+        else return new byte[][]{ans,output.toString().getBytes()};
     }
     public int[] DecodeBlock(int[] input)
     {
@@ -189,6 +194,7 @@ public class RSCode
         System.out.println("isError: " + flag);
         if(flag)
         {
+            output.append("Error!\n");
             d[0]=0;d[1]=s[1];
             elp[0][0]=0;elp[1][0]=1;
             for(int i=1;i<BlockSize-Payload;i++)
@@ -251,6 +257,7 @@ public class RSCode
             }while((u<BlockSize-Payload) && (l[u+1]<=CheckSize));
             u++;
             System.out.println("Number of Error: " + l[u]);
+            output.append("Number of Error: ").append(l[u]).append("\n");
             if(l[u]<=CheckSize)
             {
                 for(int i=0;i<=l[u];i++)
@@ -274,6 +281,7 @@ public class RSCode
                         root[count]=i;
                         loc[count]=BlockSize-i;
                         System.out.println("Error at: "+loc[count]);
+                        output.append("Error at: ").append(loc[count]).append("\n");
                         count++;
                     }
                 }
@@ -323,7 +331,11 @@ public class RSCode
                 }
                 else Restore(recd);
             }
-            else Restore(recd);
+            else
+            {
+                output.append("Too many errors!\n");
+                Restore(recd);
+            }
         }
         else Restore(recd);
         int[] ans=new int[input.length-(BlockSize-Payload)];
