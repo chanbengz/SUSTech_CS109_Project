@@ -211,6 +211,8 @@ public class MainFrame extends JFrame {
             Game.InitialMap();
             Game.Show();
             printTurnAndRound();
+            pro1.setVisible(true);
+            pro2.setVisible(true);
             PlayerName1.setText(Game.players[1].id);
             PlayerName2.setText(Game.players[0].id);
             CheatButton.setVisible(true);
@@ -244,6 +246,11 @@ public class MainFrame extends JFrame {
                 RoundLabel.setText("");
                 TurnLabel.setText("");
                 MessagePane.setText("");
+                CheatButton.setVisible(false);
+                pro1.setVisible(false);
+                pro2.setVisible(false);
+                PlayerName1.setText("");
+                PlayerName2.setText("");
                 this.Message = "";
                 for(int y = 0; y < 8; y++) {
                     for(int x = 0; x < 4; x++) {
@@ -263,6 +270,7 @@ public class MainFrame extends JFrame {
         this.add(LoadButton);
         LoadButton.setBounds(230, 615, 100, 45);
         LoadButton.addActionListener((e)->{
+            if(started) return;
             JFileChooser fileChooser = new JFileChooser();
             if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
                 File ret = fileChooser.getSelectedFile();
@@ -279,10 +287,16 @@ public class MainFrame extends JFrame {
                 try {
                     Game = new ChessBoard();
                     Game.GameContinue(data,name.substring(0,name.length()-5));
-                    generate();
                 } catch (ChessException ex) {
                     JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
                 }
+                generate();
+                pro1.setVisible(true);
+                pro2.setVisible(true);
+                PlayerName1.setText(Game.players[1].id);
+                PlayerName2.setText(Game.players[0].id);
+                CheatButton.setVisible(false);
+                started = true;
             }
         });
 
@@ -308,6 +322,7 @@ public class MainFrame extends JFrame {
         this.add(ReplayButton);
         ReplayButton.setBounds(450, 615, 100, 45);
         ReplayButton.addActionListener((e)->{
+            if(started) return;
             JFileChooser fileChooser = new JFileChooser();
             if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File ret = fileChooser.getSelectedFile();
@@ -332,11 +347,15 @@ public class MainFrame extends JFrame {
                     JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
+                pro1.setVisible(true);
+                pro2.setVisible(true);
                 PlayerName1.setText(Game.players[1].id);
                 PlayerName2.setText(Game.players[0].id);
+                printTurnAndRound();
                 generate();
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);
+                CheatButton.setVisible(false);
             }
         });
 
@@ -439,11 +458,13 @@ public class MainFrame extends JFrame {
         pro1.setIcon(new ImageIcon("resources/profile1.png"));
         this.add(pro1);
         pro1.setBounds(40, 50, 33, 33);
+        pro1.setVisible(false);
 
         //---- pro2 ----
         pro2.setIcon(new ImageIcon("resources/profile2.png"));
         this.add(pro2);
         pro2.setBounds(460, 520, 33, 33);
+        pro2.setVisible(false);
 
         //---- PlayerName1 ----
         PlayerName1.setText("");
@@ -487,6 +508,8 @@ public class MainFrame extends JFrame {
     }
 
     public void showGameOver(String dir, int status) {
+        started = false;
+        CheatButton.setVisible(false);
         if(status == 1) {
             JOptionPane.showMessageDialog(this,"You Won!\nSave at: " + dir);
         } else if(status == 0) {
