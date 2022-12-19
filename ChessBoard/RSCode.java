@@ -1,8 +1,6 @@
 package ChessBoard;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-
 public class RSCode
 {
     private static final int BlockSize=255;
@@ -20,7 +18,6 @@ public class RSCode
     {
         int mask=1;
         Trans[8]=0;
-        index[Trans[8]]=8;
         int[] tmp={1,0,1,1,1,0,0,0};
         for(int i=0;i<8;i++)
         {
@@ -30,6 +27,7 @@ public class RSCode
                 Trans[8]^=mask;
             mask<<=1;
         }
+        index[Trans[8]]=8;
         mask>>=1;
         for(int i=9;i<BlockSize;i++)
         {
