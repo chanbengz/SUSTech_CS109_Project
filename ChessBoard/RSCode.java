@@ -257,9 +257,9 @@ public class RSCode
             }while((u<BlockSize-Payload) && (l[u+1]<=CheckSize));
             u++;
             System.out.println("Number of Error: " + l[u]);
-            output.append("Number of Error: ").append(l[u]).append("\n");
-            if(l[u]<=CheckSize)
+            if(l[u]<CheckSize)
             {
+                output.append("Number of Error: ").append(l[u]).append("\n");
                 for(int i=0;i<=l[u];i++)
                     elp[u][i]=index[elp[u][i]];
                 int[] reg=new int[CheckSize+1];

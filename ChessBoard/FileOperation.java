@@ -38,6 +38,8 @@ public class FileOperation
         String tips=new String(tmp[1]);
         if(!tips.equals("qwq"))
             JOptionPane.showMessageDialog(null,tips,"Warning",JOptionPane.WARNING_MESSAGE);
+        if(tips.contains("Too"))
+            throw new ChessException(tips);
         return new String(cipher.doFinal(tmp[0]));
     }
     public static String SaveGame(ChessBoard game) throws IOException {
