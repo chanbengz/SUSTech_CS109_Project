@@ -243,6 +243,7 @@ public class MainFrame extends JFrame {
                 RoundLabel.setText("");
                 TurnLabel.setText("");
                 MessagePane.setText("");
+                CheatButton.setVisible(false);
                 pro1.setVisible(false);
                 pro2.setVisible(false);
                 PlayerName1.setText("");
@@ -266,6 +267,7 @@ public class MainFrame extends JFrame {
         this.add(LoadButton);
         LoadButton.setBounds(230, 615, 100, 45);
         LoadButton.addActionListener((e)->{
+            if(started) return;
             JFileChooser fileChooser = new JFileChooser();
             if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
                 File ret = fileChooser.getSelectedFile();
@@ -290,6 +292,8 @@ public class MainFrame extends JFrame {
                 pro2.setVisible(true);
                 PlayerName1.setText(Game.players[1].id);
                 PlayerName2.setText(Game.players[0].id);
+                CheatButton.setVisible(false);
+                started = true;
             }
         });
 
@@ -315,6 +319,7 @@ public class MainFrame extends JFrame {
         this.add(ReplayButton);
         ReplayButton.setBounds(450, 615, 100, 45);
         ReplayButton.addActionListener((e)->{
+            if(started) return;
             JFileChooser fileChooser = new JFileChooser();
             if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File ret = fileChooser.getSelectedFile();
@@ -347,6 +352,7 @@ public class MainFrame extends JFrame {
                 generate();
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);
+                CheatButton.setVisible(false);
             }
         });
 
@@ -499,6 +505,8 @@ public class MainFrame extends JFrame {
     }
 
     public void showGameOver(String dir, int status) {
+        started = false;
+        CheatButton.setVisible(false);
         if(status == 1) {
             JOptionPane.showMessageDialog(this,"You Won!\nSave at: " + dir);
         } else if(status == 0) {
