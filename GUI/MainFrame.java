@@ -274,7 +274,7 @@ public class MainFrame extends JFrame {
         WdButton.addActionListener((e)->{
             if(started) {
                 if(Game.steps != 0){
-                    Game.LoadPoint();
+                    Game.LoadPoint(false);
                     generate();
                     printTurnAndRound();
                 } else {
@@ -312,6 +312,8 @@ public class MainFrame extends JFrame {
                     JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
+                PlayerName1.setText(Game.players[1].id);
+                PlayerName2.setText(Game.players[0].id);
                 generate();
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);
@@ -323,12 +325,44 @@ public class MainFrame extends JFrame {
         ReplayLast.setBounds(35, 300, 50,50);
         this.add(ReplayLast);
         ReplayLast.setVisible(false);
+        ReplayLast.addActionListener((e)->{
+            if(Game.steps != 0){
+                Game.LoadPoint(true);
+                generate();
+                Game.Show();
+                printTurnAndRound();
+            }
+        });
 
         ReplayNext.setText(">");
         ReplayNext.setFont(new Font("Rockwell", Font.BOLD, 15));
         ReplayNext.setBounds(450, 300, 50,50);
         this.add(ReplayNext);
         ReplayNext.setVisible(false);
+        ReplayNext.addActionListener((e)->{
+            try {
+                Game.nextStep(Game.opt_stack.get(Game.steps),3);
+            } catch (ChessException ex) {
+                JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+                Game = null;
+                this.started = false;
+                RoundLabel.setText("");
+                TurnLabel.setText("");
+                MessagePane.setText("");
+                this.Message = "";
+                for(int y = 0; y < 8; y++) {
+                    for(int x = 0; x < 4; x++) {
+                        GameBoard[x][y].setVisible(false);
+                        GameBoard[x][y].rank = -1;
+                        GameBoard[x][y].player = -1;
+                        GameBoard[x][y].isRevealed = false;
+                        GameBoard[x][y].repaint();
+                    }
+                }
+                return;
+            }
+            printTurnAndRound();
+        });
     }
 
     private void AddLabel() {
@@ -372,7 +406,6 @@ public class MainFrame extends JFrame {
         scrollPane2.setViewportView(RankPane);
         this.add(scrollPane2);
         scrollPane2.setBounds(560, 435, 215, 230);
-
     }
 
     private void AddPlayerInfo() {
