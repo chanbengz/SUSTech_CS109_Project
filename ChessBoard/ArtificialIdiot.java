@@ -368,9 +368,9 @@ public class ArtificialIdiot//change isAI tag
                 }
                 else
                 {
-                    if(beta>=-get.score)
+                    if(beta>=get.score)
                     {
-                        beta=-get.score;
+                        beta=get.score;
                         ans=new Value(beta,new Operation(tmp.x,tmp.y,tmp.x,tmp.y));
                     }
                 }
@@ -390,7 +390,6 @@ public class ArtificialIdiot//change isAI tag
                             opt=opt2;
                         }
                     }
-                    if(opt==null)continue;
                 }
                 else
                 {
