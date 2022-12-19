@@ -160,7 +160,7 @@ public class Player implements Comparable<Player>
     }
     public String GamingMsg()
     {
-        StringBuilder out=new StringBuilder(id+pause+isAI+pause+rating+pause+score+pause+pieces.Msg());
+        StringBuilder out=new StringBuilder(id+pause+isAI+pause+rating+pause+score+pause+passwd+pieces.Msg());
         out.append(history.size()).append(pause);
         for(String game:history)
             out.append(game).append(pause);
@@ -174,11 +174,12 @@ public class Player implements Comparable<Player>
         isAI=Integer.parseInt(data[1]);
         rating=Integer.parseInt(data[2]);
         score=Integer.parseInt(data[3]);
+        passwd=data[4];
         for(int i=0;i<=15;i++)
-            pieces.chess[i]=new Point(Integer.parseInt(data[4+i]));
+            pieces.chess[i]=new Point(Integer.parseInt(data[5+i]));
         history.clear();
-        int n=Integer.parseInt(data[20]);
-        history.addAll(Arrays.asList(data).subList(21, n + 21));
+        int n=Integer.parseInt(data[21]);
+        history.addAll(Arrays.asList(data).subList(22, n + 22));
     }
     @Override
     public int compareTo(Player o) {
