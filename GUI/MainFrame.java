@@ -5,6 +5,7 @@ import ChessBoard.Player;
 import ChessBoard.FileOperation;
 import ChessBoard.ChessException;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -45,6 +46,7 @@ public class MainFrame extends JFrame {
     public Player local;
     public ArrayList<Player> list;
     public boolean isReplay;
+    Clip bgm;
 
     public MainFrame(String title) {
         super(title);
@@ -72,6 +74,13 @@ public class MainFrame extends JFrame {
         for(Player o: list)
             rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));
         printRank(rankness.toString());
+
+        try {
+            bgm = AudioSystem.getClip();
+        } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+        PlayBGM(0);
     }
 
     private void AddChess() {
@@ -123,7 +132,7 @@ public class MainFrame extends JFrame {
         this.ReplayNext = new JButton();
         this.CheatButton = new JButton();
 
-        //---- Startbutton ----
+        //---- StartButton ----
         StartButton.setText("Start");
         this.add(StartButton);
         StartButton.setBounds(10, 615, 100, 45);
@@ -139,6 +148,7 @@ public class MainFrame extends JFrame {
                     }
                     while (local == null) {
                         String id = JOptionPane.showInputDialog(this, "Account: ", "Login",JOptionPane.PLAIN_MESSAGE);
+                        if(id == null || id.equals("")) return;
                         for(Player o: list) {
                             if(o.id.equals(id)) {
                                 local = o;
@@ -151,6 +161,7 @@ public class MainFrame extends JFrame {
                             String passwd;
                             do {
                                 passwd = JOptionPane.showInputDialog(this, "Password: ", "Login", JOptionPane.PLAIN_MESSAGE);
+                                if(passwd == null||passwd.equals("")) return;
                             } while(!local.login(passwd));
                         }
                     }
@@ -158,6 +169,7 @@ public class MainFrame extends JFrame {
                     String id;
                     do {
                         id = JOptionPane.showInputDialog(this, "Create User: ", "Sign up",JOptionPane.PLAIN_MESSAGE);
+                        if(id == null || id.equals("")) return;
                         if(!id.matches("^[a-zA-Z0-9_]{0,15}$")) {
                             JOptionPane.showMessageDialog(this,"Invalid Name","Warning",JOptionPane.PLAIN_MESSAGE);
                         }
@@ -200,6 +212,7 @@ public class MainFrame extends JFrame {
             CheatButton.setVisible(true);
             StartButton.setText("Restart");
             generate();
+            PlayBGM(1);
         });
 
         //---- CheatButton ----
@@ -240,6 +253,7 @@ public class MainFrame extends JFrame {
                     }
                 }
             }
+            PlayBGM(0);
         });
 
         //---- LoadButton ----
@@ -499,5 +513,41 @@ public class MainFrame extends JFrame {
         } while (port < 1 || port > 65535);
 
         Game.NetworkInit(ip, port, select == 0 ? 1 : 0, local);
+    }
+
+    public void PlayBGM(int mode) {
+        if(bgm.isActive()) {
+            bgm.stop();
+            bgm.close();
+        }
+
+        AudioInputStream inputStream = null;
+        if(mode == 0) {
+            try {
+                inputStream = AudioSystem.getAudioInputStream(new File("resources/hall.wav"));
+            } catch (UnsupportedAudioFileException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else if(mode == 1) {
+            try {
+                inputStream = AudioSystem.getAudioInputStream(new File("resources/combat.wav"));
+            } catch (UnsupportedAudioFileException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        try {
+            bgm.open(inputStream);
+        } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        bgm.loop(Clip.LOOP_CONTINUOUSLY);
     }
 }

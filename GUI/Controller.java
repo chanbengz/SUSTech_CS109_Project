@@ -144,12 +144,12 @@ public class Controller implements ActionListener {
                     up = true;
                 }
             }
+        } else {
+            if(x > 1)  target.validCord[x - 1][y] = target.canMoveTo(mainFrame.GameBoard[x - 2][y - 1]); // left
+            if(x < 4)  target.validCord[x + 1][y] = target.canMoveTo(mainFrame.GameBoard[x][y - 1]); //right
+            if(y > 1)  target.validCord[x][y - 1] = target.canMoveTo(mainFrame.GameBoard[x - 1][y - 2]); // up
+            if(y < 8)  target.validCord[x][y + 1] = target.canMoveTo(mainFrame.GameBoard[x - 1][y]); // down
         }
-
-        if(x > 1)  target.validCord[x - 1][y] = target.canMoveTo(mainFrame.GameBoard[x - 2][y - 1]); // left
-        if(x < 4)  target.validCord[x + 1][y] = target.canMoveTo(mainFrame.GameBoard[x][y - 1]); //right
-        if(y > 1)  target.validCord[x][y - 1] = target.canMoveTo(mainFrame.GameBoard[x - 1][y - 2]); // up
-        if(y < 8)  target.validCord[x][y + 1] = target.canMoveTo(mainFrame.GameBoard[x - 1][y]); // down
     }
 
     private void SwapPlayer() {
