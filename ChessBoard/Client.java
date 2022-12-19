@@ -9,6 +9,7 @@ public class Client
     }
     public static synchronized void start(String ip, int port)
     {
+        System.out.println(ip+":"+port);
         stop();
         clientHandle=new ClientHandle(ip, port);
         new Thread(clientHandle,"DarkChessClient").start();
