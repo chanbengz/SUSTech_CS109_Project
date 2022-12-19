@@ -512,13 +512,6 @@ public class ChessBoard
 
     public void nextStep(Operation opt, int isAI) throws ChessException
     {
-
-        if (players[0].score>=60) {
-            mainFrame.showGameOver(GameOver(), 1);
-        }
-        if (players[1].score>=60) {
-            mainFrame.showGameOver(GameOver(), -1);
-        }
         if(isAI != 3) {
             opt=Input();
         }
@@ -564,5 +557,11 @@ public class ChessBoard
             return;
         }
         SavePoint();
+        if (players[0].score>=60) {
+        mainFrame.showGameOver(GameOver(), 1);
+    }
+        if (players[1].score>=60) {
+            mainFrame.showGameOver(GameOver(), -1);
+        }
     }
 }
