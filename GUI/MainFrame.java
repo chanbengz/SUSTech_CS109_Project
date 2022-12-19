@@ -44,6 +44,7 @@ public class MainFrame extends JFrame {
     public boolean cheat;
     public Player local;
     public ArrayList<Player> list;
+    public boolean isReplay;
 
     public MainFrame(String title) {
         super(title);
@@ -251,17 +252,17 @@ public class MainFrame extends JFrame {
                     data=FileOperation.Load(dir);
                 } catch (ChessException ex) {
                     JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
-                    throw new RuntimeException(ex);
+                    return ;
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
                 String name=dir.substring(dir.lastIndexOf("/")+1);
                 try {
+                    Game = new ChessBoard();
                     Game.GameContinue(data,name.substring(0,name.length()-5));
                     generate();
                 } catch (ChessException ex) {
                     JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
-                    throw new RuntimeException(ex);
                 }
             }
         });
@@ -304,19 +305,14 @@ public class MainFrame extends JFrame {
                 ChessBoard Replay = new ChessBoard();
                 String name = dir.substring(dir.lastIndexOf("/") + 1);
                 this.Game = Replay;
+                Game.mainFrame = this;
                 try {
                     Game.LoadReplay(data, name.substring(0, name.length() - 6));
                 } catch (ChessException ex) {
                     JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
-                    throw new RuntimeException(ex);
-
+                    return;
                 }
-                try {
-                    Game.Replay();
-                } catch (ChessException ex) {
-                    JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
-                    throw new RuntimeException(ex);
-                }
+                generate();
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);
             }

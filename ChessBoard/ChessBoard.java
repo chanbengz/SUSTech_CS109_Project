@@ -482,6 +482,7 @@ public class ChessBoard
             opt_stack.add(new Operation(Integer.parseInt(data[40+i])));
         turn=0;
         steps=0;
+        InitialMap();
     }
     public void Replay() throws ChessException
     {
