@@ -33,6 +33,7 @@ public class PieceComponent extends JButton {
     }
     public boolean canMoveTo7(PieceComponent target) { // rank is 7
         if (!target.isRevealed) return true;
+        if (target.rank == 0) return false;
         return target.player != this.player;
     }
 

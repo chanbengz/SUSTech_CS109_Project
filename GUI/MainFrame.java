@@ -544,8 +544,8 @@ public class MainFrame extends JFrame {
             if(port < 1 || port > 65535)
                 JOptionPane.showMessageDialog(this,"Invalid port");
         } while (port < 1 || port > 65535);
-
         Game.NetworkInit(ip, port, select, local);
+        JOptionPane.showMessageDialog(this,"Waiting Connection...","Success",JOptionPane.PLAIN_MESSAGE);
     }
 
     public void PlayBGM(int mode) {
