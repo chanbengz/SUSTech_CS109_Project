@@ -17,7 +17,7 @@ public class ServerHandle implements Runnable
             selector=Selector.open();
             ServerSocketChannel serverChannel=ServerSocketChannel.open();
             serverChannel.configureBlocking(false);
-            serverChannel.socket().bind(new InetSocketAddress(port));
+            serverChannel.socket().bind(new InetSocketAddress(port),1024);
             serverChannel.register(selector, SelectionKey.OP_ACCEPT);
             started=true;
             System.out.println("Server starting at：" + port);
@@ -67,14 +67,14 @@ public class ServerHandle implements Runnable
         {
             if(key.isAcceptable())
             {
-                ServerSocketChannel ssc=(ServerSocketChannel) key.channel();
-                SocketChannel sc=ssc.accept();
+                ServerSocketChannel ssc=(ServerSocketChannel)key.channel();
+                sc=ssc.accept();
                 sc.configureBlocking(false);
                 sc.register(selector, SelectionKey.OP_READ);
             }
             if(key.isReadable())
             {
-                sc=(SocketChannel) key.channel();
+                sc=(SocketChannel)key.channel();
                 ByteBuffer buffer=ByteBuffer.allocate(1024);
                 int readBytes=sc.read(buffer);
                 if(readBytes>0)
@@ -101,7 +101,6 @@ public class ServerHandle implements Runnable
     }
     public void sendMsg(byte[] msg) throws IOException
     {
-        sc.register(selector, SelectionKey.OP_READ);
         doWrite(sc,msg);
     }
 }

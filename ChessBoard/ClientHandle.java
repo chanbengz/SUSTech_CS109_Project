@@ -47,9 +47,8 @@ public class ClientHandle implements Runnable
                 selector.select(1000);
                 Set<SelectionKey> keys=selector.selectedKeys();
                 Iterator<SelectionKey> it=keys.iterator();
-                SelectionKey key;
                 while(it.hasNext()){
-                    key=it.next();
+                    SelectionKey key=it.next();
                     it.remove();
                     try {handleInput(key);}
                     catch(Exception e)
@@ -77,7 +76,7 @@ public class ClientHandle implements Runnable
     {
         if(key.isValid())
         {
-            SocketChannel sc=(SocketChannel) key.channel();
+            SocketChannel sc=(SocketChannel)key.channel();
             if(key.isConnectable())
             {
                 if(!sc.finishConnect())
