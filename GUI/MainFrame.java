@@ -295,7 +295,11 @@ public class MainFrame extends JFrame {
                 ChessBoard Replay = new ChessBoard();
                 String name = dir.substring(dir.lastIndexOf("\\") + 1);
                 this.Game = Replay;
-                Game.LoadReplay(data, name.substring(0, name.length() - 6));
+                try {
+                    Game.LoadReplay(data, name.substring(0, name.length() - 6));
+                } catch (ChessException ex) {
+                    throw new RuntimeException(ex);
+                }
                 Game.Replay();
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);

@@ -80,7 +80,11 @@ public class Main
             throw new RuntimeException(e);
         }
         String name=dir.substring(dir.lastIndexOf("\\")+1);
-        Replay.LoadReplay(data,name.substring(0,name.length()-6));
+        try {
+            Replay.LoadReplay(data,name.substring(0,name.length()-6));
+        } catch (ChessException e) {
+            throw new RuntimeException(e);
+        }
         Replay.Replay();
     }
     static void test4()

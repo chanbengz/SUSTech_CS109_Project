@@ -460,14 +460,8 @@ public class ChessBoard
         int n=Integer.parseInt(data[40]);
         if(n+41!=data.length)throw new ChessException("Wrong options size.\nError Code:307");
     }
-    public void LoadReplay(String raw,String name)
-    {
-        try {
-            FormatCheck(raw,name);
-        } catch (ChessException e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
+    public void LoadReplay(String raw,String name) throws ChessException {
+        FormatCheck(raw,name);
         String[] data=raw.split(Player.pause);
         uuid=UUID.fromString(data[0]);
         for(int i=0;i<=1;i++)
