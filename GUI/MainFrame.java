@@ -124,6 +124,11 @@ public class MainFrame extends JFrame {
                 String[] logoption = {"Sign in", "Sign up"};
                 int login = JOptionPane.showOptionDialog(this, "Sign up or Sign in", "Login",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, logoption, null);
                 if(login == 0) {
+                    if(list.size()==0)
+                    {
+                        JOptionPane.showMessageDialog(this,"Empty User List","Warning",JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
                     while (local == null) {
                         String id = JOptionPane.showInputDialog(this, "Account: ", "Login",JOptionPane.PLAIN_MESSAGE);
                         for(Player o: list) {
