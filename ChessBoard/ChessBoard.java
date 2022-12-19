@@ -126,8 +126,7 @@ public class ChessBoard
         System.out.printf("Steps: %d\n",steps);
         System.out.println();
         StringBuilder rankness = new StringBuilder();
-        // rankness.append(String.format("%5s %8d %7d\n", players[0].id, players[0].rating, players[0].score));
-        rankness.append(String.format("%6s %7d %7d\n", players[1].id, players[1].rating, players[1].score));
+        if(players[1].isAI != 3)  rankness.append(String.format("%6s %7d %7d\n", players[1].id, players[1].rating, players[1].score));
         System.out.println(rankness);
         for(Player o: mainFrame.list)
             rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));

@@ -50,14 +50,9 @@ public class Controller implements ActionListener {
                             } catch (ChessException ex) {
                                 throw new RuntimeException(ex);
                             }
-                        } else {
-                            try {
-                                mainFrame.Game.nextStep(null,5);
-                            } catch (ChessException ex) {
-                                throw new RuntimeException(ex);
-                            }
+                            SwapPlayer();
                         }
-                        SwapPlayer();
+
                     } else {
                         first.selected = false;
                         first.update();
@@ -79,14 +74,9 @@ public class Controller implements ActionListener {
                             } catch (ChessException ex) {
                                 throw new RuntimeException(ex);
                             }
-                        } else {
-                            try {
-                                mainFrame.Game.nextStep(null,5);
-                            } catch (ChessException ex) {
-                                throw new RuntimeException(ex);
-                            }
+                            SwapPlayer();
                         }
-                        SwapPlayer();
+
                         first.selected = false;
                         first.update();
                         first = null;
