@@ -27,6 +27,8 @@ public class PieceComponent extends JButton {
             return false;
         } else if (this.rank == 6 && target.rank == 1) {
             return true;
+        } else if(this.rank == 6 && target.rank == 7){
+            return false;
         } else return target.rank > this.rank;
     }
     public boolean canMoveTo7(PieceComponent target) { // rank is 7
