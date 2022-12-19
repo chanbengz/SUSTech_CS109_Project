@@ -248,7 +248,8 @@ public class MainFrame extends JFrame {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                String name=dir.substring(dir.lastIndexOf("/")+1);
+                String name=dir.substring(dir.lastIndexOf("\\")+1);
+                Game=new ChessBoard();
                 try {
                     Game.GameContinue(data,name.substring(0,name.length()-5));
                     generate();
@@ -292,7 +293,7 @@ public class MainFrame extends JFrame {
                     throw new RuntimeException(ex);
                 }
                 ChessBoard Replay = new ChessBoard();
-                String name = dir.substring(dir.lastIndexOf("/") + 1);
+                String name = dir.substring(dir.lastIndexOf("\\") + 1);
                 this.Game = Replay;
                 Game.LoadReplay(data, name.substring(0, name.length() - 6));
                 Game.Replay();

@@ -514,6 +514,7 @@ public class ChessBoard
         int n=Integer.parseInt(data[2]);
         for(int i=1;i<=n;i++)
             opt_stack.add(new Operation(Integer.parseInt(data[2+i])));
+        InitialMap();
     }
 
     public void nextStep(Operation opt, int isAI) throws ChessException
