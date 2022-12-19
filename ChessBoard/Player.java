@@ -48,6 +48,8 @@ public class Player implements Comparable<Player>
     {
         id=userid;
         this.isAI=isAI;
+        if(isAI==4)rating=500;
+        if(isAI==1)rating=1300;
         uuid=UUID.nameUUIDFromBytes(id.getBytes());
         String passwd="default";
         try {
@@ -62,6 +64,8 @@ public class Player implements Comparable<Player>
     {
         id=userid;
         this.isAI=isAI;
+        if(isAI==4)rating=500;
+        if(isAI==1)rating=1300;
         uuid=UUID.nameUUIDFromBytes(id.getBytes());
         if(passwd.equals("")) passwd = "default";
         try {
