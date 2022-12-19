@@ -67,6 +67,10 @@ public class MainFrame extends JFrame {
         ChessboardBackg.setBounds(115, 0, 305, 610);
         list = FileOperation.ScanUser("User/");
         Collections.sort(list);
+        StringBuilder rankness = new StringBuilder();
+        for(Player o: list)
+            rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));
+        printRank(rankness.toString());
     }
 
     private void AddChess() {
