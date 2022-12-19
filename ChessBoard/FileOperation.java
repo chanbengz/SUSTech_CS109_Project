@@ -38,6 +38,8 @@ public class FileOperation
         String tips=new String(tmp[1]);
         if(!tips.equals("qwq"))
             JOptionPane.showMessageDialog(null,tips,"Warning",JOptionPane.WARNING_MESSAGE);
+        if(tips.contains("Too"))
+            throw new ChessException(tips);
         return new String(cipher.doFinal(tmp[0]));
     }
     public static String SaveGame(ChessBoard game) throws IOException {
@@ -151,11 +153,20 @@ public class FileOperation
         fos.close();
     }
     public static String NetRead(UUID uuid) throws IOException, ChessException {
+        String dirFile="Network.tmp";
+        File file=new File(dirFile);
+        if(!file.exists())
+        {
+            if(!file.createNewFile())
+                throw new IOException();
+            FileOutputStream fos=new FileOutputStream(file);
+            fos.write("qwq".getBytes());
+            fos.close();
+        }
         Path path=Paths.get("Network.tmp");
         String input=Files.readString(path);
         if(input.equals("qwq"))return null;
-        String dirFile="Network.tmp";
-        File file=new File(dirFile);
+        file=new File(dirFile);
         FileWriter fileWriter=new FileWriter(file);
         fileWriter.write("qwq");
         fileWriter.flush();

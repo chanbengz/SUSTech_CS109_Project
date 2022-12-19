@@ -183,6 +183,6 @@ public class Player implements Comparable<Player>
 
     @Override
     public int compareTo(Player o) {
-        return this.rating - o.rating;
+        return o.rating - this.rating;
     }
 }

@@ -27,10 +27,13 @@ public class PieceComponent extends JButton {
             return false;
         } else if (this.rank == 6 && target.rank == 1) {
             return true;
+        } else if(this.rank == 6 && target.rank == 7){
+            return false;
         } else return target.rank > this.rank;
     }
     public boolean canMoveTo7(PieceComponent target) { // rank is 7
         if (!target.isRevealed) return true;
+        if (target.rank == 0) return false;
         return target.player != this.player;
     }
 
@@ -95,6 +98,6 @@ public class PieceComponent extends JButton {
         String color = this.player == 0 ? "B" : "R";
         String select = "";
         if(selected) select = "selected/";
-        return "resources/" + select + color + Integer.toString(rank) + ".png";
+        return "resources/" + select + color + rank + ".png";
     }
 }

@@ -205,7 +205,15 @@ public class MainFrame extends JFrame {
                 pvp = false;
             } else {
                 pvp = true;
-                Connect();
+                try
+                {
+                    Connect();
+                }
+                catch (ChessException ex)
+                {
+                    JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
             }
             Game.mainFrame = this;
             Game.InitialMap();
@@ -519,7 +527,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void Connect() {
+    private void Connect() throws ChessException {
         String[] option = {"Guest", "Host"};
         int select = JOptionPane.showOptionDialog(this, "Decide if you're the host", "Connect",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, option, null);
         String ip = "";
@@ -536,8 +544,8 @@ public class MainFrame extends JFrame {
             if(port < 1 || port > 65535)
                 JOptionPane.showMessageDialog(this,"Invalid port");
         } while (port < 1 || port > 65535);
-
-        Game.NetworkInit(ip, port, select == 0 ? 1 : 0, local);
+        Game.NetworkInit(ip, port, select, local);
+        JOptionPane.showMessageDialog(this,"Waiting Connection...","Success",JOptionPane.PLAIN_MESSAGE);
     }
 
     public void PlayBGM(int mode) {

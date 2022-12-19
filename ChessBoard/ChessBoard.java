@@ -344,12 +344,14 @@ public class ChessBoard
         opt_stack=new ArrayList<>();
         game_stack=new ArrayList<>();
     }
-    public void NetworkInit(String ip,int port,int who,Player Tim)
-    {
+    public void NetworkInit(String ip,int port,int who,Player Tim) throws ChessException {
+        String netData;
         if(who==0)
         {
             Client.start(ip,port);
             try {
+                Client.sendMsg(FileOperation.NetSend("qwq",UUID.nameUUIDFromBytes("bonus".getBytes())));
+                netData=FileOperation.NetReceive(UUID.nameUUIDFromBytes("bonus".getBytes()));
                 Client.sendMsg(FileOperation.NetSend(Tim.Msg(),UUID.nameUUIDFromBytes("bonus".getBytes())));
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -359,16 +361,16 @@ public class ChessBoard
         {
             Server.start(port);
             try {
-                Server.sendMsg(FileOperation.NetSend(Tim.Msg(),UUID.nameUUIDFromBytes("bonus".getBytes())));
-            } catch (IOException e) {
+                if(FileOperation.NetReceive(UUID.nameUUIDFromBytes("bonus".getBytes())).equals("qwq"))
+                    Server.sendMsg(FileOperation.NetSend(Tim.Msg(),UUID.nameUUIDFromBytes("bonus".getBytes())));
+                netData=FileOperation.NetReceive(UUID.nameUUIDFromBytes("bonus".getBytes()));
+            } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
+            } catch (ChessException e) {
+                throw new ChessException(e.getMessage());
             }
         }
-        try {
-            players[who].NetLoad(FileOperation.NetReceive(UUID.nameUUIDFromBytes("bonus".getBytes())));
-        } catch (IOException | InterruptedException | ChessException e) {
-            throw new RuntimeException(e);
-        }
+        players[who].NetLoad(netData);
         if(who==0)
         {
             String msg;
