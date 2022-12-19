@@ -10,6 +10,7 @@ public class PieceComponent extends JButton {
     public int rank;
     public int player;
     public int x, y;
+    public int theme;
     public boolean [][]validCord = new boolean[5][9];
 
     public PieceComponent(int player, int rank) {
@@ -86,7 +87,8 @@ public class PieceComponent extends JButton {
         } else if(rank == 0) {
             this.setIcon(null);
         } else {
-            this.setIcon(new ImageIcon("resources/hide.png"));
+            String themestr = "theme" + theme + "/";
+            this.setIcon(new ImageIcon("resources/" + themestr +"hide.png"));
         }
         this.setBorder(null);
         this.setOpaque(false);
@@ -97,7 +99,8 @@ public class PieceComponent extends JButton {
     public String getPath() {
         String color = this.player == 0 ? "B" : "R";
         String select = "";
+        String themestr = "theme" + theme + "/";
         if(selected) select = "selected/";
-        return "resources/" + select + color + rank + ".png";
+        return "resources/" + themestr + select + color + rank + ".png";
     }
 }

@@ -126,10 +126,14 @@ public class ChessBoard
         System.out.printf("Steps: %d\n",steps);
         System.out.println();
         StringBuilder rankness = new StringBuilder();
-        if(players[1].isAI != 3)  rankness.append(String.format("%6s %7d %7d\n", players[1].id, players[1].rating, players[1].score));
+        if(players[1].isAI != 3)  rankness.append(String.format("%-8s %5d %7d\n", players[1].id, players[1].rating, players[1].score));
+        rankness.append(String.format("%-8s %5d %7d\n", players[0].id, players[0].rating, players[0].score));
         System.out.println(rankness);
-        for(Player o: mainFrame.list)
-            rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));
+        for(Player o: mainFrame.list) {
+            if(!o.id.equals(players[0].id))
+                rankness.append(String.format("%-8s %5d %7d\n", o.id, o.rating, o.score));
+        }
+
         mainFrame.printRank(rankness.toString());
         for(int i=1;i<=8;i++,System.out.println())
             for(int j=1;j<=4;j++)
@@ -521,6 +525,14 @@ public class ChessBoard
     }
     public void nextStep(Operation opt, int isAI) throws ChessException
     {
+        if (players[0].score>=60) {
+            mainFrame.showGameOver(GameOver(), 1);
+            return;
+        }
+        if (players[1].score>=60) {
+            mainFrame.showGameOver(GameOver(), -1);
+            return;
+        }
         if(isAI != 3) {
             opt=Input();
         }
@@ -567,8 +579,9 @@ public class ChessBoard
         }
         SavePoint();
         if (players[0].score>=60) {
-        mainFrame.showGameOver(GameOver(), 1);
-    }
+            mainFrame.showGameOver(GameOver(), 1);
+            return;
+        }
         if (players[1].score>=60) {
             mainFrame.showGameOver(GameOver(), -1);
         }

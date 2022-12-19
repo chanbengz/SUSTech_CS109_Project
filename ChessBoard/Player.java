@@ -164,7 +164,7 @@ public class Player implements Comparable<Player>
     }
     public String GamingMsg()
     {
-        StringBuilder out=new StringBuilder(id+pause+isAI+pause+rating+pause+score+pause+passwd+pieces.Msg());
+        StringBuilder out=new StringBuilder(id+pause+isAI+pause+rating+pause+score+pause+passwd+pause+pieces.Msg());
         out.append(history.size()).append(pause);
         for(String game:history)
             out.append(game).append(pause);
@@ -172,6 +172,7 @@ public class Player implements Comparable<Player>
     }
     public void LoadGaming(String input)
     {
+        System.out.println(input);
         String[] data=input.split(pause);
         id=data[0];
         uuid=UUID.nameUUIDFromBytes(id.getBytes());

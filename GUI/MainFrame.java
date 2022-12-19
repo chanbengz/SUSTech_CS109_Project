@@ -16,8 +16,6 @@ import java.util.Collections;
 public class MainFrame extends JFrame {
     private boolean started;
     public ChessBoard Game;
-    final private int boardY = 10;
-    final private int boardX = 120;
 
     public PieceComponent[][] GameBoard;
     private final JLabel ChessboardBackg;
@@ -46,6 +44,7 @@ public class MainFrame extends JFrame {
     public Player[] local;
     public ArrayList<Player> list;
     private boolean isLogin;
+    private int theme;
     Clip bgm;
 
     public MainFrame(String title) {
@@ -61,18 +60,22 @@ public class MainFrame extends JFrame {
         this.isLogin = false;
         local = new Player[2];
 
+        String[] options = {"Genius", "Basic"};
+        theme = JOptionPane.showOptionDialog(this, "Please choose theme", "Start",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null) + 1;
+        String themestr = "theme" + theme + "/";
         AddChess();
         AddButton();
         AddLabel();
         AddInfoArea();
         AddPlayerInfo();
         //---- ChessboardBackg ----
-        ChessboardBackg.setIcon(new ImageIcon("resources/board.jpg"));
+        ChessboardBackg.setIcon(new ImageIcon("resources/" + themestr + "board.jpg"));
         this.add(ChessboardBackg);
         ChessboardBackg.setBounds(115, 0, 305, 610);
 
         JLabel Background = new JLabel(new ImageIcon("resources/bgpic1.jpg"));
-        Background.setBounds(0,0,785,700);
+        Background.setBounds(0,0,785,785);
         this.add(Background);
 
         try {
@@ -84,7 +87,7 @@ public class MainFrame extends JFrame {
         Collections.sort(list);
         StringBuilder rankness = new StringBuilder();
         for(Player o: list)
-            rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));
+            rankness.append(String.format("%-8s %5d %7d\n", o.id, o.rating, o.score));
         printRank(rankness.toString());
 
         try {
@@ -98,10 +101,15 @@ public class MainFrame extends JFrame {
     private void AddChess() {
         this.GameBoard = new PieceComponent[4][8];
         this.controller = new Controller();
+        int disx = theme == 1 ? 73 : 72;
+        int disy = theme == 1 ? 74 : 72;
+        int boardY = theme == 1 ? 10 : 15;
+        int boardX = theme == 1 ? 120 : 115;
         for(int y = 0; y < 8; y++) {
             for(int x = 0; x < 4; x++) {
                 GameBoard[x][y] = new PieceComponent(0,0);
-                GameBoard[x][y].setLocation(boardX + 73 * x, boardY + 74 * y);
+                GameBoard[x][y].theme = theme;
+                GameBoard[x][y].setLocation(boardX + disx * x, boardY + disy * y);
                 GameBoard[x][y].setVisible(false);
                 GameBoard[x][y].addActionListener(this.controller);
                 this.add(GameBoard[x][y]);
@@ -463,7 +471,7 @@ public class MainFrame extends JFrame {
         PlayerName1.setHorizontalAlignment(SwingConstants.CENTER);
         PlayerName1.setHorizontalTextPosition(SwingConstants.CENTER);
         this.add(PlayerName1);
-        PlayerName1.setBounds(15, 15, 85, 25);
+        PlayerName1.setBounds(15, 25, 85, 25);
 
         //---- PlayerName2 ----
         PlayerName2.setText("");
@@ -473,7 +481,7 @@ public class MainFrame extends JFrame {
         PlayerName2.setHorizontalAlignment(SwingConstants.CENTER);
         PlayerName2.setHorizontalTextPosition(SwingConstants.CENTER);
         this.add(PlayerName2);
-        PlayerName2.setBounds(435, 570, 85, 25);
+        PlayerName2.setBounds(435, 550, 85, 25);
     }
 
     public void printMess(String mess) {
@@ -482,7 +490,7 @@ public class MainFrame extends JFrame {
     }
 
     public void printRank(String mess) {
-        String info = "+----+--------+-------+\n| ID | Rating | Score |\n+----+--------+-------+\n";
+        String info = "+------+------+-------+\n|  ID  |Rating| Score |\n+------+------+-------+\n";
         RankPane.setText(info + mess);
     }
 
@@ -619,7 +627,7 @@ public class MainFrame extends JFrame {
             Collections.sort(list);
             StringBuilder rankness = new StringBuilder();
             for(Player o: list)
-                rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));
+                rankness.append(String.format("%-8s %5d %7d\n", o.id, o.rating, o.score));
             printRank(rankness.toString());
             return tmp;
         }
