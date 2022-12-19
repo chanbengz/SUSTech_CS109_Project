@@ -94,6 +94,10 @@ public class Player implements Comparable<Player>
         this.history.addAll(user.history);
         this.passwd=user.passwd;
     }
+    public boolean CheckAI()
+    {
+        return isAI==1 || isAI==2 || isAI==4;
+    }
     public String Msg()
     {
         return id+pause+isAI+pause+rating+pause+pieces.Msg();

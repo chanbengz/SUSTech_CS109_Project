@@ -68,6 +68,8 @@ public class ChessBoard
         opt_stack.addAll(page.opt_stack);
         for(int i=0;i<=1;i++)
             players[i]=new Player(page.players[i]);
+        if(players[turn].CheckAI() && !players[turn^1].CheckAI())
+            LoadPoint();
     }
     void CreatePieces()
     {
