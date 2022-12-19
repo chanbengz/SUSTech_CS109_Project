@@ -111,7 +111,7 @@ public class Controller implements ActionListener {
         int x = target.x; int y = target.y;
         boolean right = false, left = false, up = false, down = false;
         if(target.rank == 7) {
-            for (int i = x; i < 4; i++) { // right
+            for (int i = x; i <= 4; i++) { // right
                 PieceComponent term = mainFrame.GameBoard[i-1][y-1];
                 if(right && target.canMoveTo7(term)) {
                     target.validCord[i][y] = true;
@@ -122,7 +122,7 @@ public class Controller implements ActionListener {
             } for (int i = x; i >=1 ; i--) { // left
                 PieceComponent term = mainFrame.GameBoard[i-1][y-1];
                 if(left && target.canMoveTo7(term)) {
-                    target.validCord[i][x] = true;
+                    target.validCord[i][y] = true;
                 }
                 if(term.rank != 0) {
                     left = true;

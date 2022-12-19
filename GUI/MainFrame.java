@@ -94,7 +94,10 @@ public class MainFrame extends JFrame {
             for(int x = 0; x < 4; x++) {
                 GameBoard[x][y].setVisible(true);
                 int who = this.Game.map[y + 1][x + 1].player;
-                int value = (int)Math.pow(-1,who) * this.Game.players[who].pieces.chess[this.Game.map[y+1][x+1].index].level;
+                int value = 9;
+                if(who != -1) {
+                    value = (int)Math.pow(-1,who) * this.Game.players[who].pieces.chess[this.Game.map[y+1][x+1].index].level;
+                }
                 if(value != 9) {
                     GameBoard[x][y].rank = value > 0 ? value : -value;
                     GameBoard[x][y].player = value > 0 ? 0 : 1;
@@ -277,6 +280,7 @@ public class MainFrame extends JFrame {
                     Game.LoadPoint(false);
                     generate();
                     printTurnAndRound();
+                    Game.Show();
                 } else {
                     JOptionPane.showMessageDialog(this,"You can't withdraw", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
@@ -462,6 +466,8 @@ public class MainFrame extends JFrame {
         int round = Game.steps;
         RoundLabel.setText(String.format("ROUND %2d", round));
         TurnLabel.setText(player + "'s Turn");
+        if(turn == 0) TurnLabel.setForeground(Color.BLACK);
+        else TurnLabel.setForeground(Color.RED);
     }
 
     public void showGameOver(String dir, int status) {
