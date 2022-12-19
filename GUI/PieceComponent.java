@@ -22,15 +22,12 @@ public class PieceComponent extends JButton {
     }
 
     public boolean canMoveTo(PieceComponent target) { // rank is not 7
+        if(target.rank == 0) return true;
         if(!target.isRevealed || target.player == this.player) {
             return false;
         } else if (this.rank == 6 && target.rank == 1) {
             return true;
-        } else if (target.rank > this.rank) {
-            return false;
-        } else {
-            return true;
-        }
+        } else return target.rank > this.rank;
     }
     public boolean canMoveTo7(PieceComponent target) { // rank is 7
         if (!target.isRevealed) return true;
