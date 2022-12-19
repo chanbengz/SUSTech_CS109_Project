@@ -162,7 +162,12 @@ public class Main
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ArrayList<Player> list=FileOperation.ScanUser("User/");
+        ArrayList<Player> list;
+        try {
+            list = FileOperation.ScanUser("User/");
+        } catch (ChessException e) {
+            throw new RuntimeException(e);
+        }
         for(Player tmp:list)
             System.out.println(tmp.UserMsg());
     }
@@ -173,9 +178,18 @@ public class Main
         byte[] s= rsCode.Encode(c);
         System.out.println(Arrays.toString(s));
         byte[] a={-90, -75, 58, 121, -84, 32, -103, 78, -47, 59, 114, -121, 76, 70, -65, 92, -48, 106, -97, -32, -19, 16, -119, -3, 75, -56, 79, 24, -85, 6, -35, -70, 108, 104, 120, -108, 88, -13, -114, -27, -10, 8, 57, 15, -67, 63, -113, -22, 101, 22, -17, 69, -68, 50, 20, -10, 89, 99, 0, 9, -28, -51, -116, 109, 122, 100, -96, 43, 83, -11, 1, -39, -101, -112, 74, -41, -84, 110, 54, 21, -76, 36, 49, -110, -86, 50, 83, 111, 67, 69, -59, -122, -103, 90, -85, -94, 111, -48, 49, 75, -79, -89, 31, -88, -11, -39, -118, -45, 14, -96, -1, 53, 33, -46, -126, -107};
-        byte[] b=rsCode.Decode(a);
+        byte[] b;
+        try {
+            b = rsCode.Decode(a)[0];
+        } catch (ChessException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println(Arrays.toString(b));
-        b=rsCode.Decode(s);
+        try {
+            b=rsCode.Decode(s)[0];
+        } catch (ChessException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println(Arrays.toString(b));
     }
     public static void main(String[] args)

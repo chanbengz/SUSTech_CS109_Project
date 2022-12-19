@@ -69,7 +69,7 @@ public class ChessBoard
         for(int i=0;i<=1;i++)
             players[i]=new Player(page.players[i]);
         if(!isReplay && players[turn].CheckAI() && !players[turn^1].CheckAI())
-            LoadPoint(isReplay);
+            LoadPoint(false);
     }
     void CreatePieces()
     {
@@ -272,7 +272,7 @@ public class ChessBoard
                 if(flag)opt=opt_stack.get(steps);
                 else
                 {
-                    if(steps!=0){LoadPoint(isReplay);Show();continue;}
+                    if(steps!=0){LoadPoint(true);Show();continue;}
                     else throw new ChessException("Invalid regret.\nError Code:307");
                 }
                 if(opt.isValid()) System.out.println("Forward");
@@ -283,7 +283,7 @@ public class ChessBoard
                 opt=Input();
                 if(opt.isLoad())
                 {
-                    if(steps!=0){LoadPoint(isReplay);Show();continue;}
+                    if(steps!=0){LoadPoint(false);Show();continue;}
                     else throw new ChessException("Invalid regret.\nError Code:307");
                 }
                 if(opt.isSave())

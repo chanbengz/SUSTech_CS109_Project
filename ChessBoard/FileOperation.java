@@ -1,6 +1,7 @@
 package ChessBoard;
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,11 +30,15 @@ public class FileOperation
         RSCode rsCode=new RSCode();
         return Base64.getEncoder().encode(rsCode.Encode(cipher.doFinal(data.getBytes())));
     }
-    static String Decrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    static String Decrypt(String data, UUID uuid) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, ChessException {
         Cipher cipher=Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE,GenerateKey(uuid));
         RSCode rsCode=new RSCode();
-        return new String(cipher.doFinal(rsCode.Decode(Base64.getDecoder().decode(data))));
+        byte[][] tmp=rsCode.Decode(Base64.getDecoder().decode(data));
+        String tips=new String(tmp[1]);
+        if(!tips.equals("qwq"))
+            JOptionPane.showMessageDialog(null,tips,"Warning",JOptionPane.WARNING_MESSAGE);
+        return new String(cipher.doFinal(tmp[0]));
     }
     public static String SaveGame(ChessBoard game) throws IOException {
         StringBuilder data= new StringBuilder(game.uuid.toString()+Player.pause);
@@ -145,7 +150,7 @@ public class FileOperation
         fos.write(buf);
         fos.close();
     }
-    public static String NetRead(UUID uuid) throws IOException {
+    public static String NetRead(UUID uuid) throws IOException, ChessException {
         Path path=Paths.get("Network.tmp");
         String input=Files.readString(path);
         if(input.equals("qwq"))return null;
@@ -184,8 +189,7 @@ public class FileOperation
         }
         throw new ChessException("Connection error: Time out.");
     }
-    public static ArrayList<Player> ScanUser(String dir)
-    {
+    public static ArrayList<Player> ScanUser(String dir) throws ChessException {
         ArrayList<Player> list=new ArrayList<>();
         File file=new File(dir);
         File[] fs=file.listFiles();

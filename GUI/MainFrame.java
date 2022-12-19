@@ -20,7 +20,7 @@ public class MainFrame extends JFrame {
     final private int boardX = 120;
 
     public PieceComponent[][] GameBoard;
-    private JLabel ChessboardBackg;
+    private final JLabel ChessboardBackg;
     private JButton StartButton;
     private JButton StopButton;
     private JButton LoadButton;
@@ -45,7 +45,6 @@ public class MainFrame extends JFrame {
     public boolean cheat;
     public Player local;
     public ArrayList<Player> list;
-    public boolean isReplay;
     Clip bgm;
 
     public MainFrame(String title) {
@@ -68,7 +67,12 @@ public class MainFrame extends JFrame {
         ChessboardBackg.setIcon(new ImageIcon("resources/board.jpg"));
         this.add(ChessboardBackg);
         ChessboardBackg.setBounds(115, 0, 305, 610);
-        list = FileOperation.ScanUser("User/");
+        try {
+            list = FileOperation.ScanUser("User/");
+        } catch (ChessException e) {
+            JOptionPane.showMessageDialog(this,e.getMessage(),"Warning",JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         Collections.sort(list);
         StringBuilder rankness = new StringBuilder();
         for(Player o: list)
@@ -219,9 +223,7 @@ public class MainFrame extends JFrame {
         CheatButton.setText("Cheat");
         this.add(CheatButton);
         CheatButton.setBounds(10,500,100,45);
-        CheatButton.addActionListener((e)->{
-            this.cheat = !this.cheat;
-        });
+        CheatButton.addActionListener((e)-> this.cheat = !this.cheat);
         CheatButton.setVisible(false);
 
         //---- StopButton ----
@@ -230,7 +232,7 @@ public class MainFrame extends JFrame {
         StopButton.setBounds(120, 615, 100, 45);
         StopButton.addActionListener((e)->{
             if( started ) {
-                String dir = null;
+                String dir;
                 try {
                     dir = FileOperation.GamePause(this.Game);
                 } catch (IOException ex) {
@@ -264,7 +266,7 @@ public class MainFrame extends JFrame {
             JFileChooser fileChooser = new JFileChooser();
             if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
                 File ret = fileChooser.getSelectedFile();
-                String dir = ret.getPath(), data = "";
+                String dir = ret.getPath(), data;
                 try {
                     data=FileOperation.Load(dir);
                 } catch (ChessException ex) {
@@ -505,7 +507,7 @@ public class MainFrame extends JFrame {
                     JOptionPane.showMessageDialog(this,"Invalid IP");
             } while(!ip.matches("((25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.){3}(25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))"));
         }
-        int port = 0;
+        int port;
         do {
             port = Integer.parseInt(JOptionPane.showInputDialog(this, "Target port: ", "Connect", JOptionPane.PLAIN_MESSAGE));
             if(port < 1 || port > 65535)
@@ -525,26 +527,20 @@ public class MainFrame extends JFrame {
         if(mode == 0) {
             try {
                 inputStream = AudioSystem.getAudioInputStream(new File("resources/hall.wav"));
-            } catch (UnsupportedAudioFileException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
+            } catch (UnsupportedAudioFileException | IOException e) {
                 throw new RuntimeException(e);
             }
         } else if(mode == 1) {
             try {
                 inputStream = AudioSystem.getAudioInputStream(new File("resources/combat.wav"));
-            } catch (UnsupportedAudioFileException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
+            } catch (UnsupportedAudioFileException | IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
         try {
             bgm.open(inputStream);
-        } catch (LineUnavailableException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (LineUnavailableException | IOException e) {
             throw new RuntimeException(e);
         }
 
