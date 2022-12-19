@@ -108,16 +108,17 @@ public class ChessBoard
     }
     public void InitialMap()
     {
-        loop = 0; lastScore = 0; steps = 0;
+        loop=0;lastScore=0;steps=0;
+        for(int i=1;i<=8;i++)
+            for(int j=1;j<=4;j++)
+                map[i][j]=new Pair(-1,0);
         for(int player=0;player<=1;player++)
             for(int i=0;i<=15;i++)
             {
                 int x=players[player].pieces.chess[i].x,y=players[player].pieces.chess[i].y;
-                map[x][y]=new Pair(player, i);
-                if(!players[player].pieces.chess[i].alive)
-                    map[x][y].player=-1;
+                if(players[player].pieces.chess[i].alive)
+                    map[x][y]=new Pair(player, i);
             }
-
     }
     public void Show()
     {
