@@ -114,6 +114,8 @@ public class FileOperation
     }
     public static String GamePause(ChessBoard game) throws IOException {
         StringBuilder data= new StringBuilder(game.uuid.toString()+Player.BigPause);
+        data.append(game.initPieces[0].Msg()).append(Player.BigPause);
+        data.append(game.initPieces[1].Msg()).append(Player.BigPause);
         data.append(game.players[0].GamingMsg()).append(Player.BigPause);
         data.append(game.players[1].GamingMsg()).append(Player.BigPause);
         data.append(game.turn).append(Player.pause);

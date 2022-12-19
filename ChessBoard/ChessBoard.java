@@ -511,11 +511,17 @@ public class ChessBoard
         String[] Segment=raw.split(Player.BigPause);
         if(!Segment[0].equals(name))throw new ChessException("Wrong UUID.\nError Code:401");
         uuid=UUID.fromString(name);
+        for(int j=1;j<=2;j++)
+        {
+            String[] tmp=Segment[j].split(Player.pause);
+            for(int i=0;i<=15;i++)
+                initPieces[j-1].chess[i]=new Point(Integer.parseInt(tmp[i]));
+        }
         for(int i=0;i<=1;i++)
             players[i]=new Player();
-        players[0].LoadGaming(Segment[1]);
-        players[1].LoadGaming(Segment[2]);
-        String[] data=Segment[3].split(Player.pause);
+        players[0].LoadGaming(Segment[3]);
+        players[1].LoadGaming(Segment[4]);
+        String[] data=Segment[5].split(Player.pause);
         turn=Integer.parseInt(data[0]);
         steps=Integer.parseInt(data[1]);
         int n=Integer.parseInt(data[2]);
