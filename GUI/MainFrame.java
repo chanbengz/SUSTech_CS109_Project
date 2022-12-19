@@ -184,6 +184,7 @@ public class MainFrame extends JFrame {
             printTurnAndRound();
             PlayerName1.setText(Game.players[1].id);
             PlayerName2.setText(Game.players[0].id);
+            CheatButton.setVisible(true);
             generate();
         });
 
@@ -194,6 +195,7 @@ public class MainFrame extends JFrame {
         CheatButton.addActionListener((e)->{
             this.cheat = !this.cheat;
         });
+        CheatButton.setVisible(false);
 
         //---- StopButton ----
         StopButton.setText("Stop");
@@ -259,12 +261,14 @@ public class MainFrame extends JFrame {
         this.add(WdButton);
         WdButton.setBounds(340, 615, 100, 45);
         WdButton.addActionListener((e)->{
-            if(Game.steps != 0){
-                Game.LoadPoint();
-                generate();
-                printTurnAndRound();
-            } else {
-                JOptionPane.showMessageDialog(this,"You can't withdraw", "Warning", JOptionPane.WARNING_MESSAGE);
+            if(started) {
+                if(Game.steps != 0){
+                    Game.LoadPoint();
+                    generate();
+                    printTurnAndRound();
+                } else {
+                    JOptionPane.showMessageDialog(this,"You can't withdraw", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
 
@@ -289,8 +293,16 @@ public class MainFrame extends JFrame {
                 ChessBoard Replay = new ChessBoard();
                 String name = dir.substring(dir.lastIndexOf("/") + 1);
                 this.Game = Replay;
-                Game.LoadReplay(data, name.substring(0, name.length() - 6));
-                Game.Replay();
+                try {
+                    Game.LoadReplay(data, name.substring(0, name.length() - 6));
+                } catch (ChessException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try {
+                    Game.Replay();
+                } catch (ChessException ex) {
+                    throw new RuntimeException(ex);
+                }
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);
             }
