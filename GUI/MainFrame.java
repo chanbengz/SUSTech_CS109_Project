@@ -184,8 +184,6 @@ public class MainFrame extends JFrame {
             printTurnAndRound();
             PlayerName1.setText(Game.players[1].id);
             PlayerName2.setText(Game.players[0].id);
-            CheatButton.setVisible(true);
-            StartButton.setText("Restart");
             generate();
         });
 
@@ -196,7 +194,6 @@ public class MainFrame extends JFrame {
         CheatButton.addActionListener((e)->{
             this.cheat = !this.cheat;
         });
-        CheatButton.setVisible(false);
 
         //---- StopButton ----
         StopButton.setText("Stop");
@@ -262,14 +259,12 @@ public class MainFrame extends JFrame {
         this.add(WdButton);
         WdButton.setBounds(340, 615, 100, 45);
         WdButton.addActionListener((e)->{
-            if(started) {
-                if(Game.steps != 0){
-                    Game.LoadPoint();
-                    generate();
-                    printTurnAndRound();
-                } else {
-                    JOptionPane.showMessageDialog(this,"You can't withdraw", "Warning", JOptionPane.WARNING_MESSAGE);
-                }
+            if(Game.steps != 0){
+                Game.LoadPoint();
+                generate();
+                printTurnAndRound();
+            } else {
+                JOptionPane.showMessageDialog(this,"You can't withdraw", "Warning", JOptionPane.WARNING_MESSAGE);
             }
         });
 
@@ -294,12 +289,10 @@ public class MainFrame extends JFrame {
                 ChessBoard Replay = new ChessBoard();
                 String name = dir.substring(dir.lastIndexOf("/") + 1);
                 this.Game = Replay;
-                Game.mainFrame = this;
+                Game.LoadReplay(data, name.substring(0, name.length() - 6));
+                Game.Replay();
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);
-                Game.LoadReplay(data, name.substring(0, name.length() - 6));
-                //generate();
-                Game.Show();
             }
         });
 
@@ -308,22 +301,12 @@ public class MainFrame extends JFrame {
         ReplayLast.setBounds(35, 300, 50,50);
         this.add(ReplayLast);
         ReplayLast.setVisible(false);
-        ReplayLast.addActionListener((e)->{
-            try {
-                Game.nextStep(Game.opt_stack.get(Game.steps), Game.players[Game.turn].isAI);
-            } catch (ChessException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
 
         ReplayNext.setText(">");
         ReplayNext.setFont(new Font("Rockwell", Font.BOLD, 15));
         ReplayNext.setBounds(450, 300, 50,50);
         this.add(ReplayNext);
         ReplayNext.setVisible(false);
-        ReplayNext.addActionListener((e)->{
-            if(Game.steps!=0){Game.LoadPoint(); Game.Show();}
-        });
     }
 
     private void AddLabel() {

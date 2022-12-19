@@ -68,6 +68,8 @@ public class ChessBoard
         opt_stack.addAll(page.opt_stack);
         for(int i=0;i<=1;i++)
             players[i]=new Player(page.players[i]);
+        if(players[turn].CheckAI() && !players[turn^1].CheckAI())
+            LoadPoint();
     }
     void CreatePieces()
     {
@@ -185,11 +187,12 @@ public class ChessBoard
             }
             case 5 ->
             {
-                try {
-                    return new Operation(Integer.parseInt(FileOperation.NetReceive(uuid)));
-                } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                try
+                    {return new Operation(Integer.parseInt(FileOperation.NetReceive(uuid)));}
+                catch (IOException | InterruptedException e)
+                    {throw new RuntimeException(e);}
+                catch (ChessException e)
+                    {throw new ChessException(e.getMessage());}
             }
             default -> throw new ChessException("Invalid player's type.\nError Code:202");
         }
@@ -460,14 +463,8 @@ public class ChessBoard
         int n=Integer.parseInt(data[40]);
         if(n+41!=data.length)throw new ChessException("Wrong options size.\nError Code:307");
     }
-    public void LoadReplay(String raw,String name)
-    {
-        try {
-            FormatCheck(raw,name);
-        } catch (ChessException e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
+    public void LoadReplay(String raw,String name) throws ChessException {
+        FormatCheck(raw,name);
         String[] data=raw.split(Player.pause);
         uuid=UUID.fromString(data[0]);
         for(int i=0;i<=1;i++)
@@ -486,14 +483,9 @@ public class ChessBoard
         turn=0;
         steps=0;
     }
-    public void Replay()
+    public void Replay() throws ChessException
     {
-        try {
-            Go(true);
-        } catch (ChessException e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
+        Go(true);
         System.out.println("Game over!");
         String guid=uuid.toString();
         System.out.println(guid);
@@ -514,6 +506,7 @@ public class ChessBoard
         int n=Integer.parseInt(data[2]);
         for(int i=1;i<=n;i++)
             opt_stack.add(new Operation(Integer.parseInt(data[2+i])));
+        InitialMap();
     }
 
     public void nextStep(Operation opt, int isAI) throws ChessException
