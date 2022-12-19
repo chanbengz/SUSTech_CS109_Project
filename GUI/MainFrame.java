@@ -186,6 +186,17 @@ public class MainFrame extends JFrame {
                         throw new RuntimeException(ex);
                     }
                     JOptionPane.showMessageDialog(this,"User created","Success",JOptionPane.PLAIN_MESSAGE);
+                    try {
+                        list = FileOperation.ScanUser("User/");
+                    } catch (ChessException ex) {
+                        JOptionPane.showMessageDialog(this,ex.getMessage(),"Warning",JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    Collections.sort(list);
+                    StringBuilder rankness = new StringBuilder();
+                    for(Player o: list)
+                        rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));
+                    printRank(rankness.toString());
                 }
             }
             String[] options = {"Connect", "Medium", "Easy", "Beginner"};
