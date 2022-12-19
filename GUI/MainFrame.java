@@ -184,6 +184,8 @@ public class MainFrame extends JFrame {
             printTurnAndRound();
             PlayerName1.setText(Game.players[1].id);
             PlayerName2.setText(Game.players[0].id);
+            CheatButton.setVisible(true);
+            StartButton.setText("Restart");
             generate();
         });
 
@@ -194,6 +196,7 @@ public class MainFrame extends JFrame {
         CheatButton.addActionListener((e)->{
             this.cheat = !this.cheat;
         });
+        CheatButton.setVisible(false);
 
         //---- StopButton ----
         StopButton.setText("Stop");
@@ -259,12 +262,14 @@ public class MainFrame extends JFrame {
         this.add(WdButton);
         WdButton.setBounds(340, 615, 100, 45);
         WdButton.addActionListener((e)->{
-            if(Game.steps != 0){
-                Game.LoadPoint();
-                generate();
-                printTurnAndRound();
-            } else {
-                JOptionPane.showMessageDialog(this,"You can't withdraw", "Warning", JOptionPane.WARNING_MESSAGE);
+            if(started) {
+                if(Game.steps != 0){
+                    Game.LoadPoint();
+                    generate();
+                    printTurnAndRound();
+                } else {
+                    JOptionPane.showMessageDialog(this,"You can't withdraw", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
 
