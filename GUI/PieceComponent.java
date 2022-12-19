@@ -97,6 +97,6 @@ public class PieceComponent extends JButton {
         String color = this.player == 0 ? "B" : "R";
         String select = "";
         if(selected) select = "selected/";
-        return "resources/" + select + color + Integer.toString(rank) + ".png";
+        return "resources/" + select + color + rank + ".png";
     }
 }
