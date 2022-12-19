@@ -49,7 +49,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame(String title) {
         super(title);
-        this.setLocation(200,200);
+        this.setLocation(100,100);
         this.setSize(785,700);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
