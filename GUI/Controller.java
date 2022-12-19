@@ -29,10 +29,14 @@ public class Controller implements ActionListener {
                     target.EmptyValid();
                     first = target;
                     checkValid(target);
+                    target.selected = true;
+                    target.update();
                 }
             } else {
                 if (target == first) { // reveal
                     if( !target.isRevealed ) {
+                        first.selected = false;
+                        first.update();
                         int x = first.x, y = first.y;
                         first = null;
                         try {
@@ -56,8 +60,11 @@ public class Controller implements ActionListener {
                         }
                         SwapPlayer();
                     } else {
+                        first.selected = false;
+                        first.update();
                         first = null; // cancel
                     }
+
                 } else {
                     if(handleSecond(target)) { // move
                         int x1 = first.x, y1 = first.y, x2 = target.x, y2 = target.y;
@@ -81,6 +88,8 @@ public class Controller implements ActionListener {
                             }
                         }
                         SwapPlayer();
+                        first.selected = false;
+                        first.update();
                         first = null;
                     }
                 }

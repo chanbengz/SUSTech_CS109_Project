@@ -185,6 +185,7 @@ public class MainFrame extends JFrame {
             PlayerName1.setText(Game.players[1].id);
             PlayerName2.setText(Game.players[0].id);
             CheatButton.setVisible(true);
+            StartButton.setText("Restart");
             generate();
         });
 
@@ -286,6 +287,7 @@ public class MainFrame extends JFrame {
                     data = FileOperation.Load(dir);
                 } catch (ChessException ex) {
                     System.out.println(ex.getMessage());
+                    JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
                     throw new RuntimeException(ex);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
@@ -296,11 +298,14 @@ public class MainFrame extends JFrame {
                 try {
                     Game.LoadReplay(data, name.substring(0, name.length() - 6));
                 } catch (ChessException ex) {
+                    JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
                     throw new RuntimeException(ex);
+
                 }
                 try {
                     Game.Replay();
                 } catch (ChessException ex) {
+                    JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
                     throw new RuntimeException(ex);
                 }
                 ReplayLast.setVisible(true);
