@@ -314,7 +314,7 @@ public class MainFrame extends JFrame {
                 pro2.setVisible(true);
                 PlayerName1.setText(Game.players[1].id);
                 PlayerName2.setText(Game.players[0].id);
-                CheatButton.setVisible(false);
+                CheatButton.setVisible(true);
                 started = true;
             }
         });
@@ -555,8 +555,8 @@ public class MainFrame extends JFrame {
             if(port < 1 || port > 65535)
                 JOptionPane.showMessageDialog(this,"Invalid port");
         } while (port < 1 || port > 65535);
-        Game.NetworkInit(ip, port, select, local);
         JOptionPane.showMessageDialog(this,"Waiting Connection...","Success",JOptionPane.PLAIN_MESSAGE);
+        Game.NetworkInit(ip, port, select, local);
     }
 
     public void PlayBGM(int mode) {
