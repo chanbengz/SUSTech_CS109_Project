@@ -180,7 +180,6 @@ public class Player implements Comparable<Player>
         int n=Integer.parseInt(data[20]);
         history.addAll(Arrays.asList(data).subList(21, n + 21));
     }
-
     @Override
     public int compareTo(Player o) {
         return o.rating - this.rating;

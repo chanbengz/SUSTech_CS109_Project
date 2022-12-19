@@ -111,7 +111,13 @@ public class ChessBoard
         loop = 0; lastScore = 0; steps = 0;
         for(int player=0;player<=1;player++)
             for(int i=0;i<=15;i++)
-                map[players[player].pieces.chess[i].x][players[player].pieces.chess[i].y]=new Pair(player, i);
+            {
+                int x=players[player].pieces.chess[i].x,y=players[player].pieces.chess[i].y;
+                map[x][y]=new Pair(player, i);
+                if(!players[player].pieces.chess[i].alive)
+                    map[x][y].player=-1;
+            }
+
     }
     public void Show()
     {
@@ -513,7 +519,6 @@ public class ChessBoard
             opt_stack.add(new Operation(Integer.parseInt(data[2+i])));
         InitialMap();
     }
-
     public void nextStep(Operation opt, int isAI) throws ChessException
     {
         if(isAI != 3) {
