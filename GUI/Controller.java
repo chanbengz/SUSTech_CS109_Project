@@ -6,7 +6,6 @@ import ChessBoard.Operation;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.TimeUnit;
 
 public class Controller implements ActionListener {
     public PieceComponent first;

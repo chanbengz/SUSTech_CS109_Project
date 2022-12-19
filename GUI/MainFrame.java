@@ -49,7 +49,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame(String title) {
         super(title);
-        this.setLocation(200,200);
+        this.setLocation(100,100);
         this.setSize(785,700);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
@@ -186,6 +186,17 @@ public class MainFrame extends JFrame {
                         throw new RuntimeException(ex);
                     }
                     JOptionPane.showMessageDialog(this,"User created","Success",JOptionPane.PLAIN_MESSAGE);
+                    try {
+                        list = FileOperation.ScanUser("User/");
+                    } catch (ChessException ex) {
+                        JOptionPane.showMessageDialog(this,ex.getMessage(),"Warning",JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    Collections.sort(list);
+                    StringBuilder rankness = new StringBuilder();
+                    for(Player o: list)
+                        rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));
+                    printRank(rankness.toString());
                 }
             }
             String[] options = {"Connect", "Medium", "Easy", "Beginner"};
@@ -544,8 +555,8 @@ public class MainFrame extends JFrame {
             if(port < 1 || port > 65535)
                 JOptionPane.showMessageDialog(this,"Invalid port");
         } while (port < 1 || port > 65535);
-
         Game.NetworkInit(ip, port, select, local);
+        JOptionPane.showMessageDialog(this,"Waiting Connection...","Success",JOptionPane.PLAIN_MESSAGE);
     }
 
     public void PlayBGM(int mode) {
