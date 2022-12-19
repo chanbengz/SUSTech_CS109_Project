@@ -87,7 +87,11 @@ public class FileOperation
     public static String Load(String dir) throws ChessException, IOException {
         Path path=Paths.get(dir);
         String input=Files.readString(path);
-        String name=dir.substring(dir.lastIndexOf("/")+1);
+        String name;
+        if(dir.contains("\\"))
+            name=dir.substring(dir.lastIndexOf("\\")+1);
+        else
+            name=dir.substring(dir.lastIndexOf("/")+1);
         System.out.println(name);
         UUID uuid;
         if(name.contains(".chess"))uuid=UUID.fromString(name.substring(0,name.indexOf(".chess")));

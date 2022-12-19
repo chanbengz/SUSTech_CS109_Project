@@ -35,7 +35,11 @@ public class Main
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        String name=dir.substring(dir.lastIndexOf("\\")+1);
+        String name;
+        if(dir.contains("\\"))
+            name=dir.substring(dir.lastIndexOf("\\")+1);
+        else
+            name=dir.substring(dir.lastIndexOf("/")+1);
         Bob.Load(user,name.substring(0,name.length()-4));
         Bob.Show();
     }
@@ -79,7 +83,11 @@ public class Main
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        String name=dir.substring(dir.lastIndexOf("\\")+1);
+        String name;
+        if(dir.contains("\\"))
+            name=dir.substring(dir.lastIndexOf("\\")+1);
+        else
+            name=dir.substring(dir.lastIndexOf("/")+1);
         try {
             Replay.LoadReplay(data,name.substring(0,name.length()-6));
         } catch (ChessException e) {
@@ -105,7 +113,10 @@ public class Main
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        name=dir.substring(dir.lastIndexOf("\\")+1);
+        if(dir.contains("\\"))
+            name=dir.substring(dir.lastIndexOf("\\")+1);
+        else
+            name=dir.substring(dir.lastIndexOf("/")+1);
         try {
             Game.GameContinue(data,name.substring(0,name.length()-5));
         } catch (ChessException e) {
