@@ -525,6 +525,7 @@ public class ChessBoard
         for(int j=1;j<=2;j++)
         {
             String[] tmp=Segment[j].split(Player.pause);
+            initPieces[j-1] = new ChessPieces();
             for(int i=0;i<=15;i++)
                 initPieces[j-1].chess[i]=new Point(Integer.parseInt(tmp[i]));
         }
