@@ -345,6 +345,8 @@ public class ChessBoard
     {
         players[0]=Alice;
         players[1]=Bob;
+        players[0].score = 0;
+        players[1].score = 0;
         uuid=UUID.randomUUID();
         Random r=new Random();
         seed=r.nextLong();

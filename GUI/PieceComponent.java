@@ -9,6 +9,7 @@ public class PieceComponent extends JButton {
     public boolean selected;
     public int rank;
     public int player;
+    public int color;
     public int x, y;
     public int theme;
     public boolean [][]validCord = new boolean[5][9];
@@ -57,6 +58,7 @@ public class PieceComponent extends JButton {
         target.player = this.player;
         target.rank = this.rank;
         target.isRevealed = this.isRevealed;
+        target.color = this.color;
         EmptyValid();
     }
 
@@ -97,10 +99,10 @@ public class PieceComponent extends JButton {
     }
 
     public String getPath() {
-        String color = this.player == 0 ? "B" : "R";
+        String colorstr = this.color == 0 ? "B" : "R";
         String select = "";
         String themestr = "theme" + theme + "/";
         if(selected) select = "selected/";
-        return "resources/" + themestr + select + color + rank + ".png";
+        return "resources/" + themestr + select + colorstr + rank + ".png";
     }
 }

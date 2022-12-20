@@ -14,6 +14,7 @@ public class Controller implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         PieceComponent target =  (PieceComponent) e.getSource();
+        if(mainFrame.Game.steps == 1) mainFrame.generate();
         if(mainFrame.cheat) {
             if(handleFirst(target) && !target.isRevealed) {
                 target.Reveal();
@@ -84,11 +85,11 @@ public class Controller implements ActionListener {
                 }
             }
         }
-
+        SwapPlayer();
     }
 
     public boolean handleFirst(PieceComponent o) {
-        return o.rank != 0 || o.player == mainFrame.Game.turn; // empty or other's piece
+        return (o.rank != 0 && o.player == mainFrame.Game.turn) || !o.isRevealed; //not empty or  other's piece
     }
 
     public boolean handleSecond(PieceComponent o) {

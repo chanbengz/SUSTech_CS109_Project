@@ -117,7 +117,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void generate() {
+    public void generate() {
         this.controller.mainFrame = this;
         for(int y = 0; y < 8; y++) {
             for(int x = 0; x < 4; x++) {
@@ -137,6 +137,7 @@ public class MainFrame extends JFrame {
                     GameBoard[x][y].rank = 0;
                     GameBoard[x][y].player = -1;
                 }
+                if(Game.steps < 1) GameBoard[x][y].color = value > 0 ? 0 : 1;
                 GameBoard[x][y].x = x + 1; GameBoard[x][y].y = y + 1;
                 GameBoard[x][y].update();
             }
@@ -346,6 +347,8 @@ public class MainFrame extends JFrame {
                 }
                 pro1.setVisible(true);
                 pro2.setVisible(true);
+                local[0] = Game.players[0];
+                local[1] = Game.players[1];
                 PlayerName1.setText(Game.players[1].id);
                 PlayerName2.setText(Game.players[0].id);
                 printTurnAndRound();
@@ -496,12 +499,10 @@ public class MainFrame extends JFrame {
 
     public void printTurnAndRound() {
         int turn = Game.turn;
-        String player = turn == 0 ? "BLACK" : "RED";
+        String player = turn == 0 ? Game.players[0].id : Game.players[1].id;
         int round = Game.steps;
         RoundLabel.setText(String.format("ROUND %2d", round));
         TurnLabel.setText(player + "'s Turn");
-        if(turn == 0) TurnLabel.setForeground(Color.BLACK);
-        else TurnLabel.setForeground(Color.RED);
     }
 
     public void showGameOver(String dir, int status) {
