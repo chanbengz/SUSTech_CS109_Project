@@ -117,7 +117,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    public void generate() {
+    public void generate(boolean isLoad) {
         this.controller.mainFrame = this;
         for(int y = 0; y < 8; y++) {
             for(int x = 0; x < 4; x++) {
@@ -138,6 +138,7 @@ public class MainFrame extends JFrame {
                     GameBoard[x][y].player = -1;
                 }
                 if(Game.steps < 1) GameBoard[x][y].color = value > 0 ? 0 : 1;
+                if(isLoad) GameBoard[x][y].color = value > 0 ? 0 : 1;
                 GameBoard[x][y].x = x + 1; GameBoard[x][y].y = y + 1;
                 GameBoard[x][y].update();
             }
@@ -211,7 +212,7 @@ public class MainFrame extends JFrame {
             PlayerName2.setText(Game.players[0].id);
             CheatButton.setVisible(true);
             StartButton.setText("Restart");
-            generate();
+            generate(false);
             PlayBGM(1);
             double p = 1.0/(1.0+Math.pow(10,1.0*(Game.players[1].rating-Game.players[0].rating)/400));
             printMess(String.format("Possibility of %s \nwinning %s: %.2f", Game.players[0].id,Game.players[1].id, p * 100.0) + "% \n");
@@ -288,7 +289,7 @@ public class MainFrame extends JFrame {
                     JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
                 }
                 if(!isLogin) Login();
-                generate();
+                generate(true);
                 pro1.setVisible(true);
                 pro2.setVisible(true);
                 PlayerName1.setText(Game.players[1].id);
@@ -296,6 +297,7 @@ public class MainFrame extends JFrame {
                 CheatButton.setVisible(true);
                 started = true;
                 Game.Show();
+
             }
         });
 
@@ -307,7 +309,7 @@ public class MainFrame extends JFrame {
             if(started) {
                 if(Game.steps != 0){
                     Game.LoadPoint(false);
-                    generate();
+                    generate(false);
                     printTurnAndRound();
                     Game.Show();
                 } else {
@@ -353,7 +355,7 @@ public class MainFrame extends JFrame {
                 PlayerName1.setText(Game.players[1].id);
                 PlayerName2.setText(Game.players[0].id);
                 printTurnAndRound();
-                generate();
+                generate(true);
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);
                 CheatButton.setVisible(false);
@@ -368,7 +370,7 @@ public class MainFrame extends JFrame {
         ReplayLast.addActionListener((e)->{
             if(Game.steps != 0){
                 Game.LoadPoint(true);
-                generate();
+                generate(false);
                 Game.Show();
                 printTurnAndRound();
             }

@@ -14,7 +14,7 @@ public class Controller implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         PieceComponent target =  (PieceComponent) e.getSource();
-        if(mainFrame.Game.steps == 1) mainFrame.generate();
+        if(mainFrame.Game.steps == 1) mainFrame.generate(false);
         if(mainFrame.cheat) {
             if(handleFirst(target) && !target.isRevealed) {
                 target.Reveal();
