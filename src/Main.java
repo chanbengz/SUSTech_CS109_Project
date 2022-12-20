@@ -45,26 +45,25 @@ public class Main
     }
     static void test1()
     {
-        Server.start();
+        ChessBoard game=new ChessBoard();
+        Player pop=new Player("pop",0);
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
+            game.NetworkInit("127.0.0.1",12345,1,pop);
+        } catch (ChessException e) {
             throw new RuntimeException(e);
         }
-        try {
-            Server.sendMsg("".getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        System.out.println(game.Play());
     }
     static void test2()
     {
-        Client.start();
+        ChessBoard game=new ChessBoard();
+        Player push=new Player("push",0);
         try {
-            Client.sendMsg("".getBytes());
-        } catch (Exception e) {
+            game.NetworkInit("10.24.86.56",12345,0,push);
+        } catch (ChessException e) {
             throw new RuntimeException(e);
         }
+        System.out.println(game.Play());
     }
     static void test3()
     {

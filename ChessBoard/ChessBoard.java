@@ -108,10 +108,17 @@ public class ChessBoard
     }
     public void InitialMap()
     {
-        loop = 0; lastScore = 0; steps = 0;
+        loop=0;lastScore=0;steps=0;
+        for(int i=1;i<=8;i++)
+            for(int j=1;j<=4;j++)
+                map[i][j]=new Pair(-1,0);
         for(int player=0;player<=1;player++)
             for(int i=0;i<=15;i++)
-                map[players[player].pieces.chess[i].x][players[player].pieces.chess[i].y]=new Pair(player, i);
+            {
+                int x=players[player].pieces.chess[i].x,y=players[player].pieces.chess[i].y;
+                if(players[player].pieces.chess[i].alive)
+                    map[x][y]=new Pair(player, i);
+            }
     }
     public void Show()
     {
@@ -119,11 +126,14 @@ public class ChessBoard
         System.out.printf("Steps: %d\n",steps);
         System.out.println();
         StringBuilder rankness = new StringBuilder();
-        //rankness.append(String.format("%5s %8d %7d\n", players[0].id, players[0].rating, players[0].score));
-        rankness.append(String.format("%6s %7d %7d\n", players[1].id, players[1].rating, players[1].score));
-        //System.out.println(rankness);
-        for(Player o: mainFrame.list)
-            rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));
+        if(players[1].isAI != 3)  rankness.append(String.format("%-8s %5d %7d\n", players[1].id, players[1].rating, players[1].score));
+        rankness.append(String.format("%-8s %5d %7d\n", players[0].id, players[0].rating, players[0].score));
+        System.out.println(rankness);
+        for(Player o: mainFrame.list) {
+            if(!o.id.equals(players[0].id))
+                rankness.append(String.format("%-8s %5d %7d\n", o.id, o.rating, o.score));
+        }
+
         mainFrame.printRank(rankness.toString());
         for(int i=1;i<=8;i++,System.out.println())
             for(int j=1;j<=4;j++)
@@ -227,7 +237,16 @@ public class ChessBoard
                     tmp.chess[i]=new Point(players[0].pieces.chess[i]);
                 players[0].pieces=players[1].pieces;
                 players[1].pieces=tmp;
-                InitialMap();
+                for(int i=1;i<=8;i++)
+                    for(int j=1;j<=4;j++)
+                        map[i][j]=new Pair(-1,0);
+                for(int player=0;player<=1;player++)
+                    for(int i=0;i<=15;i++)
+                    {
+                        int x=players[player].pieces.chess[i].x,y=players[player].pieces.chess[i].y;
+                        if(players[player].pieces.chess[i].alive)
+                            map[x][y]=new Pair(player, i);
+                    }
             }
         }
         turn^=1;
@@ -335,6 +354,8 @@ public class ChessBoard
     {
         players[0]=Alice;
         players[1]=Bob;
+        players[0].score = 0;
+        players[1].score = 0;
         uuid=UUID.randomUUID();
         Random r=new Random();
         seed=r.nextLong();
@@ -360,6 +381,8 @@ public class ChessBoard
         else
         {
             Server.start(port);
+            Random r=new Random();
+            seed=r.nextLong();
             try {
                 if(FileOperation.NetReceive(UUID.nameUUIDFromBytes("bonus".getBytes())).equals("qwq"))
                     Server.sendMsg(FileOperation.NetSend(Tim.Msg(),UUID.nameUUIDFromBytes("bonus".getBytes())));
@@ -499,21 +522,44 @@ public class ChessBoard
         String[] Segment=raw.split(Player.BigPause);
         if(!Segment[0].equals(name))throw new ChessException("Wrong UUID.\nError Code:401");
         uuid=UUID.fromString(name);
+        for(int j=1;j<=2;j++)
+        {
+            String[] tmp=Segment[j].split(Player.pause);
+            initPieces[j-1] = new ChessPieces();
+            for(int i=0;i<=15;i++)
+                initPieces[j-1].chess[i]=new Point(Integer.parseInt(tmp[i]));
+        }
         for(int i=0;i<=1;i++)
             players[i]=new Player();
-        players[0].LoadGaming(Segment[1]);
-        players[1].LoadGaming(Segment[2]);
-        String[] data=Segment[3].split(Player.pause);
+        players[0].LoadGaming(Segment[3]);
+        players[1].LoadGaming(Segment[4]);
+        String[] data=Segment[5].split(Player.pause);
         turn=Integer.parseInt(data[0]);
         steps=Integer.parseInt(data[1]);
         int n=Integer.parseInt(data[2]);
         for(int i=1;i<=n;i++)
             opt_stack.add(new Operation(Integer.parseInt(data[2+i])));
-        InitialMap();
+        for(int i=1;i<=8;i++)
+            for(int j=1;j<=4;j++)
+                map[i][j]=new Pair(-1,0);
+        for(int player=0;player<=1;player++)
+            for(int i=0;i<=15;i++)
+            {
+                int x=players[player].pieces.chess[i].x,y=players[player].pieces.chess[i].y;
+                if(players[player].pieces.chess[i].alive)
+                    map[x][y]=new Pair(player, i);
+            }
     }
-
     public void nextStep(Operation opt, int isAI) throws ChessException
     {
+        if (players[0].score>=60) {
+            mainFrame.showGameOver(GameOver(), 1);
+            return;
+        }
+        if (players[1].score>=60) {
+            mainFrame.showGameOver(GameOver(), -1);
+            return;
+        }
         if(isAI != 3) {
             opt=Input();
         }
@@ -560,8 +606,9 @@ public class ChessBoard
         }
         SavePoint();
         if (players[0].score>=60) {
-        mainFrame.showGameOver(GameOver(), 1);
-    }
+            mainFrame.showGameOver(GameOver(), 1);
+            return;
+        }
         if (players[1].score>=60) {
             mainFrame.showGameOver(GameOver(), -1);
         }

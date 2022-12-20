@@ -6,7 +6,6 @@ import ChessBoard.Operation;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.TimeUnit;
 
 public class Controller implements ActionListener {
     public PieceComponent first;
@@ -15,6 +14,7 @@ public class Controller implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         PieceComponent target =  (PieceComponent) e.getSource();
+        if(mainFrame.Game.steps == 1) mainFrame.generate(false);
         if(mainFrame.cheat) {
             if(handleFirst(target) && !target.isRevealed) {
                 target.Reveal();
@@ -51,14 +51,9 @@ public class Controller implements ActionListener {
                             } catch (ChessException ex) {
                                 throw new RuntimeException(ex);
                             }
-                        } else {
-                            try {
-                                mainFrame.Game.nextStep(null,5);
-                            } catch (ChessException ex) {
-                                throw new RuntimeException(ex);
-                            }
+                            SwapPlayer();
                         }
-                        SwapPlayer();
+
                     } else {
                         first.selected = false;
                         first.update();
@@ -80,14 +75,9 @@ public class Controller implements ActionListener {
                             } catch (ChessException ex) {
                                 throw new RuntimeException(ex);
                             }
-                        } else {
-                            try {
-                                mainFrame.Game.nextStep(null,5);
-                            } catch (ChessException ex) {
-                                throw new RuntimeException(ex);
-                            }
+                            SwapPlayer();
                         }
-                        SwapPlayer();
+
                         first.selected = false;
                         first.update();
                         first = null;
@@ -95,11 +85,11 @@ public class Controller implements ActionListener {
                 }
             }
         }
-
+        SwapPlayer();
     }
 
     public boolean handleFirst(PieceComponent o) {
-        return o.rank != 0 || o.player == mainFrame.Game.turn; // empty or other's piece
+        return (o.rank != 0 && o.player == mainFrame.Game.turn) || !o.isRevealed; //not empty or  other's piece
     }
 
     public boolean handleSecond(PieceComponent o) {

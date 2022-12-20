@@ -16,8 +16,6 @@ import java.util.Collections;
 public class MainFrame extends JFrame {
     private boolean started;
     public ChessBoard Game;
-    final private int boardY = 10;
-    final private int boardX = 120;
 
     public PieceComponent[][] GameBoard;
     private final JLabel ChessboardBackg;
@@ -43,13 +41,15 @@ public class MainFrame extends JFrame {
     public Controller controller;
     public boolean pvp;
     public boolean cheat;
-    public Player local;
+    public Player[] local;
     public ArrayList<Player> list;
+    private boolean isLogin;
+    private int theme;
     Clip bgm;
 
     public MainFrame(String title) {
         super(title);
-        this.setLocation(200,200);
+        this.setLocation(100,100);
         this.setSize(785,700);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
@@ -57,16 +57,27 @@ public class MainFrame extends JFrame {
         this.setLayout(null);
         this.ChessboardBackg = new JLabel();
         this.started = false;
+        this.isLogin = false;
+        local = new Player[2];
 
+        String[] options = {"Genius", "Basic"};
+        theme = JOptionPane.showOptionDialog(this, "Please choose theme", "Start",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null) + 1;
+        String themestr = "theme" + theme + "/";
         AddChess();
         AddButton();
         AddLabel();
         AddInfoArea();
         AddPlayerInfo();
         //---- ChessboardBackg ----
-        ChessboardBackg.setIcon(new ImageIcon("resources/board.jpg"));
+        ChessboardBackg.setIcon(new ImageIcon("resources/" + themestr + "board.jpg"));
         this.add(ChessboardBackg);
         ChessboardBackg.setBounds(115, 0, 305, 610);
+
+        JLabel Background = new JLabel(new ImageIcon("resources/bgpic1.jpg"));
+        Background.setBounds(0,0,785,785);
+        this.add(Background);
+
         try {
             list = FileOperation.ScanUser("User/");
         } catch (ChessException e) {
@@ -76,7 +87,7 @@ public class MainFrame extends JFrame {
         Collections.sort(list);
         StringBuilder rankness = new StringBuilder();
         for(Player o: list)
-            rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));
+            rankness.append(String.format("%-8s %5d %7d\n", o.id, o.rating, o.score));
         printRank(rankness.toString());
 
         try {
@@ -90,10 +101,15 @@ public class MainFrame extends JFrame {
     private void AddChess() {
         this.GameBoard = new PieceComponent[4][8];
         this.controller = new Controller();
+        int disx = theme == 1 ? 73 : 72;
+        int disy = theme == 1 ? 74 : 72;
+        int boardY = theme == 1 ? 10 : 15;
+        int boardX = theme == 1 ? 120 : 115;
         for(int y = 0; y < 8; y++) {
             for(int x = 0; x < 4; x++) {
                 GameBoard[x][y] = new PieceComponent(0,0);
-                GameBoard[x][y].setLocation(boardX + 73 * x, boardY + 74 * y);
+                GameBoard[x][y].theme = theme;
+                GameBoard[x][y].setLocation(boardX + disx * x, boardY + disy * y);
                 GameBoard[x][y].setVisible(false);
                 GameBoard[x][y].addActionListener(this.controller);
                 this.add(GameBoard[x][y]);
@@ -101,7 +117,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void generate() {
+    public void generate(boolean isLoad) {
         this.controller.mainFrame = this;
         for(int y = 0; y < 8; y++) {
             for(int x = 0; x < 4; x++) {
@@ -110,6 +126,9 @@ public class MainFrame extends JFrame {
                 int value = 9;
                 if(who != -1) {
                     value = (int)Math.pow(-1,who) * this.Game.players[who].pieces.chess[this.Game.map[y+1][x+1].index].level;
+                    GameBoard[x][y].isRevealed = this.Game.players[who].pieces.chess[this.Game.map[y+1][x+1].index].show;
+                } else {
+                    GameBoard[x][y].isRevealed = false;
                 }
                 if(value != 9) {
                     GameBoard[x][y].rank = value > 0 ? value : -value;
@@ -118,7 +137,8 @@ public class MainFrame extends JFrame {
                     GameBoard[x][y].rank = 0;
                     GameBoard[x][y].player = -1;
                 }
-                GameBoard[x][y].isRevealed = this.Game.players[who].pieces.chess[this.Game.map[y+1][x+1].index].show;
+                if(Game.steps < 1) GameBoard[x][y].color = value > 0 ? 0 : 1;
+                if(isLoad) GameBoard[x][y].color = value > 0 ? 0 : 1;
                 GameBoard[x][y].x = x + 1; GameBoard[x][y].y = y + 1;
                 GameBoard[x][y].update();
             }
@@ -141,92 +161,48 @@ public class MainFrame extends JFrame {
         this.add(StartButton);
         StartButton.setBounds(10, 615, 100, 45);
         StartButton.addActionListener((e)->{
-            if(!started) {
-                String[] logoption = {"Sign in", "Sign up"};
-                int login = JOptionPane.showOptionDialog(this, "Sign up or Sign in", "Login",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, logoption, null);
-                if(login == 0) {
-                    if(list.size()==0)
-                    {
-                        JOptionPane.showMessageDialog(this,"Empty User List","Warning",JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-                    while (local == null) {
-                        String id = JOptionPane.showInputDialog(this, "Account: ", "Login",JOptionPane.PLAIN_MESSAGE);
-                        if(id == null || id.equals("")) return;
-                        for(Player o: list) {
-                            if(o.id.equals(id)) {
-                                local = o;
-                            }
-                        }
-                        if(local == null) {
-                            JOptionPane.showMessageDialog(this,"Invalid User!","Warning",JOptionPane.WARNING_MESSAGE);
-                        }
-                        if(local != null) {
-                            String passwd;
-                            do {
-                                passwd = JOptionPane.showInputDialog(this, "Password: ", "Login", JOptionPane.PLAIN_MESSAGE);
-                                if(passwd == null||passwd.equals("")) return;
-                            } while(!local.login(passwd));
-                        }
-                    }
-                } else {
-                    String id;
-                    do {
-                        id = JOptionPane.showInputDialog(this, "Create User: ", "Sign up",JOptionPane.PLAIN_MESSAGE);
-                        if(id == null || id.equals("")) return;
-                        if(!id.matches("^[a-zA-Z0-9_]{0,15}$")) {
-                            JOptionPane.showMessageDialog(this,"Invalid Name","Warning",JOptionPane.PLAIN_MESSAGE);
-                        }
-                    } while (!id.matches("^[a-zA-Z0-9_]{0,15}$"));
-                    String passwd = JOptionPane.showInputDialog(this, "Password: ", "Login", JOptionPane.PLAIN_MESSAGE);
-                    local = new Player(id, 3, passwd);
-                    try {
-                        FileOperation.SaveUser(local);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    JOptionPane.showMessageDialog(this,"User created","Success",JOptionPane.PLAIN_MESSAGE);
-                    try {
-                        list = FileOperation.ScanUser("User/");
-                    } catch (ChessException ex) {
-                        JOptionPane.showMessageDialog(this,ex.getMessage(),"Warning",JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-                    Collections.sort(list);
-                    StringBuilder rankness = new StringBuilder();
-                    for(Player o: list)
-                        rankness.append(String.format("%6s %7d %7d\n", o.id, o.rating, o.score));
-                    printRank(rankness.toString());
-                }
+            if(!started && !isLogin) {
+                Player tmp = Login();
+                if(tmp != null) local[0] = tmp;
+                else return;
             }
-            String[] options = {"Connect", "Medium", "Easy", "Beginner"};
+            String[] options = {"Remote", "Local", "Medium", "Easy", "Beginner"};
             int select = JOptionPane.showOptionDialog(this, "Please choose the level of AI or connect to others", "Start",
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
             this.started = true;
             Game = new ChessBoard();
-            if(select != 0) {
+            if(select != 0 && select != 1) {
                 int level = 4;
-                if(select == 2) {
+                String name = "Beginner";
+                if(select == 3) {
                     level = 1;
-                } else if(select == 1) {
+                    name = "Easy";
+                } else if(select == 2) {
                     level = 2;
+                    name = "Medium";
                 }
-                Player AI = new Player("AI", level);
-                Game.Init(local, AI);
+                pro1.setIcon(new ImageIcon("resources/profile1.png"));
+                Player AI = new Player(name, level);
+                Game.Init(local[0], AI);
                 pvp = false;
             } else {
                 pvp = true;
-                try
-                {
-                    Connect();
-                }
-                catch (ChessException ex)
-                {
-                    JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
-                    return;
+                pro1.setIcon(new ImageIcon("resources/profile2.png"));
+                if(select == 0) {
+                    try {
+                        Connect();
+                    } catch (ChessException ex) {
+                        JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                } else {
+                    Player tmp = Login();
+                    if(tmp != null) local[1] = tmp;
+                    Game.Init(local[0], local[1]);
                 }
             }
             Game.mainFrame = this;
+            controller.first = null;
             Game.InitialMap();
             Game.Show();
             printTurnAndRound();
@@ -236,8 +212,10 @@ public class MainFrame extends JFrame {
             PlayerName2.setText(Game.players[0].id);
             CheatButton.setVisible(true);
             StartButton.setText("Restart");
-            generate();
+            generate(false);
             PlayBGM(1);
+            double p = 1.0/(1.0+Math.pow(10,1.0*(Game.players[1].rating-Game.players[0].rating)/400));
+            printMess(String.format("Possibility of %s \nwinning %s: %.2f", Game.players[0].id,Game.players[1].id, p * 100.0) + "% \n");
         });
 
         //---- CheatButton ----
@@ -305,17 +283,21 @@ public class MainFrame extends JFrame {
                 String name=dir.substring(dir.lastIndexOf("/")+1);
                 try {
                     Game = new ChessBoard();
+                    Game.mainFrame = this;
                     Game.GameContinue(data,name.substring(0,name.length()-5));
                 } catch (ChessException ex) {
                     JOptionPane.showMessageDialog(this,ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
                 }
-                generate();
+                if(!isLogin) Login();
+                generate(true);
                 pro1.setVisible(true);
                 pro2.setVisible(true);
                 PlayerName1.setText(Game.players[1].id);
                 PlayerName2.setText(Game.players[0].id);
-                CheatButton.setVisible(false);
+                CheatButton.setVisible(true);
                 started = true;
+                Game.Show();
+
             }
         });
 
@@ -327,7 +309,7 @@ public class MainFrame extends JFrame {
             if(started) {
                 if(Game.steps != 0){
                     Game.LoadPoint(false);
-                    generate();
+                    generate(false);
                     printTurnAndRound();
                     Game.Show();
                 } else {
@@ -368,10 +350,12 @@ public class MainFrame extends JFrame {
                 }
                 pro1.setVisible(true);
                 pro2.setVisible(true);
+                local[0] = Game.players[0];
+                local[1] = Game.players[1];
                 PlayerName1.setText(Game.players[1].id);
                 PlayerName2.setText(Game.players[0].id);
                 printTurnAndRound();
-                generate();
+                generate(true);
                 ReplayLast.setVisible(true);
                 ReplayNext.setVisible(true);
                 CheatButton.setVisible(false);
@@ -386,7 +370,7 @@ public class MainFrame extends JFrame {
         ReplayLast.addActionListener((e)->{
             if(Game.steps != 0){
                 Game.LoadPoint(true);
-                generate();
+                generate(false);
                 Game.Show();
                 printTurnAndRound();
             }
@@ -493,7 +477,7 @@ public class MainFrame extends JFrame {
         PlayerName1.setHorizontalAlignment(SwingConstants.CENTER);
         PlayerName1.setHorizontalTextPosition(SwingConstants.CENTER);
         this.add(PlayerName1);
-        PlayerName1.setBounds(15, 15, 85, 25);
+        PlayerName1.setBounds(15, 25, 85, 25);
 
         //---- PlayerName2 ----
         PlayerName2.setText("");
@@ -503,7 +487,7 @@ public class MainFrame extends JFrame {
         PlayerName2.setHorizontalAlignment(SwingConstants.CENTER);
         PlayerName2.setHorizontalTextPosition(SwingConstants.CENTER);
         this.add(PlayerName2);
-        PlayerName2.setBounds(435, 570, 85, 25);
+        PlayerName2.setBounds(435, 550, 85, 25);
     }
 
     public void printMess(String mess) {
@@ -512,18 +496,16 @@ public class MainFrame extends JFrame {
     }
 
     public void printRank(String mess) {
-        String info = "+----+--------+-------+\n| ID | Rating | Score |\n+----+--------+-------+\n";
+        String info = "+------+------+-------+\n|  ID  |Rating| Score |\n+------+------+-------+\n";
         RankPane.setText(info + mess);
     }
 
     public void printTurnAndRound() {
         int turn = Game.turn;
-        String player = turn == 0 ? "BLACK" : "RED";
+        String player = turn == 0 ? Game.players[0].id : Game.players[1].id;
         int round = Game.steps;
         RoundLabel.setText(String.format("ROUND %2d", round));
         TurnLabel.setText(player + "'s Turn");
-        if(turn == 0) TurnLabel.setForeground(Color.BLACK);
-        else TurnLabel.setForeground(Color.RED);
     }
 
     public void showGameOver(String dir, int status) {
@@ -555,8 +537,8 @@ public class MainFrame extends JFrame {
             if(port < 1 || port > 65535)
                 JOptionPane.showMessageDialog(this,"Invalid port");
         } while (port < 1 || port > 65535);
-        Game.NetworkInit(ip, port, select, local);
         JOptionPane.showMessageDialog(this,"Waiting Connection...","Success",JOptionPane.PLAIN_MESSAGE);
+        Game.NetworkInit(ip, port, select, local[0]);
     }
 
     public void PlayBGM(int mode) {
@@ -587,5 +569,71 @@ public class MainFrame extends JFrame {
         }
 
         bgm.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+
+    private Player Login() {
+        String[] logoption = {"Sign in", "Sign up"};
+        int login = JOptionPane.showOptionDialog(this, "Sign up or Sign in", "Login",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, logoption, null);
+        if(login == 0) {
+            if(list.size()==0) {
+                JOptionPane.showMessageDialog(this,"Empty User List","Warning",JOptionPane.WARNING_MESSAGE);
+                return null;
+            }
+            Player tmp = null;
+            while (true) {
+                String id = JOptionPane.showInputDialog(this, "Account: ", "Login",JOptionPane.PLAIN_MESSAGE);
+                if(id == null || id.equals("")) return null;
+                for(Player o: list) {
+                    if(o.id.equals(id)) {
+                        tmp = o;
+                    }
+                }
+                if (tmp == null) {
+                    JOptionPane.showMessageDialog(this,"Invalid User!","Warning",JOptionPane.WARNING_MESSAGE);
+                } else {
+                    String passwd;
+                    do {
+                        passwd = JOptionPane.showInputDialog(this, "Password: ", "Login", JOptionPane.PLAIN_MESSAGE);
+                        if(passwd == null || passwd.equals("")) return null;
+                    } while(!tmp.login(passwd));
+                    StringBuilder hist = new StringBuilder();
+                    for(String str : tmp.history) {
+                        hist.append(str).append("\n");
+                    }
+                    if(!hist.isEmpty())
+                        JOptionPane.showMessageDialog(this,hist.toString(),"History",JOptionPane.PLAIN_MESSAGE);
+                    return tmp;
+                }
+            }
+        } else {
+            String id;
+            do {
+                id = JOptionPane.showInputDialog(this, "Create User: ", "Sign up",JOptionPane.PLAIN_MESSAGE);
+                if(id == null || id.equals("")) return null;
+                if(!id.matches("^[a-zA-Z0-9_]{0,15}$")) {
+                    JOptionPane.showMessageDialog(this,"Invalid Name","Warning",JOptionPane.PLAIN_MESSAGE);
+                }
+            } while (!id.matches("^[a-zA-Z0-9_]{0,15}$"));
+            String passwd = JOptionPane.showInputDialog(this, "Password: ", "Login", JOptionPane.PLAIN_MESSAGE);
+            Player tmp = new Player(id, 3, passwd);
+            try {
+                FileOperation.SaveUser(tmp);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            JOptionPane.showMessageDialog(this,"User created","Success",JOptionPane.PLAIN_MESSAGE);
+            try {
+                list = FileOperation.ScanUser("User/");
+            } catch (ChessException ex) {
+                JOptionPane.showMessageDialog(this,ex.getMessage(),"Warning",JOptionPane.WARNING_MESSAGE);
+                return null;
+            }
+            Collections.sort(list);
+            StringBuilder rankness = new StringBuilder();
+            for(Player o: list)
+                rankness.append(String.format("%-8s %5d %7d\n", o.id, o.rating, o.score));
+            printRank(rankness.toString());
+            return tmp;
+        }
     }
 }
