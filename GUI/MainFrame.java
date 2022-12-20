@@ -201,6 +201,7 @@ public class MainFrame extends JFrame {
                 }
             }
             Game.mainFrame = this;
+            controller.first = null;
             Game.InitialMap();
             Game.Show();
             printTurnAndRound();

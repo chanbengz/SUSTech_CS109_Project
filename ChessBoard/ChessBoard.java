@@ -237,7 +237,16 @@ public class ChessBoard
                     tmp.chess[i]=new Point(players[0].pieces.chess[i]);
                 players[0].pieces=players[1].pieces;
                 players[1].pieces=tmp;
-                InitialMap();
+                for(int i=1;i<=8;i++)
+                    for(int j=1;j<=4;j++)
+                        map[i][j]=new Pair(-1,0);
+                for(int player=0;player<=1;player++)
+                    for(int i=0;i<=15;i++)
+                    {
+                        int x=players[player].pieces.chess[i].x,y=players[player].pieces.chess[i].y;
+                        if(players[player].pieces.chess[i].alive)
+                            map[x][y]=new Pair(player, i);
+                    }
             }
         }
         turn^=1;
